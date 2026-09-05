@@ -1,31 +1,32 @@
 # grapeancestry
 
-This repo is the analysis suite that takes 167K capture FASTQ to a panel VCF and then to ancestry, identity, and PCA reports.
+Analysis suite for the grapevine **167K capture panel**: FASTQ → panel VCF → ancestry / identity / PCA.
+
+Chip design (probe and SNP selection) lives in this repo under [`chip/`](chip/) — not as a separate public grain.
+
+## Layout
+
+| Path | Role |
+|------|------|
+| [`chip/`](chip/) | Probe / SNP selection notes and design-file layouts for 167K and follow-on arrays |
+| [`analysis/`](analysis/) | Calling and report recipes (FASTQ → panel VCF → ancestry / identity / PCA) |
 
 ## This is not
 
-This is not chip design. Probe and SNP selection live in [grapevine-chip](https://github.com/Xuzhen-Li/grapevine-chip).
-This is not aDNA damage or authentication. That line is [grapevine-adna](https://github.com/Xuzhen-Li/grapevine-adna).
-This is not population-genetic theory. Those notes stay in [genomics-theory-mining](https://github.com/Xuzhen-Li/genomics-theory-mining).
+- Not an ancient-DNA damage or authentication pipeline → [grapevine-adna](https://github.com/Xuzhen-Li/grapevine-adna)
+- Not population-genetic theory notes → [genomics-theory-mining](https://github.com/Xuzhen-Li/genomics-theory-mining)
+- Not a nuclear pangenome / PAV graph → [vitis-pangenome](https://github.com/Xuzhen-Li/vitis-pangenome)
+- Not a stand-in for public structure / gene-flow work → [vitis-popgen](https://github.com/Xuzhen-Li/vitis-popgen)
 
-- Not probe / SNP design files
-- Not an ancient-DNA damage pipeline
-- Not a theory dossier
-- Not a stand-in for [vitis-popgen](https://github.com/Xuzhen-Li/vitis-popgen)
+## What is here now
 
-## What will land later
-
-Methods, scripts, and notes only.
-
-- FASTQ to panel VCF calling notes
-- Ancestry, identity, and PCA report recipes
-- CLI, Docker, and Streamlit wrappers
+- Folder contract for chip design vs analysis
+- Starter notes under `chip/` and `analysis/` (methods and checklists only)
 
 No unpublished genotypes, private coordinates, or sample-level matrices.
 
 ## See also
 
-- [grapevine-chip](https://github.com/Xuzhen-Li/grapevine-chip) — probe and SNP design for 167K and follow-on arrays
 - [grapevine-adna](https://github.com/Xuzhen-Li/grapevine-adna) — damage, authentication, aDNA capture, projection
 - [vitis-popgen](https://github.com/Xuzhen-Li/vitis-popgen) — structure and gene flow on public or published data
 - [bioinfo-agent-skills](https://github.com/Xuzhen-Li/bioinfo-agent-skills) — index of sibling repos
