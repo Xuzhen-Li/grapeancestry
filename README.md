@@ -9,7 +9,9 @@ Analysis companion for the grapevine **167K capture panel**.
 
 ## Start here
 
-→ **[`docs/GUIDELINE.md`](docs/GUIDELINE.md)** — tonight path, claim boundaries, and the demo report walkthrough.
+→ **[`docs/GUIDELINE.md`](docs/GUIDELINE.md)** — three VS-1 inputs (FASTQ / BAM / query VCF), claim boundaries, and a full sidebar walkthrough with long screenshots.
+
+Analysis diagram: [`docs/flowchart_vs1_analysis_v2.png`](docs/flowchart_vs1_analysis_v2.png) · [`docs/FLOWCHART.md`](docs/FLOWCHART.md).
 
 ## Tonight — two doors
 
