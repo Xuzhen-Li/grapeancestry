@@ -5,63 +5,98 @@ Analysis companion for the grapevine **167K capture panel**.
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![ORCID](https://img.shields.io/badge/ORCID-0000--0003--3670--6657-a6ce39)](https://orcid.org/0000-0003-3670-6657)
 
-**Status:** documentation and demo walkthrough are live. Full pipeline code, Streamlit Cloud deploy, and large panel matrices land in later commits — do not expect `grapeancestry run` from this repo yet.
+**Status:** documentation and demo walkthrough are live. Full pipeline code, Streamlit Cloud, and large panel matrices land later — do not expect `grapeancestry run` from this repo yet.
 
-## Start here
+## Analysis flow
 
-→ **[`docs/GUIDELINE.md`](docs/GUIDELINE.md)** — three VS-1 inputs (FASTQ / BAM / query VCF), claim boundaries, and a full sidebar walkthrough with long screenshots.
+Final package inputs: **FASTQ** · **BAM/CRAM** · **query VCF** — all on **VS-1** — then our 2449 × 167K assets, software, analyses, and report / `chip.json`.
 
-Analysis diagram: [`docs/flowchart_vs1_analysis_v2.png`](docs/flowchart_vs1_analysis_v2.png) · [`docs/FLOWCHART.md`](docs/FLOWCHART.md).
+![GrapeAncestry analysis flowchart](docs/flowchart_vs1_analysis_v2.png)
 
-## Tonight — two doors
+Source notes: [`docs/FLOWCHART.md`](docs/FLOWCHART.md) · full teaching text: [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
 
-| Door | Audience | Tonight deliverable | Not tonight |
-|------|----------|---------------------|-------------|
-| **Cloud** | Upload 167K VCF → Streamlit | `chip.json` | Docker / HPC / ADMIXTURE binary / full FASTQ pipeline |
-| **Suite** | Local `grapeancestry run` + report | `*.sample-first-v2.report.html` | Claiming OIV 241 / seedlessness / haplotype sex |
+| Input | What it is |
+|-------|------------|
+| **FASTQ** | Modern PE or aDNA SE → trim → map to VS-1 → call at 167K BED |
+| **BAM / CRAM** | Already on VS-1 → markdup → call at 167K BED |
+| **Query VCF** | Customer sample at 167K sites — **not** the 2449 panel matrix |
 
-> **ID trap:** Panel demo `HUN89` (2449-row ID) ≠ capture demo `HUN89-capture` / report stem `HUN89_query` (independent FASTQ recapture). Do not treat the recapture as the panel ID.
+> **ID trap:** Panel demo `HUN89` (2449-row ID) ≠ capture demo `HUN89_query` (independent FASTQ recapture).
 
-## What you get (scan order)
+### Claim boundaries
 
-1. QC  
-2. Self-vs-clone IBS / identity  
-3. Passport / SDR **proxy** (not Science H1–H5 haplotype sex) / trait card  
-4. Purity screen & parentage (screens, not final calls)  
-5. Advanced: f3/f4, local ancestry, NJ, GEA/Fst, impute  
-6. **Colour GS last** — only OIV 225 is currently rankable  
+| Class | Rule |
+|-------|------|
+| Decision-grade | **OIV 225** colour GS only |
+| Exploratory | OIV 241 / unbalanced traits — no parent ranking / seedlessness claim |
+| Do not claim | SDR ≠ haplotype sex; selection overlay ≠ selected; **score ≠ phenotype** |
 
-## Decision / explore / do-not-claim
+> Classroom note: Cloud → `chip.json`; Suite → `*.sample-first-v2.report.html`. Pick one deliverable.
 
-| Class | Trait / claim | Rule |
-|-------|---------------|------|
-| Decision-grade | OIV 225 colour GS | May rank when policy + evidence say so |
-| Exploratory | OIV 241, unbalanced case/control | Demo only; never parent ranking / seedlessness claim |
-| Do not claim | SDR = haplotype sex; query GT = selection | SDR = unphased window **proxy**; selection overlay ≠ “this sample was selected” |
-| Reminder | Model score | **Score ≠ observed phenotype** |
+---
 
-## Walk the demo
+## Walk the demo report
 
-Full walkthrough: [`docs/GUIDELINE.md`](docs/GUIDELINE.md). Screenshots below are from the local suite demo report (`HUN89_query.sample-first-v2.report.html`).
+Demo: `HUN89_query.sample-first-v2.report.html`. Each block below is one sidebar section (full long screenshot) plus a short read note. Longer commentary lives in [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
 
-### Sidebar + overview
+### 1 · Sample validity
 
-![Sidebar and overview](docs/guideline_shots/01_sidebar_overview.png)
+![Sample validity](docs/guideline_shots/sections/01_sample_validity_full.png)
 
-### PCA
+Read panel calling rate, depth, and capture tables first. Heterozygosity is a screen, not a purity call. Missing aDNA damage on a modern PE library is expected.
 
-![PCA](docs/guideline_shots/04_pca.png)
+### 2 · Identity & placement
 
-### ADMIXTURE
+![Identity and placement](docs/guideline_shots/sections/02_identity_placement_full.png)
 
-![ADMIXTURE](docs/guideline_shots/05_admixture.png)
+IBS / kinship vs the 2449 panel. Non-self Identical and PO are clone/parentage **screens**. Pin a row to overlay the same ID on PCA / ADMIXTURE / NJ.
+
+### 3 · Population placement
+
+![Population placement](docs/guideline_shots/sections/03_population_placement_full.png)
+
+Frozen GCTA64 PCA projection, ADMIXTURE (lookup or `-P` / NNLS), NJ on IBS identity, optional f3/f4. Query is placed on a **frozen** reference — not an unsupervised 2449+N refit.
+
+PCA · ADMIXTURE · NJ detail:
+
+![PCA](docs/guideline_shots/sections/03b_pca.png)
+
+![ADMIXTURE](docs/guideline_shots/sections/03c_admixture.png)
+
+![NJ tree](docs/guideline_shots/sections/03d_nj.png)
+
+### 4 · Sample evidence
+
+![Sample evidence](docs/guideline_shots/sections/04_sample_evidence_full.png)
+
+Passport / VIVC, SDR **proxy** (not Science H1–H5 haplotype sex), trait card, colour GS. Only **OIV 225** is decision-grade today.
+
+### 5 · Panel research
+
+![Panel research](docs/guideline_shots/sections/05_panel_research_full.png)
+
+Selection / GEA and related panel contrasts. Query GT is an **overlay**, not proof that this sample was selected.
+
+### 6 · Methods
+
+![Methods](docs/guideline_shots/sections/06_methods_full.png)
+
+Software and frozen-asset notes for the report you are reading.
+
+### 7 · Downloads
+
+![Downloads](docs/guideline_shots/sections/07_downloads_full.png)
+
+Export tables and figures from the demo; no unpublished full 2449 matrices in the public tree.
+
+---
 
 ## Layout
 
 | Path | Role |
 |------|------|
-| [`docs/`](docs/) | GUIDELINE, Chip Companion, demo screenshots |
-| [`chip/`](chip/) | Probe / SNP selection for 167K and follow-ons (design files land later) |
+| [`docs/`](docs/) | GUIDELINE, FLOWCHART, demo section screenshots |
+| [`chip/`](chip/) | Probe / SNP selection for 167K (design files land later) |
 | [`analysis/`](analysis/) | Calling and report recipes when filled |
 
 The old standalone shell [grapevine-chip](https://github.com/Xuzhen-Li/grapevine-chip) redirects to `chip/`.
