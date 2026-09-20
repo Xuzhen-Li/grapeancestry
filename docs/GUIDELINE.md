@@ -8,7 +8,7 @@ This page has two jobs:
 1. **How to use** the product as it exists today (three lanes).
 2. **How to read** the demo HTML report — every sidebar section and every screenshot below has an intro.
 
-Diagram: [`flowchart_vs1_analysis_v2.png`](flowchart_vs1_analysis_v2.png) · [`FLOWCHART.md`](FLOWCHART.md) · Cloud notes: [`CHIP_COMPANION.md`](CHIP_COMPANION.md).
+Diagram: [`flowchart_vs1_analysis_v2.png`](flowchart_vs1_analysis_v2.png) · [`USER_GUIDE.md`](USER_GUIDE.md) · [`FLOWCHART.md`](FLOWCHART.md) · Cloud notes: [`CHIP_COMPANION.md`](CHIP_COMPANION.md).
 
 ---
 
@@ -45,7 +45,7 @@ Three lanes. Pick **one** lane for a given night; the hand-in filename must matc
 
 1. Clone or browse `https://github.com/Xuzhen-Li/grapeancestry`.
 2. Read this GUIDELINE top-to-bottom (usage → report walkthrough).
-3. Open [`FLOWCHART.md`](FLOWCHART.md) for the analysis boxes; [`CHIP_COMPANION.md`](CHIP_COMPANION.md) for Cloud vs Lab doors.
+3. Open [`USER_GUIDE.md`](USER_GUIDE.md) · [`FLOWCHART.md`](FLOWCHART.md) for the analysis boxes; [`CHIP_COMPANION.md`](CHIP_COMPANION.md) for Cloud vs Lab doors.
 4. Use the screenshots below as a stand-in for the interactive HTML (GitHub cannot run the report in-repo).
 
 **Honest stop:** this tree does **not** ship a runnable `grapeancestry` binary, VS-1, or the 2449 dosage cache. Commands in Lane B live in the private suite package.
@@ -136,162 +136,259 @@ Screenshots below are **non-overlapping panel crops** (no full+viewport duplicat
 
 ## Walk the demo report
 
+The GrapeAncestry 167K capture panel analysis companion provides a dedicated analytical framework on the VS-1 reference genome, utilizing a frozen 2449 × 167K dosage cache, GCTA64 principal component axes, ADMIXTURE Q/P matrices (K=2–8), and genomic selection models. This walkthrough uses the `HUN89_query` sample-first-v2 report HTML. Screenshots below are **non-overlapping panel crops** (no full+viewport duplicates). Panel research stays coarse; **one dedicated LocusZoom** shot is included.
+
 Demo stem: `HUN89_query` (modern PE recapture). Compare mentally to panel ID `HUN89` — same variety story, different file identity.
 
 ### 1 · Sample validity
 
-**What this section is for.** Prove the HTML is about *this* query before you trust any plot: who generated it, which artifacts fed it, which methods actually ran, and whether capture QC / aDNA damage make sense for the library type.
+**Background.** High-throughput DNA capture panels applied to historical, degraded, or modern plant material require rigorous initial validation before downstream population and predictive workflows. This layer flags anomalies early, preventing technical artifacts from propagating into PCA projection and genomic selection.
 
-**How to use it.** Read metadata → method coverage → conclusions. If calling rate or depth look broken, stop; do not interpret IBS or GS. Modern PE should not show ancient-DNA damage patterns.
+**What the report shows.** Provenance (report / query / source IDs, artifact paths), method coverage, capture QC (depth, calling, on-target), and whether aDNA damage applies for the library type.
+
+**How a careful reader uses it.**
+
+1. Inspect missingness and depth across the 167K targets.
+2. Verify alignment / coordinates match **VS-1**.
+3. Treat heterozygosity as a **screen**, not a purity call.
+4. Confirm identifier integrity (`query_id` vs `source_sample_id`; keep `_query`).
+5. If calling rate or depth look broken, **stop** — do not interpret IBS or GS yet.
+
+**What you may claim / must not claim.**
+
+- **Allowed:** Whether the sample meets baseline QC for downstream 167K analysis; which methods are available vs unavailable.
+- **Forbidden:** That high QC alone proves parentage or authenticates field passport records.
+
+**Bridge.** Once technical validity is confirmed, establish genetic identity against the frozen 2449 panel.
 
 ![validity 1 — metadata and conclusions](guideline_shots/panels/01_sample_validity_01.png)
 
-*What you see:* Report / query / source IDs, timestamps, paths to dosage cache, VCF, BAM, damage, and LocusZoom JSON; method coverage table; auto conclusions.  
-*How to read:* Confirm `query_id` vs `source_sample_id`. Check Selection / GWAS LocusZoom paths exist if you will open those tabs. Conclusions should match library type (modern PE vs aDNA).
+*What you see:* Report metadata, artifact paths (incl. Selection / GWAS LocusZoom JSON), method coverage, auto conclusions.  
+*How to read:* Confirm IDs and library type. Modern PE should not show ancient-DNA damage patterns.
 
 ![validity 2 — capture QC](guideline_shots/panels/01_sample_validity_02.png)
 
-*What you see:* On-target fraction, mean depth, breadth, calling rate, heterozygosity summary.  
-*How to read:* Calling rate and depth gate downstream overlays. Heterozygosity is a **screen**, not a purity or clone call — use Identity for that.
+*What you see:* On-target, depth, breadth, calling rate, heterozygosity summary.  
+*How to read:* Calling rate and depth gate overlays. Heterozygosity ≠ purity — use Identity for that.
 
 ![validity 3 — damage note](guideline_shots/panels/01_sample_validity_03.png)
 
 *What you see:* Damage / aDNA module status.  
-*How to read:* Missing or “not applicable” damage on modern PE is expected. Only treat damage profiles as meaningful on SE aDNA libraries.
+*How to read:* Missing damage on modern PE is expected; meaningful mainly for SE aDNA libraries.
 
 ### 2 · Identity & placement
 
-**What this section is for.** Place the query against the frozen **2449** panel: exact clone / parent–offspring first, then ranked IBS and KING neighbors. Pinning here drives overlays on Population plots.
+**Background.** Robust identity means separating true biological accessions from technical recaptures and mapping the query into cultivar space without mixing panel keys and report stems.
 
-**How to use it.** (1) Check Identical + PO. (2) Scan IBS / kinship tops. (3) Click a row to pin a reference (yellow ♦). (4) Jump to PCA / ADMIXTURE / NJ with that pin active. Mid-rank IBS hits are **not** variety names.
+**What the report shows.** Clone / parent–offspring screens, IBS and KING neighbors, passport / Grp when available. Pinning a row overlays that reference (yellow ♦) on Population plots.
+
+**How a careful reader uses it.**
+
+1. Check Identical + PO first.
+2. Keep panel `HUN89` ≠ stem `HUN89_query` — never strip `_query` for passport / Q lookup.
+3. Scan IBS / kinship tops; pin one neighbor at a time.
+4. Treat mid-rank IBS hits as **not** variety names.
+
+**What you may claim / must not claim.**
+
+- **Allowed:** Closest panel matches and kinship **screens** from the 167K distance metrics.
+- **Forbidden:** Legal pedigree from a mid-list IBS score alone; stripping `_query` to borrow panel Q/passport.
+
+**Bridge.** With identity set, place the query on frozen PCA / ADMIXTURE / NJ axes.
 
 ![identity 1 — clone and PO](guideline_shots/panels/02_identity_01.png)
 
-*What you see:* Clone + PO list (Italy 4K screen) and top IBS / kinship tables for `HUN89_query`.  
-*How to read:* Identical to panel `HUN89` is expected for this demo recapture — still keep the ID trap in mind for passport / Q lookup. PO / full-sib ranks are kinship hints, not pedigree certificates.
+*What you see:* Clone + PO list and top IBS / kinship for `HUN89_query`.  
+*How to read:* Identical to panel `HUN89` is expected for this demo recapture; PO / sib ranks are hints, not certificates.
 
 ![identity 2 — neighbors detail](guideline_shots/panels/02_identity_02.png)
 
-*What you see:* Continued neighbor detail (IBS and KING sides).  
-*How to read:* Use pins to compare one neighbor at a time on Population plots. Do not invent a variety name from a mid-list IBS score.
+*What you see:* Continued neighbor tables.  
+*How to read:* Pin → jump to Population plots with the yellow diamond active.
 
-### 3 · Population placement
+### 3 · Population placement (PCA · ADMIXTURE · NJ)
 
-**What this section is for.** Show where the query sits in the **frozen** panel coordinate system. PCA axes and ADMIXTURE Q/P were fit on 2449; the query is projected / `-P` / NNLS — never unsupervised-refit 2449+N per customer.
+**Background.** Global context means projecting onto **pre-computed** axes without unsupervised 2449+N refits: least-squares PCA, frozen ADMIXTURE Q lookup or `-P` / NNLS, and NJ on IBS identity.
 
-**How to use it.** Switch PC pairs and K; keep one pin from Identity; ask whether the query sits with the expected Grp / CG cluster. Out-of-window points may be hidden — use the PC pair toggles.
+**What the report shows.** Interactive GCTA64 PCA (2D/3D), ADMIXTURE K=2–8, NJ tree. Chrome: black ★/♦ = query; yellow ♦ = pinned; K toggles; EN/中文; theme.
+
+**How a careful reader uses it.**
+
+1. Read PCA position on frozen axes (switch PC pairs if needed).
+2. Toggle K=2…8 for Q proportions.
+3. Check NJ clade with the same pin from Identity.
+4. Ask whether methods agree on Grp / CG neighborhood.
+
+**What you may claim / must not claim.**
+
+- **Allowed:** Least-squares projection onto frozen GCTA64 axes; Q from lookup or `-P` / NNLS.
+- **Forbidden:** Claiming an unsupervised refit of 2449+N; treating NJ as a dated phylogeny.
+
+**Bridge.** Macro placement done — next, local allele evidence at MAS / GWAS / trait sites.
 
 ![PCA](guideline_shots/panels/03_pca.png)
 
-*What you see:* 2D + 3D GCTA64 PCA projection; black star = query; colours = panel Grps.  
-*How to read:* Metadata should say frozen GCTA64 GRM-PCA (`panel167k_nogwas`). Least-squares projection onto frozen axes — not a new smartPCA run per sample.
+*What you see:* 2D + 3D GCTA64 PCA; black star = query.  
+*How to read:* Metadata should say frozen GCTA64 GRM-PCA (`panel167k_nogwas`).
 
 ![ADMIXTURE](guideline_shots/panels/03_admixture.png)
 
-*What you see:* ADMIXTURE bars / components for K = 2–8.  
-*How to read:* In-panel IDs **lookup** frozen Q. New IDs use `admixture -P` (lab) or NNLS (Cloud). Changing K only changes which Q vector you view.
+*What you see:* ADMIXTURE components for K=2–8.  
+*How to read:* In-panel = frozen Q lookup; new IDs = `-P` (lab) or NNLS (Cloud).
 
 ![NJ](guideline_shots/panels/03_nj.png)
 
-*What you see:* Neighbor-joining tree on IBS identity (query + panel tips).  
-*How to read:* Topology is a visual neighbor aid, not a dated phylogeny. Use with IBS tables, not instead of them.
+*What you see:* NJ on IBS identity.  
+*How to read:* Visual neighbor aid — use with IBS tables, not instead of them.
 
 ### 4 · Sample evidence
 
-**What this section is for.** Show what **this query called** at curated MAS / GWAS / trait sites, next to **panel** annotations. The section answers “what alleles do we observe?” — not “what phenotype does the plant have?”
+**Background.** This layer answers what **this query called** at curated MAS / GWAS / trait sites. Labels describe **panel** context; observed GT is not a phenotype.
 
-**How to use it.** Read the caveat box first. Scan GT pills (0/0 REF, 0/1 het, 1/1 ALT). For breeding decisions, only treat **OIV 225** colour GS as rankable; treat SDR / seedless / other OIV cards as proxy or exploratory.
+**What the report shows.** Genotype evidence tables (curated tags and panel GWAS leads), passport / SDR **proxy**, trait cards, colour GS scores.
+
+**How a careful reader uses it.**
+
+1. Read the caveat box first.
+2. Scan GT pills (0/0, 0/1, 1/1).
+3. For breeding decisions, only treat **OIV 225** as rankable.
+4. Treat SDR / seedless / other OIV cards as proxy or exploratory.
+
+**What you may claim / must not claim.**
+
+- **Allowed:** Observed allele calls; unphased SDR-window **proxy** state; OIV 225 GS as decision-grade score.
+- **Forbidden:** SDR proxy = Science haplotypes H1–H5; GS score = field phenotype; OIV 241 / seedlessness for parent ranking.
+
+**Bridge.** Individual evidence leads into panel-wide selection / GWAS maps with query overlay.
 
 ![evidence 1 — genotype evidence table](guideline_shots/panels/04_sample_evidence_01.png)
 
-*What you see:* Site · evidence type (curated MAS/GWAS tag vs panel GWAS lead) · query GT · status · panel annotation (Dong 2023, gene notes, SDR tag, …).  
-*How to read:* Colour pills encode **genotype**, not phenotype. “Panel GWAS lead” stats (e.g. −log10 p) are from the 2449 map.
+*What you see:* Site · evidence type · query GT · panel annotation.  
+*How to read:* Colour pills = genotype, not phenotype; −log10 p on leads is from the 2449 map.
 
 ![evidence 2 — trait / GS cards](guideline_shots/panels/04_sample_evidence_02.png)
 
-*What you see:* Trait / MAS cards and GS prediction rows.  
-*How to read:* **OIV 225** colour GS (`topk_ridge`) is the only decision-grade score today. OIV 241 / seedlessness remain exploratory (small case n). SDR = proxy ≠ haplotype sex. Score ≠ field phenotype.
+*What you see:* Trait / MAS cards and GS rows.  
+*How to read:* Only OIV 225 (`topk_ridge`, panel CV *r* ≈ 0.625) is decision-grade today.
 
 ### 5 · Panel research
 
-**What this section is for.** Show **2449-panel** research context: selection / sweep scans, named domestication windows, GEA/origin indexes, and regional maps. The query appears only as a **genotype overlay**.
+**Background.** GWAS and selection scans use the **2449** frozen panel. Overlaying the query bridges individual genotypes to population quantitative genomics without claiming the customer sample was “selected.”
 
-**How to use it.** Read panel Manhattan / heatmaps / tables first. Then open LocusZoom for a named window or GWAS lead. Never cite a sweep as “this customer sample was selected.”
+**What the report shows.** Genome-wide selection / sweep context, named windows, heatmaps, GWAS index, and paths into Selection / GWAS LocusZoom. Query GT appears only as overlay.
+
+**How a careful reader uses it.**
+
+1. Read panel Manhattan / tables first.
+2. Open LocusZoom for a named window or GWAS lead.
+3. Keep OIV 225 as the only decision-grade GS boundary.
+4. Treat f3/f4 and OIV 241 as exploratory.
+
+**What you may claim / must not claim.**
+
+- **Allowed:** Panel selection / GWAS context; query GT at overlapping sites; OIV 225 GS within decision scope.
+- **Forbidden:** “This sample was selected”; score = phenotype; seedlessness / OIV 241 ranking (case_n=10 / control_n=374); f3/f4 as formal qpAdm/qpGraph.
+
+**Bridge.** Methods document how each number was made; LocusZoom is the interactive regional lens.
 
 ![panel 1 — genome-wide selection / sweeps](guideline_shots/panels/05_panel_research_01.png)
 
-*What you see:* Genome-wide selection / simplified-het vs mean-het style scans, sweep tables, named-window heatmaps / Fst–het summaries on the panel.  
-*How to read:* Sweep rules are panel Grp-vs-rest (Fst high **and** within-Grp windowed het low). Clicking a cell / row jumps toward LocusZoom.
+*What you see:* Genome-wide selection / sweep-style scans and related tables.  
+*How to read:* Sweep rules are panel Grp-vs-rest; click toward LocusZoom.
 
 ![panel 2 — query overlay at named windows](guideline_shots/panels/05_panel_research_02.png)
 
-*What you see:* Per-site query genotypes inside carried / named windows (lead, design-time, literature tags).  
-*How to read:* Overlay only — explains what *this* sample carries at panel-interesting sites; it does not move the panel Fst map.
+*What you see:* Query genotypes inside named / selection windows.  
+*How to read:* Overlay only — does not move the panel Fst map.
 
 ![panel 3 — regional context toward LocusZoom](guideline_shots/panels/05_panel_research_03.png)
 
-*What you see:* Regional panel context (among-Grps Fst), window picker, and the LocusZoom widget entry.  
-*How to read:* Choose a named window (e.g. SDR trait locus) and Y metric (Fst / windowed het). Colour = panel r² to the lead.
+*What you see:* Regional among-Grps context and LocusZoom entry.  
+*How to read:* Pick window and Y metric; colour = panel r².
 
 ![panel 4 — window / trait locus tables](guideline_shots/panels/05_panel_research_04.png)
 
-*What you see:* Window summaries, reference / Dong-style overlaps, trait-locus indexes for the region.  
-*How to read:* Use as a bibliography + interval checklist before claiming a gene story.
+*What you see:* Window summaries and trait-locus indexes.  
+*How to read:* Bibliography + interval checklist before a gene story.
 
 ![panel 5 — GWAS index into LocusZoom](guideline_shots/panels/05_panel_research_05.png)
 
-*What you see:* Panel GWAS / GS index rows and the start of the GWAS LocusZoom + query overlay stack.  
-*How to read:* Pick a trait lead (prefer OIV 225 for decision talk). Then use the dedicated LocusZoom panel below.
+*What you see:* Panel GWAS / GS index into the LocusZoom stack.  
+*How to read:* Prefer OIV 225 for decision talk; then open §5b.
 
-### 5b · LocusZoom (one dedicated panel)
+### 5b · LocusZoom
 
-**What this section is for.** Interactive regional plot (**LocusZoom.js 0.14.0**). Sidebar entries: **Selection LocusZoom** and **GWAS LocusZoom**.
+**Background.** LocusZoom.js 0.14.0 links population-level statistics to one sample’s genotypes. Sidebar: **Selection LocusZoom** and **GWAS LocusZoom**.
 
-**How to use it.**
+**What the report shows.** Scatter = **panel** map (GWAS −log10 *p*, or selection Fst / windowed het; colour = panel r²). Strip / table below = **this query’s** genotypes at matching coordinates.
+
+**How a careful reader uses it.**
 
 1. Pick window / trait from the dropdown.
-2. Set Y (association −log10 p for GWAS; Fst or windowed het for selection).
-3. Drag to pan, scroll to zoom, click a SNP or gene.
-4. Read the **query genotype overlay** (strip + table) under the plot — that strip is *this sample*, while the scatter is the **panel** map.
+2. Set Y (association vs Fst / het).
+3. Drag to pan, scroll to zoom, click SNP or gene.
+4. Read the query overlay separately from the panel scatter.
+
+**What you may claim / must not claim.**
+
+- **Allowed:** Panel association or selection context at a locus; what the query called at lead / design sites.
+- **Forbidden:** That query GT proves selection on this sample; that p/β are this plant’s phenotype.
 
 ![LocusZoom — panel GWAS + query GT](guideline_shots/panels/05_locuszoom.png)
 
-*What you see:* Example **GWAS LocusZoom** for **OIV 225** colour on chr19: peak, gene track (`Vvsyl19G000343` region), lead `19:6564633`, and `HUN89_query` GT overlay (het at lead).  
-*How to read:* p / β / MAF / r² come from the 2449 EMMAX/P3D map. Query GT answers “what did we call here?”, not “what colour is the berry?” Selection LocusZoom uses the same widget with Y = among-Grps Fst / het — still panel context only.
+*What you see:* Example GWAS LocusZoom for **OIV 225** on chr19 (lead `19:6564633`, gene track, `HUN89_query` overlay).  
+*How to read:* p / β / MAF / r² from 2449 EMMAX/P3D; query strip = calls only.
 
 ### 6 · Methods
 
-**What this section is for.** Spell out how each number was produced (software, frozen assets, caveats). It is documentation inside the report — **not** a field SOP or a guarantee of publication readiness.
+**Background.** Reproducibility needs explicit software, frozen assets, and statistical assumptions — not a black-box WGS story.
 
-**How to use it.** When a plot looks surprising, jump here for the exact method string (e.g. GCTA64 projection, ADMIXTURE lookup vs `-P`, simplified Fst). Cite methods papers from the report text, not from memory.
+**What the report shows.** Method cards for QC, identity, projection, ADMIXTURE, GS, selection / GEA, and assembly caveats.
+
+**How a careful reader uses it.** When a plot surprises you, jump here for the exact method string (GCTA64 projection, ADMIXTURE lookup vs `-P`, simplified Fst).
+
+**What you may claim / must not claim.**
+
+- **Allowed:** Cite VS-1, 167K panel design, frozen axes, and named models.
+- **Forbidden:** Presenting the suite as unsupervised WGS ancestry or omitting the fixed capture design.
 
 ![methods 1](guideline_shots/panels/06_methods_01.png)
 
-*What you see:* Narrative for QC, calling, and identity layers.  
-*How to read:* Match artifact paths back to Sample validity provenance.
+*What you see:* QC / identity method narrative.  
+*How to read:* Match paths back to Sample validity provenance.
 
 ![methods 2](guideline_shots/panels/06_methods_02.png)
 
-*What you see:* PCA projection, ADMIXTURE, relatedness / NJ methods.  
-*How to read:* Confirm “frozen axes / frozen Q” language — unsupervised refits are out of scope for customer reports.
+*What you see:* PCA / ADMIXTURE / relatedness methods.  
+*How to read:* Confirm frozen axes / frozen Q language.
 
 ![methods 3](guideline_shots/panels/06_methods_03.png)
 
-*What you see:* GS, selection / GEA, f-stats, and assembly caveats.  
-*How to read:* Re-check decision scope (OIV 225 only) and exploratory labels (f3/f4, OIV 241).
+*What you see:* GS, selection / GEA, f-stats caveats.  
+*How to read:* Re-check OIV 225-only decision scope.
 
 ### 7 · Downloads
 
-**What this section is for.** Take away **query-scoped** sidecars (tables / small plots). The public demo never ships the full 2449 dosage matrix.
+**Background.** Exportable, query-scoped artifacts support archiving and secondary analysis without shipping the full 2449 matrix.
 
-**How to use it.** Download what you need for a notebook or hand-in appendix; do not expect panel VCFs here.
+**What the report shows.** Links to query-only sidecars tied to this report stem. Suite hand-in remains `*.sample-first-v2.report.html`; Cloud remains `chip.json`.
+
+**How a careful reader uses it.** Download what you need; do not expect panel VCFs here. Missing links mean the method was unavailable (see Sample validity).
+
+**What you may claim / must not claim.**
+
+- **Allowed:** Store standard deliverables generated for this query.
+- **Forbidden:** Mixing Cloud and Suite filenames; treating downloads as a full public panel dump.
 
 ![downloads](guideline_shots/panels/07_downloads.png)
 
-*What you see:* Links to query-only artifacts tied to this report stem.  
-*How to read:* If a link is missing, the method was unavailable (see Sample validity coverage) — that is expected, not a broken page.
+*What you see:* Query-scoped download links.  
+*How to read:* Hand-in is a **filename**, not every sidebar tab.
 
 ---
+
+*Section prose adapted from Gemini draft for GUIDELINE Walk the demo report (facts constrained to suite claim boundaries).*
+
 
 ## Privacy
 
@@ -299,4 +396,4 @@ No unpublished genotypes, private coordinates, or full 2449 matrices in public d
 
 ## Related
 
-[`CHIP_COMPANION.md`](CHIP_COMPANION.md) · [`FLOWCHART.md`](FLOWCHART.md) · https://github.com/Xuzhen-Li/grapeancestry
+[`CHIP_COMPANION.md`](CHIP_COMPANION.md) · [`USER_GUIDE.md`](USER_GUIDE.md) · [`FLOWCHART.md`](FLOWCHART.md) · https://github.com/Xuzhen-Li/grapeancestry
