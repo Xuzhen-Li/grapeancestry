@@ -1,0 +1,15 @@
+# Customer image: Streamlit UI + linux ADMIXTURE. Mount data/ (frozen Q/P + optional panel VCF).
+services:
+  grapeancestry:
+    image: grapeancestry:latest
+    build:
+      context: .
+      platforms:
+        - linux/amd64
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/opt/grapeancestry/data
+      - ./results:/opt/grapeancestry/results
+    environment:
+      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false

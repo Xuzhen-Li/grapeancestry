@@ -1,0 +1,4 @@
+samples:
+  Ages:
+    type: adna
+    r1: data/fastq/V5xL1xP2_Ages_3_5070.12Xv2.realigned.fastq.gz

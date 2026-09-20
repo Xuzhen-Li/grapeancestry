@@ -1,0 +1,6 @@
+# Smoke samples: 10k PE subsample (fast MBP validation)
+samples:
+  HUN89smoke:
+    type: pe
+    r1: data/fastq/smoke/h10k_1.fq.gz
+    r2: data/fastq/smoke/h10k_2.fq.gz

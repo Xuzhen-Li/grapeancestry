@@ -1,0 +1,25 @@
+# HPC full profile — Slurm / large RAM
+# Source: docs/BUILD.md §5 batch 0
+
+profile: hpc_full
+threads: 16
+mem_gb: 64
+
+paths:
+  ref_fa: data/ref/VS1.final.fa
+  subref_fa: data/ref/subref167k.fa
+  panel_vcf: data/panel/panel167k_2449.vcf.gz
+  panel_info: data/panel/2449.info
+  results: results
+
+mapping: full  # preferred on HPC; subref still available
+panel_n_sites: 167433
+panel_n_samples: 2449
+
+gate:
+  concordance_min: 0.99
+
+slurm:
+  partition: normal
+  time: "24:00:00"
+  account: null

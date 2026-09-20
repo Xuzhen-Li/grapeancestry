@@ -15,6 +15,17 @@ Analysis companion for the grapevine **167K capture panel** — interactive repo
 
 ## Analysis methods
 
+## Scripts and modular platform
+
+Runnable companion code lives in this repo:
+
+- **Package:** `src/grapeancestry/` · CLI `grapeancestry` · `workflow/Snakefile` · `scripts/`
+- **Detailed map:** [`docs/SCRIPTS.md`](docs/SCRIPTS.md) (pipeline · visualization · report builders · add-another-chip checklist)
+- **Profiles:** [`profiles/`](profiles/) + [`templates/`](templates/) — point a new GBTS panel at your sites/reference/frozen axes without rewriting the stack
+- **Demo HTML:** [`demo/`](demo/) (Ages). **Large matrices / FASTQ / VS-1 are not shipped** — stage under `data/` locally
+
+Other chips: copy `templates/` → `profiles/<your-id>/`, rewrite `config/` paths, rebuild dosage cache. Process notes for a dedicated kit repo: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
+
 Script-level map of the full pipeline, visualization, and report builders: [`docs/ANALYSIS_METHODS.md`](docs/ANALYSIS_METHODS.md) · science contracts: [`docs/PIPELINE.md`](docs/PIPELINE.md).
 
 ## What this is
@@ -114,7 +125,7 @@ Full step-by-step: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md). Short version bel
 1. Open [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) for onboarding.
 2. Open [`docs/GUIDELINE.md`](docs/GUIDELINE.md) for the demo screenshot walkthrough (incl. LocusZoom).
 3. Optional diagram: [`docs/FLOWCHART.md`](docs/FLOWCHART.md).
-4. Script map: [`docs/ANALYSIS_METHODS.md`](docs/ANALYSIS_METHODS.md) · [`docs/PIPELINE.md`](docs/PIPELINE.md).
+4. Script map: [`docs/SCRIPTS.md`](docs/SCRIPTS.md) · [`docs/ANALYSIS_METHODS.md`](docs/ANALYSIS_METHODS.md) · [`docs/PIPELINE.md`](docs/PIPELINE.md).
 5. Interactive Ages HTML: [`demo/`](demo/).
 
 No `grapeancestry` binary, VS-1, or 2449 dosage cache ships in this clone yet.
