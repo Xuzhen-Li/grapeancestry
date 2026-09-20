@@ -13,6 +13,10 @@ Analysis companion for the grapevine **167K capture panel** — interactive repo
 
 *Solid arrows stop at tonight's hand-in (`*.sample-first-v2.report.html` / `chip.json`). Dashed = how you read the report. Detail: [`docs/FLOWCHART.md`](docs/FLOWCHART.md).*
 
+## Analysis methods
+
+Script-level map of the full pipeline, visualization, and report builders: [`docs/ANALYSIS_METHODS.md`](docs/ANALYSIS_METHODS.md) · science contracts: [`docs/PIPELINE.md`](docs/PIPELINE.md).
+
 ## What this is
 
 GrapeAncestry places a **new grapevine query** against a **frozen 2449 × 167K** reference built on the **VS-1** genome. From the same sample you can read capture QC, identity and kinship screens, PCA and ADMIXTURE placement on frozen axes, an IBS neighbour-joining tree, passport-style cards, and — where the evidence supports ranking — a colour genomic-selection score.
@@ -52,15 +56,15 @@ This demo shows the **aDNA** door of the companion (damage module meaningful; mo
 
 **How to open it**
 
-- **This docs tree:** screenshot walkthrough in [`docs/GUIDELINE.md`](docs/GUIDELINE.md) (Ages-oriented; article-style intros).
-- **Local suite with finished HTML:**
+- **In this repo (complete HTML):** [`demo/results/Ages.sample-first-v2.report.html`](demo/results/Ages.sample-first-v2.report.html) — keep `demo/assets/` beside `demo/results/`. Notes: [`demo/README.md`](demo/README.md).
 
 ```bash
-cd /path/to/local-suite
-python -m http.server
+cd demo
+python -m http.server 8000
 # http://localhost:8000/results/Ages.sample-first-v2.report.html
 ```
 
+- **Screenshot walkthrough:** [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
 - **Docker image:** sidebar → **Demos** → Ages.
 
 **Preview frames** (cropped from Ages full-section long screenshots; fuller set in GUIDELINE):
@@ -110,6 +114,8 @@ Full step-by-step: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md). Short version bel
 1. Open [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) for onboarding.
 2. Open [`docs/GUIDELINE.md`](docs/GUIDELINE.md) for the demo screenshot walkthrough (incl. LocusZoom).
 3. Optional diagram: [`docs/FLOWCHART.md`](docs/FLOWCHART.md).
+4. Script map: [`docs/ANALYSIS_METHODS.md`](docs/ANALYSIS_METHODS.md) · [`docs/PIPELINE.md`](docs/PIPELINE.md).
+5. Interactive Ages HTML: [`demo/`](demo/).
 
 No `grapeancestry` binary, VS-1, or 2449 dosage cache ships in this clone yet.
 
