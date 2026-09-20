@@ -48,6 +48,6 @@ One markdown per sub-step. Names use **`00a`…`14b`** so order stays obvious.
 2. Per sample: `01a` → `13b`  
 3. Cloud door: `14a` → `14b`  
 
-Also: [../SCRIPTS.md](../SCRIPTS.md) · [../PIPELINE.md](../PIPELINE.md) · [../GUIDELINE.md](../GUIDELINE.md).
+Also: [../REPO_MAP.md](../REPO_MAP.md) · [../SCRIPTS.md](../SCRIPTS.md) · [../PIPELINE.md](../PIPELINE.md) · [../GUIDELINE.md](../GUIDELINE.md).
 
 **Other chips:** reuse these step IDs; replace artifacts behind `00a`–`00e` via `profiles/` + `config/`.
