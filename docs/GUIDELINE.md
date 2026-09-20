@@ -1,130 +1,105 @@
 # GrapeAncestry guideline (chip companion)
 
-**Status:** draft for local suite → public `Xuzhen-Li/grapeancestry` when filled.  
-**Language:** English primary for public files; Chinese teaching notes may live in Companion.
+**Status:** public docs on `Xuzhen-Li/grapeancestry` (demo walkthrough). Full suite CLI lands later.  
+**Language:** English primary.
 
-## Final-package inputs (pick one · all on VS-1)
+## Final-package inputs (all on VS-1)
 
-| Input | What it is | Notes |
-|-------|------------|-------|
-| **FASTQ** | Modern PE or aDNA SE reads | Trim → map to **VS-1** → call at 167K BED |
-| **BAM / CRAM** | Already aligned on **VS-1** | Markdup → call at 167K BED |
-| **Query VCF** | Customer sample at **167K sites** | Sites ∩ 167K; not the 2449 panel matrix |
+| Input | Notes |
+|-------|-------|
+| **FASTQ** | Trim → map to VS-1 → call at 167K BED |
+| **BAM / CRAM** | Already on VS-1 → markdup → call at 167K |
+| **Query VCF** | 167K sites for the customer sample — **not** the 2449 panel matrix |
 
-Full analysis flow: [`FLOWCHART.md`](FLOWCHART.md) · diagram: [`flowchart_vs1_analysis_v2.png`](flowchart_vs1_analysis_v2.png).
+Diagram: [`flowchart_vs1_analysis_v2.png`](flowchart_vs1_analysis_v2.png) · [`FLOWCHART.md`](FLOWCHART.md).
 
-### ID trap (read once)
+**ID trap:** panel `HUN89` ≠ report stem `HUN89_query`.
 
-Panel demo `HUN89` (2449-row ID) ≠ capture demo `HUN89-capture` / report stem `HUN89_query` (independent FASTQ recapture). Do not treat the recapture as the panel row.
+**Claim boundaries:** only **OIV 225** colour GS is decision-grade today; SDR = proxy; selection overlay ≠ selected; score ≠ phenotype. Details below in each section.
 
-### Claim boundaries (short)
+> Classroom: Cloud → `chip.json`; Suite → `*.sample-first-v2.report.html`.
 
-| Class | Trait / claim | Rule |
-|-------|---------------|------|
-| Decision-grade | OIV 225 colour GS | May rank when policy + evidence say so |
-| Exploratory | OIV 241, unbalanced case/control | Demo only; never parent ranking / seedlessness claim |
-| Do not claim | SDR = haplotype sex; query GT = selection | SDR = unphased window **proxy** (not Science H1–H5); selection overlay ≠ “this sample was selected” |
-| Reminder | Model score | **Score ≠ observed phenotype** |
+## How to open the demo
 
-> **Classroom note (not the main story):** Cloud door → hand in `chip.json` from a 167K VCF; Suite door → hand in `*.sample-first-v2.report.html`. Pick one deliverable; do not mix them.
-
----
-
-## How to open the demo locally
-
-Demo report: `results/HUN89_query.sample-first-v2.report.html` (English UI).  
-Serve from the **suite root** so relative `../assets/` (and section assets) resolve:
+From your **local suite** root (not this docs-only clone):
 
 ```bash
-cd grapeancestry_suite
+cd /path/to/local-suite
 python -m http.server
-# then open:
 # http://localhost:8000/results/HUN89_query.sample-first-v2.report.html
 ```
 
-Sidebar order below matches the live report. Each section: **one full long screenshot**, then a short teaching note (what to read · what it means · what not to claim).
+`http.server` is view-only. Screenshots below are **non-overlapping panel crops** (no full+viewport duplicates).
 
 ---
 
 ## Walk the demo report
 
-## 1 · Sample validity
+### 1 · Sample validity
 
-![Sample validity (full section)](guideline_shots/sections/01_sample_validity_full.png)
+![validity 1](guideline_shots/panels/01_sample_validity_01.png)
 
-Start here before any identity or ancestry claim. Read **panel calling rate**, **mean depth**, and the library/capture tables (total reads, mapped fraction, breadth at 1×/4×/10× on the 167K chip). High panel calling (demo ≈99.7%) and usable depth mean the query VCF is dense enough for IBS/PCA/ADMIXTURE; low calling rate or thin depth means later sections are under-powered, not “mysterious ancestry.” Heterozygosity is a **screen against the panel distribution**, not a purity verdict. Modern libraries skip the aDNA damage module—that absence is expected, not a failed run.
+![validity 2](guideline_shots/panels/01_sample_validity_02.png)
 
-**Do not claim:** “high total reads” alone as quality, or that missing damage plots imply failure.
+![validity 3](guideline_shots/panels/01_sample_validity_03.png)
 
-## 2 · Identity & placement
+Read provenance / conclusions, then capture QC (calling rate, depth, breadth), then the damage note. Heterozygosity is a screen, not a purity call. Missing aDNA damage on modern PE is expected.
 
-![Identity and placement (full section)](guideline_shots/sections/02_identity_placement_full.png)
+### 2 · Identity & placement
 
-This is the clone / kinship lane. Read **Clone + PO list** first (Identical / Parent-Offspring), then the **IBS neighbors** and **KING kinship** tops. In the demo, `HUN89 SZEKSZARDI` appears as Identical with KING ≈0.5; a PO hit (e.g. GM17) is a direct relative screen, not a pedigree certificate. Click a ref row to **pin** it (purple) onto PCA / ADMIXTURE / NJ so the same accession stays highlighted across plots.
+![identity 1](guideline_shots/panels/02_identity_01.png)
 
-**Do not claim:** a high IBS rank as “this variety” unless the class is Identical; do not treat Full-sib / 2nd-degree ranks as naming calls.
+![identity 2](guideline_shots/panels/02_identity_02.png)
 
-## 3 · Population placement
+Clone + PO first, then IBS / KING neighbors. Pin a ref to overlay PCA / ADMIXTURE / NJ. Identical ≠ naming a variety from a mid-rank IBS hit.
 
-![Population placement (full section)](guideline_shots/sections/03_population_placement_full.png)
+### 3 · Population placement
 
-Query vs the frozen **2449 × 167K** panel: PCA projection, ADMIXTURE K=2–8, NJ on IBS identity, plus exploratory f3/f4. Use the full section shot for orientation; the three subshots below are the teaching close-ups.
+![PCA](guideline_shots/panels/03_pca.png)
 
-### PCA
+![ADMIXTURE](guideline_shots/panels/03_admixture.png)
 
-![PCA](guideline_shots/sections/03b_pca.png)
+![NJ](guideline_shots/panels/03_nj.png)
 
-Axes are **frozen GCTA64 GRM-PCA** on the panel; the query is a least-squares projection onto those axes (star). Read neighborhood and Grp color, not a country label from a single PC pair.
+Frozen GCTA64 PCA projection; ADMIXTURE lookup or `-P` / NNLS; NJ on IBS identity. No duplicate “full section” strip.
 
-**Do not claim:** PC coordinates as passport origin or cultivar name.
+### 4 · Sample evidence
 
-### ADMIXTURE
+![evidence 1](guideline_shots/panels/04_sample_evidence_01.png)
 
-![ADMIXTURE](guideline_shots/sections/03c_admixture.png)
+![evidence 2](guideline_shots/panels/04_sample_evidence_02.png)
 
-In-panel IDs look up frozen Q; new samples use `admixture -P` (lab) or NNLS (Cloud). Compare the query bar to panel strips at the same K; CG labels are **composition summaries**, not hard taxonomy.
+Trait / MAS cards and GS scores. Only OIV 225 is decision-grade; score ≠ phenotype; SDR ≠ haplotype sex.
 
-**Do not claim:** a K-component fraction as exact geographic ancestry or pure-variety proof.
+### 5 · Panel research
 
-### NJ tree
+![panel 1](guideline_shots/panels/05_panel_research_01.png)
 
-![NJ tree](guideline_shots/sections/03d_nj.png)
+![panel 2](guideline_shots/panels/05_panel_research_02.png)
 
-Neighbor-Joining on **IBS genotype identity**. Tip clicks pin the same ref as in identity tables. Branch length ≠ years or breeding history.
+![panel 3](guideline_shots/panels/05_panel_research_03.png)
 
-**Do not claim:** the tree as a dated phylogeny or as replacement for clone/PO tables.
+![panel 4](guideline_shots/panels/05_panel_research_04.png)
 
-## 4 · Sample evidence
+![panel 5](guideline_shots/panels/05_panel_research_05.png)
 
-![Sample evidence (full section)](guideline_shots/sections/04_sample_evidence_full.png)
+Sequential non-overlapping crops of the long panel-research section (GWAS / selection / GEA context). Query GT is overlay only.
 
-Two layers: **query genotype evidence** (curated MAS/GWAS tags and panel leads—observed GT badges, not phenotypes) and **per-query GS predictions** (model score, panel CV *r*, Flag). For breeding talk, only treat traits with decision-grade policy—today that is **OIV 225 colour**; Flag `ok` still means **score ≠ observed berry colour**. Low CV *r* / exploratory traits (e.g. OIV 241-class imbalance) stay demo-only.
+### 6 · Methods
 
-**Do not claim:** SDR-window GT as Science haplotype sex; query GT on selection windows as “this sample was selected”; seedlessness from exploratory GS.
+![methods 1](guideline_shots/panels/06_methods_01.png)
 
-## 5 · Panel research
+![methods 2](guideline_shots/panels/06_methods_02.png)
 
-![Panel research (full section)](guideline_shots/sections/05_panel_research_full.png)
+![methods 3](guideline_shots/panels/06_methods_03.png)
 
-Panel-side research context: GWAS / selection / GEA-style views that explain the **reference**, with the query as an overlay where shown. Read which contrasts are panel-only (Grp-vs-rest, among-Grp LocusZoom) versus query-specific. This section teaches the frozen assets behind the report; it is not a second identity call.
+How each number was made; not a field-release SOP.
 
-**Do not claim:** panel Fst/het sweeps as proof the query was under selection; do not export unpublished full matrices from demos.
+### 7 · Downloads
 
-## 6 · Methods
+![downloads](guideline_shots/panels/07_downloads.png)
 
-![Methods (full section)](guideline_shots/sections/06_methods_full.png)
-
-Provenance and recipes: PCA (GCTA64 axes), identity thresholds, ADMIXTURE lookup vs `-P`/NNLS, phenotype/GWAS/GS model cards, software versions, caveats and references. Use this when a reader asks “how was that number made?” Scope boundaries here match the claim table at the top—binary traits with tiny case counts stay exploratory.
-
-**Do not claim:** methods text as a field-release SOP, or CV *r* as phenotype accuracy in a new orchard.
-
-## 7 · Downloads
-
-![Downloads (full section)](guideline_shots/sections/07_downloads_full.png)
-
-Query-only sidecars: QC TSV, clone/PO, kinship top, this-sample PCA, damage (if any), ADMIXTURE Q for K=2–8. The **2449 reference is not included**. A missing sidecar means that artifact was not produced for this query—not that the HTML report failed.
-
-**Do not claim:** downloads as a public dump of the panel dosage cache.
+Query-only sidecars; 2449 reference is not included.
 
 ---
 
@@ -132,7 +107,6 @@ Query-only sidecars: QC TSV, clone/PO, kinship top, this-sample PCA, damage (if 
 
 No unpublished genotypes, private coordinates, or full 2449 matrices in public demos.
 
-## Related docs
+## Related
 
-- Local: `docs/CHIP_COMPANION.md`, `docs/METHODS_breeding.md`, `README.md`, [`FLOWCHART.md`](FLOWCHART.md)
-- Public grain (placeholder): https://github.com/Xuzhen-Li/grapeancestry
+[`CHIP_COMPANION.md`](CHIP_COMPANION.md) · [`FLOWCHART.md`](FLOWCHART.md) · https://github.com/Xuzhen-Li/grapeancestry

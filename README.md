@@ -13,10 +13,6 @@ This repo is for breeders and classrooms that hand in a **query** sample or open
 
 *Solid path: your input → our frozen assets → analyses → report or `chip.json`. Detail: [`docs/FLOWCHART.md`](docs/FLOWCHART.md).*
 
-![Demo report overview](docs/guideline_shots/sections/01_sample_validity.png)
-
-*Start of the demo report. The hand-in is a filename (`chip.json` or `*.sample-first-v2.report.html`), not every sidebar tab. Full section walk: [`docs/GUIDELINE.md`](docs/GUIDELINE.md).*
-
 Only **OIV 225** colour GS is decision-grade today; claim rules live in the GUIDELINE.
 
 ## How to use (this public docs repo)
@@ -39,6 +35,37 @@ Panel ID `HUN89` ≠ report stem `HUN89_query`.
 3. **Later (local suite / Cloud — not copy-paste from this repo yet).** Cloud hand-in is `chip.json` from a 167K-site query VCF; Suite hand-in is `*.sample-first-v2.report.html`. Commands such as `chip-report`, `run`, and Docker live in the suite package when published — see CHIP_COMPANION / GUIDELINE, not a fake CLI in this tree.
 
 **Three inputs, one line:** FASTQ / BAM / query VCF → **VS-1** → 167K sites → analyses (flowchart above).
+
+
+## Demo panels
+
+Non-overlapping panel crops from the demo report. Caption: **hand-in is a filename, not every sidebar tab.** Full set + reading notes: [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
+
+**Sample validity**
+
+![Sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
+
+**Identity**
+
+![Identity](docs/guideline_shots/panels/02_identity_01.png)
+
+**PCA · ADMIXTURE · NJ**
+
+![PCA](docs/guideline_shots/panels/03_pca.png)
+
+![ADMIXTURE](docs/guideline_shots/panels/03_admixture.png)
+
+![NJ](docs/guideline_shots/panels/03_nj.png)
+
+**Sample evidence · Panel research · Methods · Downloads**
+
+![Evidence](docs/guideline_shots/panels/04_sample_evidence_01.png)
+
+![Panel research](docs/guideline_shots/panels/05_panel_research_01.png)
+
+![Methods](docs/guideline_shots/panels/06_methods_01.png)
+
+![Downloads](docs/guideline_shots/panels/07_downloads.png)
 
 ## Related
 
