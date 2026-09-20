@@ -136,9 +136,9 @@ Screenshots below are **non-overlapping panel crops** (no full+viewport duplicat
 
 ## Walk the demo report
 
-The GrapeAncestry 167K capture panel analysis companion provides a dedicated analytical framework on the VS-1 reference genome, utilizing a frozen 2449 × 167K dosage cache, GCTA64 principal component axes, ADMIXTURE Q/P matrices (K=2–8), and genomic selection models. This walkthrough uses the `HUN89_query` sample-first-v2 report HTML. Screenshots below are **non-overlapping panel crops** (no full+viewport duplicates). Panel research stays coarse; **one dedicated LocusZoom** shot is included.
+The GrapeAncestry 167K capture panel analysis companion provides a dedicated analytical framework on the VS-1 reference genome, utilizing a frozen 2449 × 167K dosage cache, GCTA64 principal component axes, ADMIXTURE Q/P matrices (K=2–8), and genomic selection models. This walkthrough uses the **`Ages`** sample-first-v2 report HTML (aDNA SE; archaeological sample **V5**). Cite: Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z); incl. **Ludovic Orlando**). Screenshots below are **non-overlapping panel crops** (no full+viewport duplicates). Panel research stays coarse; **one dedicated LocusZoom** shot is included.
 
-Demo stem: `HUN89_query` (modern PE recapture). Compare mentally to panel ID `HUN89` — same variety story, different file identity.
+Demo stem: `Ages` (aDNA SE from V5 / Iron Age Martigues). Modern PE recaptures (e.g. `HUN89_query`) are a separate door — do not confuse panel IDs with aDNA demo stems.
 
 ### 1 · Sample validity
 

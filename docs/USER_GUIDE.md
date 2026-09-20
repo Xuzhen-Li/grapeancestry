@@ -106,7 +106,7 @@ Do not strip contig prefixes hoping the caller will “just work”.
 
 ## 5. Demos **(image)** / **(docs)**
 
-**(image)** Sidebar → **Demos**: finished Ages and `HUN89_query` V2 reports, plus an optional quick VCF JSON check (not the full VS-1 calling report). New customer samples use **Analysis**, not Demos.
+**(image)** Sidebar → **Demos**: primary **Ages** (V5 aDNA; cite Noraz et al. 2026 / Orlando — see README Demo) and optional modern-capture demos. New customer samples use **Analysis**, not Demos.
 
 **(docs)** Without the image, open the walkthrough screenshots in [`GUIDELINE.md`](GUIDELINE.md), or — if you have a local suite checkout with finished HTML:
 
@@ -114,7 +114,7 @@ Do not strip contig prefixes hoping the caller will “just work”.
 # path = local suite root (not the docs-only GitHub clone)
 cd /path/to/local-suite
 python -m http.server
-# http://localhost:8000/results/HUN89_query.sample-first-v2.report.html
+# http://localhost:8000/results/Ages.sample-first-v2.report.html
 ```
 
 `http.server` is **view-only**. It does **not** create a hand-in file.
