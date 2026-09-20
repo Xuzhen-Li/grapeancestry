@@ -20,6 +20,7 @@ Analysis companion for the grapevine **167K capture panel** — interactive repo
 Runnable companion code lives in this repo:
 
 - **Package:** `src/grapeancestry/` · CLI `grapeancestry` · `workflow/Snakefile` · `scripts/`
+- **Step-by-step analysis docs:** [`docs/steps/`](docs/steps/) — one markdown per step (data analysis, statistical outputs, visualizations)
 - **Detailed map:** [`docs/SCRIPTS.md`](docs/SCRIPTS.md) (pipeline · visualization · report builders · add-another-chip checklist)
 - **Profiles:** [`profiles/`](profiles/) + [`templates/`](templates/) — point a new GBTS panel at your sites/reference/frozen axes without rewriting the stack
 - **Demo HTML:** [`demo/`](demo/) (Ages). **Large matrices / FASTQ / VS-1 are not shipped** — stage under `data/` locally
