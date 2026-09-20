@@ -2,6 +2,10 @@
 
 This repository now ships both the **grapevine 167K public face** (docs + Ages demo HTML) and the **runnable companion package** under `src/grapeancestry/`. The same modules are the template for **other GBTS / capture panels**: keep code generic at the CLI/domain layer; swap sites, reference, and frozen axes through `profiles/` + `config/`.
 
+## Repository map
+
+Folder roles and what is not in git: **[REPO_MAP.md](REPO_MAP.md)**.
+
 ## Step-by-step docs
 
 One markdown per analysis step (scripts · stats · viz): **[steps/README.md](steps/README.md)**.

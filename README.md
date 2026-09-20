@@ -13,21 +13,31 @@ Analysis companion for the grapevine **167K capture panel** — interactive repo
 
 *Solid arrows stop at tonight's hand-in (`*.sample-first-v2.report.html` / `chip.json`). Dashed = how you read the report. Detail: [`docs/FLOWCHART.md`](docs/FLOWCHART.md).*
 
+## What's in this repository
+
+The public tree grew on purpose: **docs + Ages demo + runnable grapevine companion**. Folder-by-folder map: [`docs/REPO_MAP.md`](docs/REPO_MAP.md).
+
+| Area | Path | One-line description |
+|------|------|----------------------|
+| Product story + flowchart | `README` · [`docs/FLOWCHART.md`](docs/FLOWCHART.md) | 167K companion on VS-1; three inputs → report / `chip.json` |
+| Screenshot walkthrough | [`docs/GUIDELINE.md`](docs/GUIDELINE.md) | Ages sidebar panels (incl. LocusZoom) |
+| Interactive demo | [`demo/`](demo/) | Ages `*.sample-first-v2.report.html` + `assets/` |
+| Fine-grained steps | [`docs/steps/`](docs/steps/) | `00a`–`14b`: prep → map/call → QC → identity → placement → report/cloud |
+| Script / module index | [`docs/SCRIPTS.md`](docs/SCRIPTS.md) | CLI, Snakefile, domains, report/cloud builders |
+| Methods & science rules | [`docs/ANALYSIS_METHODS.md`](docs/ANALYSIS_METHODS.md) · [`docs/PIPELINE.md`](docs/PIPELINE.md) | What each analysis does; claim grades |
+| Onboarding doors | [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) · [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md) | Docs-only · Docker · Cloud · local suite |
+| Python package | `src/grapeancestry/` | CLI `grapeancestry` (`core` · `identity` · `adna` · `popgen` · `breeding` · `report` · `cloud`) |
+| Orchestration | `workflow/` · `scripts/` · `config/` | Snakemake + wrappers + sample YAMLs |
+| Panel profile hooks | `profiles/` · `templates/` | Swap sites/reference/frozen axes for another chip |
+| Platform seams | `platform/` | Notes for pipeline / report / viz / cloud doors |
+| Chip design pointer | `chip/` | 167K design door (not the kit scaffold) |
+| Local staging | `data/` · `bin/` · `results/` | READMEs / optional binaries; **matrices & FASTQ not in git** |
+
+**Cross-panel scaffold** (not grape walkthrough): [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
+
 ## Analysis methods
 
-## Scripts and modular platform
-
-Runnable companion code lives in this repo:
-
-- **Package:** `src/grapeancestry/` · CLI `grapeancestry` · `workflow/Snakefile` · `scripts/`
-- **Step-by-step analysis docs:** [`docs/steps/`](docs/steps/) — one markdown per step (data analysis, statistical outputs, visualizations)
-- **Detailed map:** [`docs/SCRIPTS.md`](docs/SCRIPTS.md) (pipeline · visualization · report builders · add-another-chip checklist)
-- **Profiles:** [`profiles/`](profiles/) + [`templates/`](templates/) — point a new GBTS panel at your sites/reference/frozen axes without rewriting the stack
-- **Demo HTML:** [`demo/`](demo/) (Ages). **Large matrices / FASTQ / VS-1 are not shipped** — stage under `data/` locally
-
-Other chips: copy `templates/` → `profiles/<your-id>/`, rewrite `config/` paths, rebuild dosage cache. Process notes for a dedicated kit repo: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
-
-Script-level map of the full pipeline, visualization, and report builders: [`docs/ANALYSIS_METHODS.md`](docs/ANALYSIS_METHODS.md) · science contracts: [`docs/PIPELINE.md`](docs/PIPELINE.md).
+Narrative methods and science contracts: [`docs/ANALYSIS_METHODS.md`](docs/ANALYSIS_METHODS.md) · [`docs/PIPELINE.md`](docs/PIPELINE.md). Step pages under [`docs/steps/`](docs/steps/) name scripts, statistical outputs, and visualizations for each band (`00*` prep · `01*`–`13*` suite · `14*` cloud).
 
 ## What this is
 
@@ -37,7 +47,7 @@ The scientific frame is fixed on purpose. Coordinates and calling use **VS-1**. 
 
 **ID trap:** panel row `HUN89` ≠ report stem `HUN89_query` (independent FASTQ recapture). Do not strip `_query` to look up passport or frozen Q.
 
-This public GitHub tree is the **docs face** first. A runnable CLI, Docker customer image, VS-1, and large matrices land in later releases.
+This public tree includes the **docs face**, the **Ages demo HTML**, and the **runnable** `grapeancestry` package. **VS-1, FASTQ, and the 2449 × 167K dosage cache are not shipped** — stage them under `data/` locally (see [`docs/REPO_MAP.md`](docs/REPO_MAP.md)).
 
 ## Tonight hand-in
 
@@ -123,13 +133,14 @@ Full step-by-step: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md). Short version bel
 
 ### A · This docs tree (today)
 
-1. Open [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) for onboarding.
-2. Open [`docs/GUIDELINE.md`](docs/GUIDELINE.md) for the demo screenshot walkthrough (incl. LocusZoom).
-3. Optional diagram: [`docs/FLOWCHART.md`](docs/FLOWCHART.md).
-4. Script map: [`docs/SCRIPTS.md`](docs/SCRIPTS.md) · [`docs/ANALYSIS_METHODS.md`](docs/ANALYSIS_METHODS.md) · [`docs/PIPELINE.md`](docs/PIPELINE.md).
-5. Interactive Ages HTML: [`demo/`](demo/).
+1. Folder map (what all the new paths mean): [`docs/REPO_MAP.md`](docs/REPO_MAP.md).
+2. Open [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) for onboarding.
+3. Open [`docs/GUIDELINE.md`](docs/GUIDELINE.md) for the demo screenshot walkthrough (incl. LocusZoom).
+4. Diagram: [`docs/FLOWCHART.md`](docs/FLOWCHART.md) · steps: [`docs/steps/`](docs/steps/).
+5. Script / methods map: [`docs/SCRIPTS.md`](docs/SCRIPTS.md) · [`docs/ANALYSIS_METHODS.md`](docs/ANALYSIS_METHODS.md) · [`docs/PIPELINE.md`](docs/PIPELINE.md).
+6. Interactive Ages HTML: [`demo/`](demo/).
 
-No `grapeancestry` binary, VS-1, or 2449 dosage cache ships in this clone yet.
+The `grapeancestry` package is in `src/`; after `pip install -e .` the CLI is available. **VS-1 and the 2449 dosage cache still do not ship** — stage under `data/` (see USER_GUIDE / `data/MANIFEST.md`).
 
 ### B · Customer Docker image (when you have the package)
 
