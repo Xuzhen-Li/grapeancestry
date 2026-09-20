@@ -5,6 +5,14 @@ Analysis companion for the grapevine **167K capture panel** — interactive repo
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![ORCID](https://img.shields.io/badge/ORCID-0000--0003--3670--6657-a6ce39)](https://orcid.org/0000-0003-3670-6657)
 
+## Analysis flow
+
+**Three inputs, one line:** FASTQ / BAM / query VCF → **VS-1** → 167K sites → analyses → report or `chip.json`.
+
+![GrapeAncestry analysis flowchart](docs/flowchart_vs1_analysis_v2.png)
+
+*Solid arrows stop at tonight's hand-in (`*.sample-first-v2.report.html` / `chip.json`). Dashed = how you read the report. Detail: [`docs/FLOWCHART.md`](docs/FLOWCHART.md).*
+
 ## What this is
 
 GrapeAncestry places a **new grapevine query** against a **frozen 2449 × 167K** reference built on the **VS-1** genome. From the same sample you can read capture QC, identity and kinship screens, PCA and ADMIXTURE placement on frozen axes, an IBS neighbour-joining tree, passport-style cards, and — where the evidence supports ranking — a colour genomic-selection score.
@@ -24,6 +32,66 @@ This public GitHub tree is the **docs face** first. A runnable CLI, Docker custo
 | **This docs tree alone** | read only — no hand-in file |
 
 Hand-in is a **filename**, not every sidebar tab.
+
+## Demo
+
+**Primary demo:** `Ages` — ancient SE library from archaeological grape material labeled **V5** in the source study (Iron Age Martigues, southern France, ~300–200 BCE). Suite config: `config/samples_ages.yaml` → FASTQ `V5xL1xP2_Ages_3_5070.12Xv2.realigned.fastq.gz` → AdapterRemoval + `bwa aln` on **VS-1** → 167K call → `Ages.sample-first-v2.report.html`.
+
+**Cite the source data (required):** Noraz, R., … & **Orlando, L.** (2026). Ancient DNA reveals 4000 years of grapevine diversity, viticulture and clonal propagation in France. *Nature Communications*. [https://doi.org/10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z). Sample **V5** is discussed there as an Iron Age Martigues pip with domesticated-like ancestry.
+
+This demo shows the **aDNA** door of the companion (damage module meaningful; modern PE demos are separate). Hand-in name remains `Ages.sample-first-v2.report.html` when you run Suite / Docker.
+
+**What the Ages report walks:**
+
+1. Sample validity — provenance, capture QC, **aDNA damage** note
+2. Identity — IBS / kinship vs the frozen 2449 panel
+3. Population — frozen PCA · ADMIXTURE K=2–8 · NJ
+4. Sample evidence — MAS / trait cards; only **OIV 225** colour GS is decision-grade
+5. Panel research + **LocusZoom** — 2449 context; query GT is overlay only
+6. Methods / Downloads
+
+**How to open it**
+
+- **This docs tree:** screenshot walkthrough in [`docs/GUIDELINE.md`](docs/GUIDELINE.md) (Ages-oriented; article-style intros).
+- **Local suite with finished HTML:**
+
+```bash
+cd /path/to/local-suite
+python -m http.server
+# http://localhost:8000/results/Ages.sample-first-v2.report.html
+```
+
+- **Docker image:** sidebar → **Demos** → Ages.
+
+**Preview frames** (Ages report; fuller set in GUIDELINE):
+
+![Ages sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
+
+*Sample validity — metadata / method coverage (Ages aDNA).*
+
+![Ages aDNA damage](docs/guideline_shots/panels/01_sample_validity_damage.png)
+
+*aDNA damage — Ages SE library (meaningful on this door).*
+
+![Ages identity](docs/guideline_shots/panels/02_identity_01.png)
+
+*Identity — IBS / kinship vs the frozen 2449 panel.*
+
+![Ages PCA](docs/guideline_shots/panels/03_pca.png)
+
+*Population placement — Ages query on frozen GCTA64 PCA.*
+
+![Ages ADMIXTURE](docs/guideline_shots/panels/03_admixture.png)
+
+*ADMIXTURE — Ages projected on frozen K=2–8.*
+
+![Ages sample evidence](docs/guideline_shots/panels/04_sample_evidence_01.png)
+
+*Sample evidence — passport / MAS cards; only OIV 225 colour GS is decision-grade.*
+
+![Ages LocusZoom](docs/guideline_shots/panels/05_locuszoom.png)
+
+*LocusZoom — panel map + Ages genotype overlay.*
 
 ## Install and use
 
@@ -57,7 +125,7 @@ BAM tip: if `@SQ` looks like `chr1` / 12X / PN40024, the job fails — start fro
 ### C · Cloud Chip Companion (classroom)
 
 1. Upload a **167K-site query VCF** (not FASTQ) in Streamlit.
-2. Hand in **`chip.json`.
+2. Hand in **`chip.json`**.
 3. Notes: [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md).
 
 ### D · Local lab suite (developers with private checkout)
@@ -67,51 +135,10 @@ If you already have a finished demo HTML next to `assets/`:
 ```bash
 cd /path/to/local-suite   # not this docs-only clone
 python -m http.server
-# http://localhost:8000/results/HUN89_query.sample-first-v2.report.html
+# http://localhost:8000/results/Ages.sample-first-v2.report.html
 ```
 
 `http.server` is **view-only** — it does not create a hand-in file. End-to-end `grapeancestry run` needs conda env `ga` + panel assets; see USER_GUIDE / suite README when you have that tree.
-
-## Demo
-
-**Demo sample:** `HUN89_query` — modern PE recapture of the panel variety story behind `HUN89`. Same biology narrative, **different file identity** (see ID trap above).
-
-**What the demo report walks:**
-
-1. Sample validity — provenance, capture QC, damage note
-2. Identity — clone / PO / IBS neighbors (pin a row to overlay plots)
-3. Population — frozen PCA · ADMIXTURE K=2–8 · NJ
-4. Sample evidence — MAS / trait cards; only **OIV 225** colour GS is decision-grade
-5. Panel research + **LocusZoom** — 2449 context; query GT is overlay only
-6. Methods / Downloads
-
-**How to see it today**
-
-- **On this GitHub tree:** follow the long screenshots in [`docs/GUIDELINE.md`](docs/GUIDELINE.md) (article-style intros + every panel).
-- **With a local suite HTML:** use the `http.server` command in Install §D.
-- **With the Docker image:** sidebar → **Demos** → `HUN89_query` / Ages.
-
-**Three preview frames** (full set in GUIDELINE):
-
-![Sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
-
-*Sample validity — metadata, method coverage, conclusions.*
-
-![PCA](docs/guideline_shots/panels/03_pca.png)
-
-*Population placement — query (black star) on frozen GCTA64 PCA.*
-
-![LocusZoom](docs/guideline_shots/panels/05_locuszoom.png)
-
-*LocusZoom — panel GWAS map + this query genotype overlay (OIV 225 example).*
-
-## Analysis flow
-
-**Three inputs, one line:** FASTQ / BAM / query VCF → **VS-1** → 167K sites → analyses → report or `chip.json`.
-
-![GrapeAncestry analysis flowchart](docs/flowchart_vs1_analysis_v2.png)
-
-*Solid arrows stop at tonight's hand-in (`*.sample-first-v2.report.html` / `chip.json`). Dashed = how you read the report. Detail: [`docs/FLOWCHART.md`](docs/FLOWCHART.md).*
 
 ## Related
 
