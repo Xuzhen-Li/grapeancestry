@@ -7,37 +7,64 @@ Analysis companion for the grapevine **167K capture panel** — interactive repo
 
 ## What this is
 
-GrapeAncestry sits beside a fixed **167K** capture design for *Vitis*. Breeders and classrooms bring one **query** sample and ask where it sits against a shared reference: capture QC, identity and kinship screens, PCA and ADMIXTURE placement, a neighbor tree, passport-style cards, and — where the evidence supports it — a colour genomic-selection score. This public repository is the **docs face** of that companion: how the pieces fit, how to read a demo report, and what a tonight hand-in file is named.
+GrapeAncestry places a **new grapevine query** against a **frozen 2449 × 167K** reference built on the **VS-1** genome. From the same sample you can read capture QC, identity and kinship screens, PCA and ADMIXTURE placement on frozen axes, an IBS neighbour-joining tree, passport-style cards, and — where the evidence supports ranking — a colour genomic-selection score.
 
-Everything is anchored on the **VS-1** coordinate frame. You may start from FASTQ, from a BAM/CRAM already mapped to VS-1, or from a query VCF restricted to the 167K sites. In every case the analyses compare your sample to a **frozen 2449 × 167K** panel (dosage cache, PCA axes, ADMIXTURE Q/P, passport tables). That query VCF uses the same sites as the chip; it is **not** the panel matrix, and new samples are **projected** onto the frozen axes (`-P` / NNLS) rather than used to refit the panel.
+The scientific frame is fixed on purpose. Coordinates and calling use **VS-1**. Your input is FASTQ, BAM/CRAM already on VS-1, or a **query VCF at the 167K sites**. That query VCF uses the same sites as the chip; it is **not** the 2449-panel dosage matrix. PCA axes and ADMIXTURE Q/P are **frozen**; new samples are projected (`admixture -P` in the lab image, or NNLS on Cloud), not used to refit the panel. Today only **OIV 225** colour GS is treated as decision-grade; other traits and flower-sex / selection narratives stay exploratory (full rules in the GUIDELINE).
 
-Hand-in is a **filename**, not every sidebar tab. On Cloud night the file is `chip.json`; on Suite / local-demo night it is `*.sample-first-v2.report.html`. Reading this GitHub tree alone does not produce either file. Only **OIV 225** colour GS is treated as decision-grade today; SDR, seedlessness, selection overlays, and other trait cards are documented as proxy or exploratory in the deep-read pages — keep those nuances out of a one-line claim.
+**ID trap (one line):** panel row `HUN89` (2449-row ID) ≠ report stem `HUN89_query` (independent FASTQ recapture).
 
-The public tree ships **documentation and a demo walkthrough** first. A runnable CLI, Docker image, and full matrices land later; until then, follow **Start here** for the honest path that matches what you actually have in hand.
+This public GitHub tree is the **docs face** first: how the pieces fit, how to start, and how to read the demo. A runnable CLI, Docker customer image, VS-1, and large panel matrices land in later releases — do not expect `grapeancestry run` from this clone yet.
 
-**Tonight hand-in:** Cloud → `chip.json` · Suite → `*.sample-first-v2.report.html` · Public docs (Lane A) → read only (no file).
+## Tonight hand-in
 
-**Start here:** [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) — step-by-step onboarding (docs today vs image-in-hand). Deep read / screenshots: [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
+Pick **one** door. Do not mix filenames.
+
+| Door | Hand-in |
+|------|---------|
+| **Cloud** | `chip.json` |
+| **Suite** (local image / lab suite) | `*.sample-first-v2.report.html` |
+| **Public docs (Lane A)** | read only — no hand-in file |
+
+The hand-in is a **filename**, not every sidebar tab in the report.
+
+## Start here
+
+→ **[`docs/USER_GUIDE.md`](docs/USER_GUIDE.md)** — step-by-step onboarding (what works on this docs tree today vs what needs the customer image).
+
+Deep read, claim rules, and long screenshots: [`docs/GUIDELINE.md`](docs/GUIDELINE.md).  
+Diagram notes: [`docs/FLOWCHART.md`](docs/FLOWCHART.md).  
+Cloud door notes: [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md).
+
+## What you get
+
+Inside the Suite HTML report (or the Cloud card), the read path is:
+
+1. **Sample validity** — QC / provenance
+2. **Identity & placement** — clone / PO / IBS screens
+3. **Population placement** — PCA · ADMIXTURE · NJ on frozen axes
+4. **Sample evidence** — MAS / trait cards; OIV 225 GS when in scope
+5. **Panel research** — 2449 context + LocusZoom (query GT = overlay)
+6. **Methods / Downloads** — how numbers were made; query-only exports
+
+Screenshot walkthrough: [`docs/GUIDELINE.md#walk-the-demo-report`](docs/GUIDELINE.md#walk-the-demo-report) (not embedded here).
+
+## Analysis flow
+
+**Three inputs, one line:** FASTQ / BAM / query VCF → **VS-1** → 167K sites → analyses → report or `chip.json`.
 
 ![GrapeAncestry analysis flowchart](docs/flowchart_vs1_analysis_v2.png)
 
-*Solid path ends at tonight's filename (`*.sample-first-v2.report.html` / `chip.json`). Dashed = read inside the report. Detail: [`docs/FLOWCHART.md`](docs/FLOWCHART.md).*
+*Solid arrows stop at tonight's hand-in (`*.sample-first-v2.report.html` / `chip.json`). Dashed lines = how you read the report. Claim-bounded boxes are not field release — see GUIDELINE. Node list: [`docs/FLOWCHART.md`](docs/FLOWCHART.md).*
 
-Only **OIV 225** colour GS is decision-grade today; full claim rules live in the GUIDELINE.
-
-## How to use (usage flow)
-
-**Default today: read the docs and the demo walkthrough.** This GitHub tree does not yet ship a runnable `grapeancestry` CLI.
+## How to use (three lanes)
 
 | Lane | Who | What you do | Hand-in |
 |------|-----|-------------|---------|
-| **A · Public docs** | Anyone | Open **Start here** ([USER_GUIDE](docs/USER_GUIDE.md)); use GUIDELINE screenshots as the walkthrough | read only |
-| **B · Local suite** | Lab with private suite checkout | Commands live in USER_GUIDE / GUIDELINE — **not** copy-paste from this clone | `*.sample-first-v2.report.html` |
-| **C · Cloud** | Classroom Streamlit | Upload a **167K-site query VCF** (not FASTQ) | `chip.json` |
+| **A · Public docs** | Anyone with this GitHub tree | Follow **USER_GUIDE**; use GUIDELINE screenshots as the walkthrough | read only |
+| **B · Local suite / image** | Lab with private suite or customer Docker package | Follow **USER_GUIDE** (and GUIDELINE) for commands — **not** copy-paste fake CLI from this clone | `*.sample-first-v2.report.html` |
+| **C · Cloud** | Classroom Streamlit when wired | Upload a **167K-site query VCF** (not FASTQ) → export JSON | `chip.json` |
 
-Panel ID `HUN89` ≠ report stem `HUN89_query`. Cloud notes: [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md).
-
-**Three inputs, one line:** FASTQ / BAM / query VCF → **VS-1** → 167K sites → analyses (flowchart above).
+Lane A is the default for visitors to this repository. Lanes B and C need assets that are not in this public tree yet.
 
 ## Related
 
