@@ -2,6 +2,11 @@
 
 This repository now ships both the **grapevine 167K public face** (docs + Ages demo HTML) and the **runnable companion package** under `src/grapeancestry/`. The same modules are the template for **other GBTS / capture panels**: keep code generic at the CLI/domain layer; swap sites, reference, and frozen axes through `profiles/` + `config/`.
 
+## Step-by-step docs
+
+One markdown per analysis step (scripts · stats · viz): **[steps/README.md](steps/README.md)**.
+
+
 Cross-panel scaffold process (Gemini-led): [Xuzhen-Li/gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).  
 **Not in git:** panel dosage matrices, FASTQ/BAM, reference genomes — stage under `data/` locally (see `data/MANIFEST.md` and `data/*/README.md`).
 
