@@ -2,7 +2,7 @@
 
 **user input → our panel assets → software → analyses → outputs**
 
-**Caption:** Inputs must be on **VS-1**. Your sample is then placed on a frozen 2449 × 167K reference; boxes name the software or asset at each step.
+**Caption:** Inputs must be on **VS-1**. Your sample is then placed on a frozen 2449 × 167K reference; boxes name the software or asset at each step. **Solid** arrows into the output = core path (QC · IBS · PCA · ADMIXTURE · NJ). **Dashed** arrows (f3/f4 · selection/GEA · colour GS · passport/SDR) = report modules — read claim rules before citing.
 
 ```mermaid
 flowchart TB
@@ -59,10 +59,10 @@ flowchart TB
     PROJ --> REP
     ADM --> REP
     NJ --> REP
-    F34 --> REP
-    SEL --> REP
-    GS --> REP
-    CARD --> REP
+    F34 -.-> REP
+    SEL -.-> REP
+    GS -.-> REP
+    CARD -.-> REP
   end
 ```
 
@@ -82,3 +82,4 @@ flowchart TB
 - Panel = our **2449 × 167K** reference (not user upload).
 - PCA / ADMIXTURE: frozen on 2449; query projected / `-P` / NNLS.
 - SDR = proxy ≠ haplotype sex; OIV 225 only decision-grade; score ≠ phenotype; selection overlay ≠ selected.
+- Mermaid: solid → output = core path; dashed → output = optional / claim-bounded modules inside the same file.

@@ -9,73 +9,29 @@ Analysis companion for the grapevine **167K capture panel** — reports and Chip
 
 This repo is for breeders and classrooms that hand in a **query** sample or open a demo report. Sites are called on **VS-1** and compared to a **frozen 2449 × 167K** panel (dosage, PCA axes, ADMIXTURE Q/P). Your input is FASTQ, BAM/CRAM on VS-1, or a query VCF at the 167K sites — that VCF is **not** the panel matrix. New samples are projected onto the frozen reference (`-P` / NNLS), not used to refit the panel. The public tree ships **docs and a demo walkthrough** first; full `run` and matrices land later.
 
+**Tonight hand-in:** Cloud → `chip.json` · Suite → `*.sample-first-v2.report.html` · Public docs (Lane A) → read only (no file).
+
+**Start here:** [`docs/GUIDELINE.md`](docs/GUIDELINE.md) — usage lanes, claim boundaries, and the demo report walkthrough (screenshots + LocusZoom). Hand-in is a **filename**, not every sidebar tab.
+
 ![GrapeAncestry analysis flowchart](docs/flowchart_vs1_analysis_v2.png)
 
-*Solid path: your input → our frozen assets → analyses → report or `chip.json`. Detail: [`docs/FLOWCHART.md`](docs/FLOWCHART.md).*
+*Solid arrows stop at tonight's filename (`report.html` / `chip.json`). Dashed = read inside the report. Claim rules = do not over-claim. Detail: [`docs/FLOWCHART.md`](docs/FLOWCHART.md).*
 
-Only **OIV 225** colour GS is decision-grade today; claim rules live in the GUIDELINE.
+Only **OIV 225** colour GS is decision-grade today; full claim rules live in the GUIDELINE.
 
 ## How to use (usage flow)
 
 **Default today: read the docs and the demo walkthrough.** This GitHub tree does not yet ship a runnable `grapeancestry` CLI.
 
-Full step-by-step lives in [`docs/GUIDELINE.md`](docs/GUIDELINE.md) — three lanes, report chrome (pin / K / theme), and **what each screenshot is for**.
-
 | Lane | Who | What you do | Hand-in |
 |------|-----|-------------|---------|
-| **A · Public docs** | Anyone | Read GUIDELINE + flowchart + CHIP_COMPANION; use screenshots as the walkthrough | — |
-| **B · Local suite** | Lab Mac with private suite | `pip install -e ".[dev,web]"` → `grapeancestry run …` (FASTQ→HTML) or post-VCF `analyze` / `identity` / `chip-report` | `*.sample-first-v2.report.html` |
-| **C · Cloud** | Classroom Streamlit | Upload **167K query VCF** (not FASTQ) | `chip.json` |
+| **A · Public docs** | Anyone | Open **Start here** (GUIDELINE); use screenshots as the walkthrough | read only |
+| **B · Local suite** | Lab with private suite checkout | Commands live in GUIDELINE (and upcoming USER_GUIDE) — **not** copy-paste from this clone | `*.sample-first-v2.report.html` |
+| **C · Cloud** | Classroom Streamlit | Upload a **167K-site query VCF** (not FASTQ) | `chip.json` |
 
-View an existing HTML demo from the **suite root** (view-only):
-
-```bash
-cd /path/to/local-suite
-python -m http.server
-# http://localhost:8000/results/HUN89_query.sample-first-v2.report.html
-```
-
-Panel ID `HUN89` ≠ report stem `HUN89_query`. Diagram: [`docs/FLOWCHART.md`](docs/FLOWCHART.md) · Cloud notes: [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md).
+Panel ID `HUN89` ≠ report stem `HUN89_query`. Cloud notes: [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md).
 
 **Three inputs, one line:** FASTQ / BAM / query VCF → **VS-1** → 167K sites → analyses (flowchart above).
-
-## Demo panels
-
-Non-overlapping panel crops from the demo report. Each image has a short caption in [`docs/GUIDELINE.md`](docs/GUIDELINE.md). Hand-in is a **filename**, not every sidebar tab.
-
-**Sample validity** — provenance, QC, damage note
-
-![Sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
-
-**Identity** — clone / PO, then IBS neighbors (pin to overlay)
-
-![Identity](docs/guideline_shots/panels/02_identity_01.png)
-
-**PCA · ADMIXTURE · NJ** — frozen projection, not a panel refit
-
-![PCA](docs/guideline_shots/panels/03_pca.png)
-
-![ADMIXTURE](docs/guideline_shots/panels/03_admixture.png)
-
-![NJ](docs/guideline_shots/panels/03_nj.png)
-
-**Sample evidence** — query GT at MAS/GWAS sites; OIV 225 only decision-grade
-
-![Evidence](docs/guideline_shots/panels/04_sample_evidence_01.png)
-
-**Panel research** — 2449 context; query GT is overlay only
-
-![Panel research](docs/guideline_shots/panels/05_panel_research_01.png)
-
-**LocusZoom** — regional panel map + this sample’s genotypes
-
-![LocusZoom](docs/guideline_shots/panels/05_locuszoom.png)
-
-**Methods · Downloads**
-
-![Methods](docs/guideline_shots/panels/06_methods_01.png)
-
-![Downloads](docs/guideline_shots/panels/07_downloads.png)
 
 ## Related
 
