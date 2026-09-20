@@ -161,13 +161,18 @@ Before you cite or rank anything:
 | **SDR / flower sex** | Unphased window **proxy** ≠ Science haplotype sex (H1–H5) |
 | **Selection** | Panel Grp-vs-rest context; query GT overlay ≠ “this sample was selected” |
 | **Scores** | **GS score ≠ observed phenotype** |
-| **Hand-in** | Filename only: `chip.json` or `*.sample-first-v2.report.html` — not “every sidebar tab” |
+| **Hand-in** | Filename matches the door: `chip.json` **or** `*.sample-first-v2.report.html` |
 
-More claim detail: [`GUIDELINE.md`](GUIDELINE.md) · [`CHIP_COMPANION.md`](CHIP_COMPANION.md).
+Full claim table and teaching notes: [`GUIDELINE.md`](GUIDELINE.md) · flowchart: [`FLOWCHART.md`](FLOWCHART.md).
 
 ---
 
-## 9. Done checklist
+## 9. What “done” looks like
+
+**Cloud:** `chip.json` exported from a 167K-site query VCF.  
+**Suite / Docker:** `*.sample-first-v2.report.html` opens with assets; you can walk §7; you make no decision-grade claim beyond OIV 225.
+
+Checklist:
 
 - [ ] Door chosen (Cloud vs Suite); hand-in **filename** matches that door
 - [ ] Input on **VS-1** (FASTQ mapped, BAM `@SQ` OK, or query VCF ∩ 167K)
@@ -175,15 +180,23 @@ More claim detail: [`GUIDELINE.md`](GUIDELINE.md) · [`CHIP_COMPANION.md`](CHIP_
 - [ ] No decision-grade claim beyond **OIV 225** colour GS
 - [ ] ID trap checked (`HUN89` ≠ `HUN89_query` when relevant)
 
+**Later (not a classroom night):** Docker/HPC rebuilds, full FASTQ→VCF on new libraries, ADMIXTURE `-P` batch work, publishing large matrices — see maintainer Docker notes when shipped.
+
 ---
 
-## 10. Related
+## 10. Related docs
 
-| Doc | Role |
-|-----|------|
-| [`GUIDELINE.md`](GUIDELINE.md) | Demo screenshots + how to read each panel |
-| [`FLOWCHART.md`](FLOWCHART.md) | Analysis boxes (solid vs dashed) |
+| Doc | Use it for |
+|-----|------------|
+| [`GUIDELINE.md`](GUIDELINE.md) | Full demo walk + claim rules |
+| [`FLOWCHART.md`](FLOWCHART.md) | Nodes behind the diagram |
 | [`CHIP_COMPANION.md`](CHIP_COMPANION.md) | Cloud vs Lab doors |
-| https://github.com/Xuzhen-Li/grapeancestry | Public docs tree |
+| Public README | Short intro + honest “docs first” status |
 
 **Note:** CLI commands such as `grapeancestry run` and full matrices land with the private suite / customer image — they are **not** copy-paste targets from this docs-only clone until published.
+
+---
+
+## Privacy
+
+Do not put unpublished genotypes, private coordinates, or full 2449 panel matrices into public demos or tickets.
