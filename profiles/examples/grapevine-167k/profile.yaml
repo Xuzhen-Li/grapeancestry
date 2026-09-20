@@ -1,0 +1,13 @@
+# Example profile stub — grapevine 167K capture panel
+# Paths are relative to a private suite root, not this public clone.
+
+profile_id: grapevine-167k
+label: Grapevine 167K GBTS / liquid-capture panel
+panel_n_sites: 167433
+# coordinate_system: VS-1  # stage genome locally
+# sites_bed: data/panel/panel167k.sites.bed
+# panel_info: data/panel/2449.info
+# dosage_cache: results/cache/panel_dosage_167k.npz
+# admixture_family: panel167k_nogwas
+claims_doc: CLAIMS.md   # optional; see docs/CLAIMS.md pattern
+public_face: https://github.com/Xuzhen-Li/grapeancestry

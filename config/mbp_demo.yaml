@@ -1,0 +1,27 @@
+# MBP demo profile — Apple M1 Pro 16GB safe defaults
+# Source: docs/BUILD.md §1 / §5 batch 0
+
+profile: mbp_demo
+threads: 4
+mem_gb: 6
+
+# Paths relative to grapeancestry_suite/
+paths:
+  ref_fa: data/ref/VS1.final.fa
+  subref_fa: data/ref/subref167k.fa
+  panel_vcf: data/panel/panel167k_2449.vcf.gz
+  panel_info: data/panel/2449.info
+  results: results
+
+mapping: full  # gate 2026-08-10: subref_vs_full=0.959 < 0.99 → default full; override with --mapping subref
+panel_n_sites: 167433
+panel_n_samples: 2449
+
+# Gate (batch 1.5): enable subref accel only if concordance >= threshold
+gate:
+  concordance_min: 0.99
+
+samples:
+  # filled by user / CLI; demo defaults:
+  # - HUN89: data/fastq/HUN89-1-ywk_{1,2}.fq.gz (PE modern)
+  # - Ages: data/fastq/V5xL1xP2_Ages_3_5070.12Xv2.realigned.fastq.gz (SE aDNA)

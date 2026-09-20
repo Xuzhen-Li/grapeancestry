@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.snakemake/
+.venv/
+**/._*
+.DS_Store
+results/**
+!results/.gitkeep
+data/ref/**
+!data/ref/README.md
+data/panel/**
+!data/panel/README.md
+data/fastq/**
+!data/fastq/README.md
+data/cloud/**
+!data/cloud/.gitkeep
+*.npz
+*.bam
+*.fastq.gz
+*.fq.gz
+# keep demo HTML package; ignore other large VCFs if added under data/

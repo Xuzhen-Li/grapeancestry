@@ -1,0 +1,5 @@
+samples:
+  HUN89:
+    type: pe
+    r1: data/fastq/HUN89-1-ywk_1.fq.gz
+    r2: data/fastq/HUN89-1-ywk_2.fq.gz

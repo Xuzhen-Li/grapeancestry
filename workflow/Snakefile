@@ -1,0 +1,269 @@
+# GrapeAncestry Suite — core capture pipeline
+# Docs: docs/BUILD.md §5 batch 1
+# Usage:
+#   snakemake -s workflow/Snakefile --configfile config/mbp_demo.yaml \
+#     --config samples_file=config/samples_demo.yaml -j 4 results/HUN89.vcf.gz
+
+import os
+from pathlib import Path
+
+ROOT = Path(workflow.basedir).parent  # grapeancestry_suite/
+
+configfile: str(ROOT / "config" / "mbp_demo.yaml")
+
+SAMPLES_FILE = config.get("samples_file", str(ROOT / "config" / "samples_demo.yaml"))
+import yaml
+with open(SAMPLES_FILE) as _fh:
+    _sdata = yaml.safe_load(_fh)
+SAMPLES = _sdata["samples"]
+
+THREADS = int(config.get("threads", 4))
+MAPPING = config.get("mapping", "subref")
+# Keep data paths absolute; results relative so CLI targets match
+REF_FA = str(ROOT / config["paths"]["ref_fa"])
+SUBREF_FA = str(ROOT / config["paths"]["subref_fa"])
+PANEL_VCF = str(ROOT / config["paths"]["panel_vcf"])
+SITES_BED = str(ROOT / "data" / "panel" / "panel167k.sites.bed")
+SUBREF_MAP = str(ROOT / "data" / "ref" / "subref167k.map.tsv")
+REF_FAI = REF_FA + ".fai"
+RESULTS = config["paths"].get("results", "results")
+
+ALIGN_REF = SUBREF_FA if MAPPING == "subref" else REF_FA
+
+
+def sample_r1(wildcards):
+    return str(ROOT / SAMPLES[wildcards.sample]["r1"])
+
+
+def sample_r2(wildcards):
+    s = SAMPLES[wildcards.sample]
+    if s["type"] != "pe":
+        raise ValueError(f"{wildcards.sample} is not PE")
+    return str(ROOT / s["r2"])
+
+
+def is_pe(sample):
+    return SAMPLES[sample]["type"] == "pe"
+
+
+def is_adna(sample):
+    return SAMPLES[sample]["type"] == "adna"
+
+
+def is_se(sample):
+    return SAMPLES[sample]["type"] == "se"
+
+
+PE_SAMPLES = [s for s in SAMPLES if is_pe(s)]
+SE_SAMPLES = [s for s in SAMPLES if is_se(s)]
+ADNA_SAMPLES = [s for s in SAMPLES if is_adna(s)]
+PE_WC = "|".join(PE_SAMPLES) if PE_SAMPLES else "none"
+SE_WC = "|".join(SE_SAMPLES) if SE_SAMPLES else "none"
+ADNA_WC = "|".join(ADNA_SAMPLES) if ADNA_SAMPLES else "none"
+ANY_WC = "|".join(SAMPLES) if SAMPLES else "none"
+
+
+rule all:
+    input:
+        expand(os.path.join(RESULTS, "{sample}.vcf.gz"), sample=SAMPLES),
+
+
+rule trim_pe:
+    input:
+        r1=sample_r1,
+        r2=sample_r2,
+    output:
+        r1=temp(os.path.join(RESULTS, "trim", "{sample}_1.fq.gz")),
+        r2=temp(os.path.join(RESULTS, "trim", "{sample}_2.fq.gz")),
+        html=os.path.join(RESULTS, "trim", "{sample}.fastp.html"),
+        json=os.path.join(RESULTS, "trim", "{sample}.fastp.json"),
+    threads: THREADS
+    wildcard_constraints:
+        sample=PE_WC,
+    shell:
+        """
+        mkdir -p $(dirname {output.r1})
+        fastp -w {threads} \
+          -i {input.r1} -I {input.r2} \
+          -o {output.r1} -O {output.r2} \
+          -h {output.html} -j {output.json} \
+          --detect_adapter_for_pe
+        """
+
+
+rule trim_se:
+    input:
+        r1=sample_r1,
+    output:
+        r1=temp(os.path.join(RESULTS, "trim", "{sample}.fq.gz")),
+        html=os.path.join(RESULTS, "trim", "{sample}.fastp.html"),
+        json=os.path.join(RESULTS, "trim", "{sample}.fastp.json"),
+    threads: THREADS
+    wildcard_constraints:
+        sample=SE_WC,
+    shell:
+        """
+        mkdir -p $(dirname {output.r1})
+        fastp -w {threads} \
+          -i {input.r1} -o {output.r1} \
+          -h {output.html} -j {output.json}
+        """
+
+
+rule trim_adna:
+    """aDNA SE: AdapterRemoval3 trim (adapters + min length)."""
+    input:
+        r1=sample_r1,
+    output:
+        r1=temp(os.path.join(RESULTS, "trim", "{sample}.fq.gz")),
+        log=os.path.join(RESULTS, "trim", "{sample}.adapterremoval.log"),
+        html=os.path.join(RESULTS, "trim", "{sample}.adapterremoval.html"),
+        json=os.path.join(RESULTS, "trim", "{sample}.adapterremoval.json"),
+    threads: THREADS
+    wildcard_constraints:
+        sample=ADNA_WC,
+    shell:
+        """
+        mkdir -p $(dirname {output.r1})
+        adapterremoval3 \
+          --in-file1 {input.r1} \
+          --out-file1 {output.r1} \
+          --out-html {output.html} \
+          --out-json {output.json} \
+          --min-length 25 \
+          --threads {threads} \
+          > {output.log} 2>&1
+        """
+
+
+rule map_pe:
+    input:
+        r1=os.path.join(RESULTS, "trim", "{sample}_1.fq.gz"),
+        r2=os.path.join(RESULTS, "trim", "{sample}_2.fq.gz"),
+        ref=ALIGN_REF,
+    output:
+        bam=temp(os.path.join(RESULTS, "bam", "{sample}.raw.bam")),
+    threads: THREADS
+    params:
+        rg=lambda w: f"@RG\\tID:{w.sample}\\tSM:{w.sample}\\tPL:ILLUMINA",
+    wildcard_constraints:
+        sample=PE_WC,
+    shell:
+        """
+        mkdir -p $(dirname {output.bam})
+        bwa mem -t {threads} -R '{params.rg}' {input.ref} {input.r1} {input.r2} \
+          | samtools view -b -o {output.bam}
+        """
+
+
+rule map_se:
+    input:
+        r1=os.path.join(RESULTS, "trim", "{sample}.fq.gz"),
+        ref=ALIGN_REF,
+    output:
+        bam=temp(os.path.join(RESULTS, "bam", "{sample}.raw.bam")),
+    threads: THREADS
+    params:
+        rg=lambda w: f"@RG\\tID:{w.sample}\\tSM:{w.sample}\\tPL:ILLUMINA",
+    wildcard_constraints:
+        sample=SE_WC,
+    shell:
+        """
+        mkdir -p $(dirname {output.bam})
+        bwa mem -t {threads} -R '{params.rg}' {input.ref} {input.r1} \
+          | samtools view -b -o {output.bam}
+        """
+
+
+rule map_aln:
+    """aDNA SE: bwa aln + samse (short damaged reads)."""
+    input:
+        r1=os.path.join(RESULTS, "trim", "{sample}.fq.gz"),
+        ref=ALIGN_REF,
+    output:
+        bam=temp(os.path.join(RESULTS, "bam", "{sample}.raw.bam")),
+    threads: THREADS
+    params:
+        rg=lambda w: f"@RG\\tID:{w.sample}\\tSM:{w.sample}\\tPL:ILLUMINA",
+    wildcard_constraints:
+        sample=ADNA_WC,
+    shell:
+        """
+        mkdir -p $(dirname {output.bam})
+        bwa aln -t {threads} -l 1024 -n 0.01 {input.ref} {input.r1} > {output.bam}.sai
+        bwa samse -r '{params.rg}' {input.ref} {output.bam}.sai {input.r1} \
+          | samtools view -b -o {output.bam}
+        rm -f {output.bam}.sai
+        """
+
+
+rule lift_or_copy:
+    """Lift subref BAM → VS1 coords; or pass-through if mapping=full."""
+    input:
+        bam=os.path.join(RESULTS, "bam", "{sample}.raw.bam"),
+        map=SUBREF_MAP,
+        fai=REF_FAI,
+    output:
+        bam=temp(os.path.join(RESULTS, "bam", "{sample}.lifted.bam")),
+    params:
+        mapping=MAPPING,
+    shell:
+        """
+        if [ "{params.mapping}" = "subref" ]; then
+          python -m grapeancestry.core.lift \
+            --in-bam {input.bam} --out-bam {output.bam} \
+            --map {input.map} --ref-fai {input.fai}
+        else
+          cp {input.bam} {output.bam}
+        fi
+        """
+
+
+rule sort_markdup:
+    input:
+        bam=os.path.join(RESULTS, "bam", "{sample}.lifted.bam"),
+    output:
+        bam=os.path.join(RESULTS, "bam", "{sample}.markdup.bam"),
+        bai=os.path.join(RESULTS, "bam", "{sample}.markdup.bam.bai"),
+    threads: THREADS
+    params:
+        pe=lambda w: is_pe(w.sample),
+    wildcard_constraints:
+        sample=ANY_WC,
+    shell:
+        """
+        mkdir -p $(dirname {output.bam})
+        if [ "{params.pe}" = "True" ]; then
+          samtools sort -@ {threads} -n -o {output.bam}.namesort.bam {input.bam}
+          samtools fixmate -m {output.bam}.namesort.bam {output.bam}.fixmate.bam
+          samtools sort -@ {threads} -o {output.bam}.pos.bam {output.bam}.fixmate.bam
+          samtools markdup -@ {threads} {output.bam}.pos.bam {output.bam}
+          rm -f {output.bam}.namesort.bam {output.bam}.fixmate.bam {output.bam}.pos.bam
+        else
+          # SE: no fixmate; coordinate-sort then markdup
+          samtools sort -@ {threads} -o {output.bam}.pos.bam {input.bam}
+          samtools markdup -@ {threads} -r {output.bam}.pos.bam {output.bam} 2>/dev/null \
+            || samtools markdup -@ {threads} {output.bam}.pos.bam {output.bam}
+          rm -f {output.bam}.pos.bam
+        fi
+        samtools index {output.bam}
+        """
+
+
+rule call:
+    input:
+        bam=os.path.join(RESULTS, "bam", "{sample}.markdup.bam"),
+        bai=os.path.join(RESULTS, "bam", "{sample}.markdup.bam.bai"),
+        ref=REF_FA,
+        sites=SITES_BED,
+    output:
+        vcf=os.path.join(RESULTS, "{sample}.vcf.gz"),
+        tbi=os.path.join(RESULTS, "{sample}.vcf.gz.tbi"),
+    threads: THREADS
+    shell:
+        """
+        bcftools mpileup -f {input.ref} -T {input.sites} -a FORMAT/DP,FORMAT/AD \
+          --threads {threads} -Ou {input.bam} \
+        | bcftools call -m -Oz -o {output.vcf}
+        bcftools index -t {output.vcf}
+        """

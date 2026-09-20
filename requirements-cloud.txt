@@ -1,0 +1,2 @@
+# Streamlit Cloud — use requirements.txt (this file kept as an alias)
+-r requirements.txt

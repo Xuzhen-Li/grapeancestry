@@ -1,0 +1,35 @@
+name: ga
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - bwa
+  - samtools
+  - bcftools
+  - fastp
+  - adapterremoval
+  - mapdamage2
+  - snakemake
+  - pysam
+  - numpy
+  - pandas
+  - matplotlib
+  - click
+  - pyyaml
+  - jinja2
+  - pytest
+  - pytorch
+  - openpyxl
+  - plink
+  - gcta
+  - pip
+  - pip:
+      - streamlit
+# Local / Docker / HPC. Streamlit Cloud uses root environment.yml (no bioconda).
+# conda env create -f environment-hpc.yml
+# Notes:
+# - Snakefile aDNA trim uses `adapterremoval3` when present;
+#   bioconda package is often still `adapterremoval`.
+# - Official ADMIXTURE -P needs plink + linux ADMIXTURE 1.3.0 in Docker.
+# - Do not ship the Mac Mach-O `bin/admixture`.

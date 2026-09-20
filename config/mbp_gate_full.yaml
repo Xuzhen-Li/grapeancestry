@@ -1,0 +1,19 @@
+# Gate run: full-genome mapping for HUN89
+profile: mbp_gate_full
+threads: 4
+mem_gb: 6
+
+paths:
+  ref_fa: data/ref/VS1.final.fa
+  subref_fa: data/ref/subref167k.fa
+  panel_vcf: data/panel/panel167k_2449.vcf.gz
+  panel_info: data/panel/2449.info
+  results: results/gate
+
+mapping: full
+
+panel_n_sites: 167433
+panel_n_samples: 2449
+
+gate:
+  concordance_min: 0.99

@@ -1,0 +1,12 @@
+data/panel/*.vcf.gz
+data/ref/*.fa
+data/ref/*.gff3
+data/fastq/
+data/panel/admixture/bed/
+results/
+.git/
+*.egg-info/
+.pytest_cache/
+bin/admixture.x86_64
+**/*.pyc
+__pycache__/

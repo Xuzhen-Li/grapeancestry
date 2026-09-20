@@ -1,0 +1,12 @@
+# Demo FASTQ. The library is an independent chip recapture (HUN89-1-ywk).
+# It is NOT the 2449 panel ID "HUN89". Snakemake still writes results/HUN89.vcf.gz;
+# analyze with --as-query → results/HUN89_query.vcf.gz.
+
+samples:
+  HUN89:
+    type: pe
+    r1: data/fastq/HUN89-1-ywk_1.fq.gz
+    r2: data/fastq/HUN89-1-ywk_2.fq.gz
+  Ages:
+    type: adna
+    r1: data/fastq/V5xL1xP2_Ages_3_5070.12Xv2.realigned.fastq.gz

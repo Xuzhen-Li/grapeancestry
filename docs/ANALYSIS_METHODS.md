@@ -122,3 +122,6 @@ grapeancestry chip-report --vcf results/Ages.vcf.gz --out chip.json
 ## Official methods (pointers)
 
 Dong et al. 2023 (Science grape panel) · Patterson et al. 2012 (f-statistics) · ADMIXTURE · GCTA (Yang et al.; shipped PCA) · EMMAX (Kang et al.) · LocusZoom · mapDamage2. Full breeding notes: suite `docs/METHODS_breeding.md` (not all mirrored here yet).
+
+
+See also the detailed file map: [SCRIPTS.md](SCRIPTS.md).

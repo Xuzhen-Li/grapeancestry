@@ -1,0 +1,9 @@
+# ID = sample ID matching 2449.info / panel VCF
+# trait = OIV code or name
+# value = numeric or category
+ID	trait	value
+1	Uti	WINE
+3	Uti	WINE
+5	Uti	WINE/TABLE
+31	Uti	WINE/TABLE
+36	Uti	WINE
