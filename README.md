@@ -15,11 +15,11 @@ This repo is for breeders and classrooms that hand in a **query** sample or open
 
 Only **OIV 225** colour GS is decision-grade today; claim rules live in the GUIDELINE.
 
-## How to use (this public docs repo)
+## How to use (usage flow)
 
 **Default today: read the docs and the demo walkthrough.** This GitHub tree does not yet ship a runnable `grapeancestry` CLI.
 
-1. **Start here.** Open [`docs/GUIDELINE.md`](docs/GUIDELINE.md) — sidebar order, long screenshots, and reading notes. Diagram notes: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). Cloud companion notes: [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md).
+1. **Start here.** Open [`docs/GUIDELINE.md`](docs/GUIDELINE.md) — **usage flow** (docs / local suite / Cloud), sidebar order, every panel caption, and one dedicated **LocusZoom** shot. Diagram: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). Cloud notes: [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md).
 
 2. **Open a local demo report (when you have the suite checkout).** Serve from that suite root so relative assets resolve. `python -m http.server` is **view-only**; it does not create a hand-in file.
 
@@ -32,24 +32,25 @@ python -m http.server
 
 Panel ID `HUN89` ≠ report stem `HUN89_query`.
 
-3. **Later (local suite / Cloud — not copy-paste from this repo yet).** Cloud hand-in is `chip.json` from a 167K-site query VCF; Suite hand-in is `*.sample-first-v2.report.html`. Commands such as `chip-report`, `run`, and Docker live in the suite package when published — see CHIP_COMPANION / GUIDELINE, not a fake CLI in this tree.
+3. **Local suite (developer path — not copy-paste as if it lived in this repo).** Install in the private suite, then `grapeancestry run …` for FASTQ→report, or `chip-report` / Streamlit for Cloud `chip.json`. Full command list and doors: GUIDELINE → *Usage flow*.
+
+4. **Classroom doors.** Cloud → `chip.json` from a 167K-site query VCF. Suite → `*.sample-first-v2.report.html`. Do not mix filenames.
 
 **Three inputs, one line:** FASTQ / BAM / query VCF → **VS-1** → 167K sites → analyses (flowchart above).
 
-
 ## Demo panels
 
-Non-overlapping panel crops from the demo report. Caption: **hand-in is a filename, not every sidebar tab.** Full set + reading notes: [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
+Non-overlapping panel crops from the demo report. Each image has a short caption in [`docs/GUIDELINE.md`](docs/GUIDELINE.md). Hand-in is a **filename**, not every sidebar tab.
 
-**Sample validity**
+**Sample validity** — provenance, QC, damage note
 
 ![Sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
 
-**Identity**
+**Identity** — clone / PO, then IBS neighbors (pin to overlay)
 
 ![Identity](docs/guideline_shots/panels/02_identity_01.png)
 
-**PCA · ADMIXTURE · NJ**
+**PCA · ADMIXTURE · NJ** — frozen projection, not a panel refit
 
 ![PCA](docs/guideline_shots/panels/03_pca.png)
 
@@ -57,11 +58,19 @@ Non-overlapping panel crops from the demo report. Caption: **hand-in is a filena
 
 ![NJ](docs/guideline_shots/panels/03_nj.png)
 
-**Sample evidence · Panel research · Methods · Downloads**
+**Sample evidence** — query GT at MAS/GWAS sites; OIV 225 only decision-grade
 
 ![Evidence](docs/guideline_shots/panels/04_sample_evidence_01.png)
 
+**Panel research** — 2449 context; query GT is overlay only
+
 ![Panel research](docs/guideline_shots/panels/05_panel_research_01.png)
+
+**LocusZoom** — regional panel map + this sample’s genotypes
+
+![LocusZoom](docs/guideline_shots/panels/05_locuszoom.png)
+
+**Methods · Downloads**
 
 ![Methods](docs/guideline_shots/panels/06_methods_01.png)
 
