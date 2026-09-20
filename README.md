@@ -63,27 +63,35 @@ python -m http.server
 
 - **Docker image:** sidebar → **Demos** → Ages.
 
-**Preview frames** (Ages report; fuller set in GUIDELINE):
+**Preview frames** (cropped from Ages full-section long screenshots; fuller set in GUIDELINE):
 
 ![Ages sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
 
-*Sample validity — metadata / method coverage (Ages aDNA).*
+*Sample validity — report metadata / method coverage (Ages aDNA).*
+
+![Ages conclusions and QC](docs/guideline_shots/panels/01_sample_validity_02.png)
+
+*Sample validity — conclusions and capture QC cards.*
 
 ![Ages aDNA damage](docs/guideline_shots/panels/01_sample_validity_damage.png)
 
-*aDNA damage — Ages SE library (meaningful on this door).*
+*aDNA damage — mapDamage misincorporation + fragment length (Ages SE).*
 
 ![Ages identity](docs/guideline_shots/panels/02_identity_01.png)
 
-*Identity — IBS / kinship vs the frozen 2449 panel.*
+*Identity — clone/PO screen and IBS / kinship vs the frozen panel.*
 
 ![Ages PCA](docs/guideline_shots/panels/03_pca.png)
 
-*Population placement — Ages query on frozen GCTA64 PCA.*
+*Population — Ages query on frozen GCTA64 PCA.*
 
 ![Ages ADMIXTURE](docs/guideline_shots/panels/03_admixture.png)
 
-*ADMIXTURE — Ages projected on frozen K=2–8.*
+*Population — Ages projected on frozen ADMIXTURE K=8.*
+
+![Ages NJ](docs/guideline_shots/panels/03_nj.png)
+
+*Population — IBS neighbour-joining tree with Ages marked.*
 
 ![Ages sample evidence](docs/guideline_shots/panels/04_sample_evidence_01.png)
 
@@ -91,7 +99,7 @@ python -m http.server
 
 ![Ages LocusZoom](docs/guideline_shots/panels/05_locuszoom.png)
 
-*LocusZoom — panel map + Ages genotype overlay.*
+*Panel research — LocusZoom + Ages genotype overlay.*
 
 ## Install and use
 

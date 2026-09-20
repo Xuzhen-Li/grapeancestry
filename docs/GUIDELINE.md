@@ -91,7 +91,7 @@ Ages aDNA SE demo: `--samples config/samples_ages.yaml --sample Ages` (AdapterRe
 ```bash
 cd /path/to/grapeancestry_suite   # must be suite root so ../assets resolve
 python -m http.server
-# open http://localhost:8000/results/HUN89_query.sample-first-v2.report.html
+# open http://localhost:8000/results/Ages.sample-first-v2.report.html
 ```
 
 `http.server` does **not** create a hand-in file. Hand-in for Suite is the HTML filename itself (or Cloud `chip.json`).
