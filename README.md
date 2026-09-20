@@ -19,22 +19,23 @@ Only **OIV 225** colour GS is decision-grade today; claim rules live in the GUID
 
 **Default today: read the docs and the demo walkthrough.** This GitHub tree does not yet ship a runnable `grapeancestry` CLI.
 
-1. **Start here.** Open [`docs/GUIDELINE.md`](docs/GUIDELINE.md) — **usage flow** (docs / local suite / Cloud), sidebar order, every panel caption, and one dedicated **LocusZoom** shot. Diagram: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). Cloud notes: [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md).
+Full step-by-step lives in [`docs/GUIDELINE.md`](docs/GUIDELINE.md) — three lanes, report chrome (pin / K / theme), and **what each screenshot is for**.
 
-2. **Open a local demo report (when you have the suite checkout).** Serve from that suite root so relative assets resolve. `python -m http.server` is **view-only**; it does not create a hand-in file.
+| Lane | Who | What you do | Hand-in |
+|------|-----|-------------|---------|
+| **A · Public docs** | Anyone | Read GUIDELINE + flowchart + CHIP_COMPANION; use screenshots as the walkthrough | — |
+| **B · Local suite** | Lab Mac with private suite | `pip install -e ".[dev,web]"` → `grapeancestry run …` (FASTQ→HTML) or post-VCF `analyze` / `identity` / `chip-report` | `*.sample-first-v2.report.html` |
+| **C · Cloud** | Classroom Streamlit | Upload **167K query VCF** (not FASTQ) | `chip.json` |
+
+View an existing HTML demo from the **suite root** (view-only):
 
 ```bash
-# path = your local suite checkout (not this docs-only clone)
 cd /path/to/local-suite
 python -m http.server
 # http://localhost:8000/results/HUN89_query.sample-first-v2.report.html
 ```
 
-Panel ID `HUN89` ≠ report stem `HUN89_query`.
-
-3. **Local suite (developer path — not copy-paste as if it lived in this repo).** Install in the private suite, then `grapeancestry run …` for FASTQ→report, or `chip-report` / Streamlit for Cloud `chip.json`. Full command list and doors: GUIDELINE → *Usage flow*.
-
-4. **Classroom doors.** Cloud → `chip.json` from a 167K-site query VCF. Suite → `*.sample-first-v2.report.html`. Do not mix filenames.
+Panel ID `HUN89` ≠ report stem `HUN89_query`. Diagram: [`docs/FLOWCHART.md`](docs/FLOWCHART.md) · Cloud notes: [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md).
 
 **Three inputs, one line:** FASTQ / BAM / query VCF → **VS-1** → 167K sites → analyses (flowchart above).
 
