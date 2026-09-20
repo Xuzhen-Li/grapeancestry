@@ -5,111 +5,67 @@ Analysis companion for the grapevine **167K capture panel**.
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![ORCID](https://img.shields.io/badge/ORCID-0000--0003--3670--6657-a6ce39)](https://orcid.org/0000-0003-3670-6657)
 
-**Status:** documentation and demo walkthrough are live. Full pipeline code, Streamlit Cloud, and large panel matrices land later — do not expect `grapeancestry run` from this repo yet.
+## What this is
 
-## Analysis flow
+GrapeAncestry takes a new grapevine sample and places it against a **frozen 2449 × 167K** reference built on the **VS-1** genome. From the same query you get capture QC, identity / kinship screens, PCA and ADMIXTURE placement, an IBS neighbor-joining tree, passport-style cards, and a colour genomic-selection score where the evidence supports it. The public tree here is the **docs face** first: how the pieces fit, how to read the demo report, and what the final package will accept. Runnable suite code and large panel matrices land in later commits.
 
-Final package inputs: **FASTQ** · **BAM/CRAM** · **query VCF** — all on **VS-1** — then our 2449 × 167K assets, software, analyses, and report / `chip.json`.
+Think of three layers: **your input** (FASTQ, BAM/CRAM on VS-1, or a query VCF at the 167K sites), **our reference assets** (VS-1, 167K BED, dosage cache, frozen PCA axes and ADMIXTURE Q/P, passport tables, GS training phenotypes), and **the report** (interactive HTML) or **`chip.json`** on the Cloud path. A query VCF uses the same sites as the chip; it is **not** the 2449-panel matrix.
 
 ![GrapeAncestry analysis flowchart](docs/flowchart_vs1_analysis_v2.png)
 
-Source notes: [`docs/FLOWCHART.md`](docs/FLOWCHART.md) · full teaching text: [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
+More detail on the diagram: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). Claim boundaries, ID traps, and a full sidebar teaching walk live in [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
 
-| Input | What it is |
-|-------|------------|
-| **FASTQ** | Modern PE or aDNA SE → trim → map to VS-1 → call at 167K BED |
-| **BAM / CRAM** | Already on VS-1 → markdup → call at 167K BED |
-| **Query VCF** | Customer sample at 167K sites — **not** the 2449 panel matrix |
+## How to use
 
-> **ID trap:** Panel demo `HUN89` (2449-row ID) ≠ capture demo `HUN89_query` (independent FASTQ recapture).
+### 1. Read the demo report (today)
 
-### Claim boundaries
+The screenshots and walkthrough assume the local suite demo `HUN89_query.sample-first-v2.report.html`. From the suite root so relative assets resolve:
 
-| Class | Rule |
-|-------|------|
-| Decision-grade | **OIV 225** colour GS only |
-| Exploratory | OIV 241 / unbalanced traits — no parent ranking / seedlessness claim |
-| Do not claim | SDR ≠ haplotype sex; selection overlay ≠ selected; **score ≠ phenotype** |
+```bash
+cd grapeancestry_suite
+python -m http.server
+# open http://localhost:8000/results/HUN89_query.sample-first-v2.report.html
+```
 
-> Classroom note: Cloud → `chip.json`; Suite → `*.sample-first-v2.report.html`. Pick one deliverable.
+Sidebar order: Sample validity → Identity & placement → Population placement → Sample evidence → Panel research → Methods → Downloads. Walk each section with long screenshots in [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
 
----
+### 2. Cloud path (when Streamlit is wired)
 
-## Walk the demo report
+Upload a **167K-site query VCF** (not FASTQ) into the Chip Companion app, then export **`chip.json`**. Notes: [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md).
 
-Demo: `HUN89_query.sample-first-v2.report.html`. Each block below is one sidebar section (full long screenshot) plus a short read note. Longer commentary lives in [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
+```bash
+grapeancestry chip-report --vcf sample.vcf.gz --out chip.json
+```
 
-### 1 · Sample validity
+### 3. Final package inputs (VS-1)
 
-![Sample validity](docs/guideline_shots/sections/01_sample_validity_full.png)
+| You provide | What happens |
+|-------------|--------------|
+| **FASTQ** | Trim → map to VS-1 → call genotypes at the 167K BED → query VCF → analyses → report |
+| **BAM / CRAM** (on VS-1) | Markdup → call at 167K → same downstream |
+| **Query VCF** (@ 167K sites) | Skip calling; run analyses → report or `chip.json` |
 
-Read panel calling rate, depth, and capture tables first. Heterozygosity is a screen, not a purity call. Missing aDNA damage on a modern PE library is expected.
+Panel row `HUN89` is not the same thing as the capture demo stem `HUN89_query` (independent recapture). Keep those IDs straight when you compare to the 2449 reference.
 
-### 2 · Identity & placement
+### 4. What to open next
 
-![Identity and placement](docs/guideline_shots/sections/02_identity_placement_full.png)
+| Doc | Use it for |
+|-----|------------|
+| [`docs/GUIDELINE.md`](docs/GUIDELINE.md) | Full demo walk + scientific reading notes |
+| [`docs/FLOWCHART.md`](docs/FLOWCHART.md) | Node list behind the diagram |
+| [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md) | Online / Cloud companion |
+| [`chip/`](chip/) · [`analysis/`](analysis/) | Design and calling folders (fill as code lands) |
 
-IBS / kinship vs the 2449 panel. Non-self Identical and PO are clone/parentage **screens**. Pin a row to overlay the same ID on PCA / ADMIXTURE / NJ.
+## Related repos
 
-### 3 · Population placement
-
-![Population placement](docs/guideline_shots/sections/03_population_placement_full.png)
-
-Frozen GCTA64 PCA projection, ADMIXTURE (lookup or `-P` / NNLS), NJ on IBS identity, optional f3/f4. Query is placed on a **frozen** reference — not an unsupervised 2449+N refit.
-
-PCA · ADMIXTURE · NJ detail:
-
-![PCA](docs/guideline_shots/sections/03b_pca.png)
-
-![ADMIXTURE](docs/guideline_shots/sections/03c_admixture.png)
-
-![NJ tree](docs/guideline_shots/sections/03d_nj.png)
-
-### 4 · Sample evidence
-
-![Sample evidence](docs/guideline_shots/sections/04_sample_evidence_full.png)
-
-Passport / VIVC, SDR **proxy** (not Science H1–H5 haplotype sex), trait card, colour GS. Only **OIV 225** is decision-grade today.
-
-### 5 · Panel research
-
-![Panel research](docs/guideline_shots/sections/05_panel_research_full.png)
-
-Selection / GEA and related panel contrasts. Query GT is an **overlay**, not proof that this sample was selected.
-
-### 6 · Methods
-
-![Methods](docs/guideline_shots/sections/06_methods_full.png)
-
-Software and frozen-asset notes for the report you are reading.
-
-### 7 · Downloads
-
-![Downloads](docs/guideline_shots/sections/07_downloads_full.png)
-
-Export tables and figures from the demo; no unpublished full 2449 matrices in the public tree.
-
----
-
-## Layout
-
-| Path | Role |
-|------|------|
-| [`docs/`](docs/) | GUIDELINE, FLOWCHART, demo section screenshots |
-| [`chip/`](chip/) | Probe / SNP selection for 167K (design files land later) |
-| [`analysis/`](analysis/) | Calling and report recipes when filled |
-
-The old standalone shell [grapevine-chip](https://github.com/Xuzhen-Li/grapevine-chip) redirects to `chip/`.
-
-## This is not
-
-- Not an aDNA authentication pipeline → [grapevine-adna](https://github.com/Xuzhen-Li/grapevine-adna)
-- Not theory dossiers → [genomics-theory-mining](https://github.com/Xuzhen-Li/genomics-theory-mining)
-- Not a nuclear pangenome / PAV graph → [vitis-pangenome](https://github.com/Xuzhen-Li/vitis-pangenome)
+- aDNA authentication → [grapevine-adna](https://github.com/Xuzhen-Li/grapevine-adna)
+- Theory dossiers → [genomics-theory-mining](https://github.com/Xuzhen-Li/genomics-theory-mining)
+- Nuclear pangenome → [vitis-pangenome](https://github.com/Xuzhen-Li/vitis-pangenome)
+- Older chip shell → [grapevine-chip](https://github.com/Xuzhen-Li/grapevine-chip) (points at `chip/`)
 
 ## Privacy
 
-No unpublished genotypes, private coordinates, or full 2449 panel matrices in this public tree.
+This public tree does not ship unpublished genotypes, private coordinates, or the full 2449 panel matrix.
 
 ## Author
 
