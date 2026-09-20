@@ -19,31 +19,26 @@ This repo is for breeders and classrooms that hand in a **query** sample or open
 
 Only **OIV 225** colour GS is decision-grade today; claim rules live in the GUIDELINE.
 
-## How to use
+## How to use (this public docs repo)
 
-1. **Open the demo (today).** From the local suite root so assets resolve:
+**Default today: read the docs and the demo walkthrough.** This GitHub tree does not yet ship a runnable `grapeancestry` CLI.
+
+1. **Start here.** Open [`docs/GUIDELINE.md`](docs/GUIDELINE.md) — sidebar order, long screenshots, and reading notes. Diagram notes: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). Cloud companion notes: [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md).
+
+2. **Open a local demo report (when you have the suite checkout).** Serve from that suite root so relative assets resolve. `python -m http.server` is **view-only**; it does not create a hand-in file.
 
 ```bash
-cd grapeancestry_suite
+# path = your local suite checkout (not this docs-only clone)
+cd /path/to/local-suite
 python -m http.server
 # http://localhost:8000/results/HUN89_query.sample-first-v2.report.html
 ```
 
-`http.server` is view-only; it does not create the hand-in. Panel ID `HUN89` ≠ report stem `HUN89_query`.
+Panel ID `HUN89` ≠ report stem `HUN89_query`.
 
-2. **Pick one deliverable.** Cloud → `chip.json` from a 167K-site query VCF. Suite / demo → `*.sample-first-v2.report.html`. On this public docs repo, prefer Cloud-when-ready or open the demo and read the GUIDELINE.
+3. **Later (local suite / Cloud — not copy-paste from this repo yet).** Cloud hand-in is `chip.json` from a 167K-site query VCF; Suite hand-in is `*.sample-first-v2.report.html`. Commands such as `chip-report`, `run`, and Docker live in the suite package when published — see CHIP_COMPANION / GUIDELINE, not a fake CLI in this tree.
 
-```bash
-grapeancestry chip-report --vcf sample.vcf.gz --out chip.json
-```
-
-3. **Three inputs, one line.** FASTQ / BAM / query VCF → **VS-1** → 167K sites → analyses (see flowchart).
-
-| Next doc | For |
-|----------|-----|
-| [`docs/GUIDELINE.md`](docs/GUIDELINE.md) | Sidebar walk + reading notes |
-| [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md) | Cloud companion |
-| [`docs/FLOWCHART.md`](docs/FLOWCHART.md) | Diagram node list |
+**Three inputs, one line:** FASTQ / BAM / query VCF → **VS-1** → 167K sites → analyses (flowchart above).
 
 ## Related
 
