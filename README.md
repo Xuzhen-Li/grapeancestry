@@ -11,7 +11,7 @@ This repo is for breeders and classrooms that hand in a **query** sample or open
 
 **Tonight hand-in:** Cloud → `chip.json` · Suite → `*.sample-first-v2.report.html` · Public docs (Lane A) → read only (no file).
 
-**Start here:** [`docs/GUIDELINE.md`](docs/GUIDELINE.md) — usage lanes, claim boundaries, and the demo report walkthrough (screenshots + LocusZoom). Hand-in is a **filename**, not every sidebar tab.
+**Start here:** [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) — step-by-step onboarding (docs today vs image-in-hand). Deep read / screenshots: [`docs/GUIDELINE.md`](docs/GUIDELINE.md). Hand-in is a **filename**, not every sidebar tab.
 
 ![GrapeAncestry analysis flowchart](docs/flowchart_vs1_analysis_v2.png)
 
@@ -26,7 +26,7 @@ Only **OIV 225** colour GS is decision-grade today; full claim rules live in the
 | Lane | Who | What you do | Hand-in |
 |------|-----|-------------|---------|
 | **A · Public docs** | Anyone | Open **Start here** (GUIDELINE); use screenshots as the walkthrough | read only |
-| **B · Local suite** | Lab with private suite checkout | Commands live in GUIDELINE (and upcoming USER_GUIDE) — **not** copy-paste from this clone | `*.sample-first-v2.report.html` |
+| **B · Local suite** | Lab with private suite checkout | Commands live in GUIDELINE (and USER_GUIDE) — **not** copy-paste from this clone | `*.sample-first-v2.report.html` |
 | **C · Cloud** | Classroom Streamlit | Upload a **167K-site query VCF** (not FASTQ) | `chip.json` |
 
 Panel ID `HUN89` ≠ report stem `HUN89_query`. Cloud notes: [`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md).
