@@ -4,18 +4,34 @@
 
 LocusZoom for panel GWAS leads (e.g. OIV 225 region) with query GT overlay.
 
-## Scripts
+## Inputs
 
-Interactive dashboard + `results/gwas/**/locuszoom.json`
+- `results/gwas/**/locuszoom.json` (or equivalent per-trait payload)
+- Query VCF for genotype strip
 
-## Statistical / file outputs
+## Commands
 
-Lead SNP GT for this sample; site table with p/β
+```bash
+grapeancestry gwas --pheno data/phenotype.tsv --curated
+grapeancestry analyze --sample Ages
 
-## Visualization outputs
+# Interactive:
+#   src/grapeancestry/report/interactive_dashboard.py
+#   GWAS locuszoom payloads under results/gwas/
+```
+
+## Outputs
+
+| Artifact | Meaning |
+|----------|---------|
+| Lead SNP GT for this sample | Overlay strip |
+| Site table with p/β | Panel association context |
+
+## Plots
 
 GWAS LocusZoom + genotype overlay bars/table.
 
-## Claim
+## Notes
 
-Strip colour = genotype, not LD.
+- Strip colour = **genotype**, not LD.
+- Panel association ≠ observed customer phenotype; GS score ≠ phenotype.

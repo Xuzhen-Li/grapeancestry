@@ -1,10 +1,11 @@
 # Analysis steps (fine-grained)
 
-**DIY no-kit path:** `00a`–`13b`. **Optional** Chip Companion: `14a`–`14b`.
+**DIY no-kit path:** `00a`–`13b` (ends at sample-first V2 HTML).  
+**Optional Chip Companion:** `14a`–`14b` (`chip-report` / Cloud JSON — not required for v1 HTML).
 
 One markdown per sub-step. Names use **`00a`…`14b`** so order stays obvious.
 
-**Legend:** `00*` = data preparation (before any customer sample) · `01*`+ = per-sample analysis · each page lists scripts, statistical outputs, and visualization outputs.
+**Legend:** `00*` = data preparation (before any customer sample) · `01*`+ = per-sample analysis · each page lists **Goal / Inputs / Commands / Outputs / Plots / Notes**.
 
 | Step | Doc | Focus |
 |------|-----|-------|
@@ -47,8 +48,8 @@ One markdown per sub-step. Names use **`00a`…`14b`** so order stays obvious.
 ## Suggested reading order
 
 1. Data prep: `00a` → `00g` (skip `00f`/`00g` if ancestry-only)  
-2. Per sample (DIY / v1 product): `01a` → `13b` → `*.sample-first-v2.report.html`  
-3. **Optional** Cloud JSON only: `14a` → `14b` (skip for Docker kit / DIY HTML)  
+2. Per sample (**DIY / v1 HTML**): `01a` → `13b` → `*.sample-first-v2.report.html` — **skip 14\*** for v1 HTML  
+3. **Optional** Cloud JSON only: `14a` → `14b` (Chip Companion; skip for Docker kit / DIY HTML)
 
 Also: [../REPO_MAP.md](../REPO_MAP.md) · [../SCRIPTS.md](../SCRIPTS.md) · [../PIPELINE.md](../PIPELINE.md) · [../GUIDELINE.md](../GUIDELINE.md).
 

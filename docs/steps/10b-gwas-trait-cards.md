@@ -2,20 +2,38 @@
 
 ## Goal
 
-Present per-trait results and imbalance warnings on the report/Cloud cards.
+Present per-trait GWAS results and imbalance warnings on the report / Cloud cards.
 
-## Scripts
+## Inputs
 
-`breeding/methods_doc.py` · `cloud/mas.py`, `card.py`
+- GWAS summaries from 10a
+- Query VCF only for GT overlay fields
 
-## Statistical / file outputs
+## Commands
 
-Card fields: top site, N, coverage, Bayes/p summaries as available
+```bash
+# Cards assembled on report / Cloud paths:
+grapeancestry analyze --sample Ages
+grapeancestry chip-report --vcf results/Ages.vcf.gz --out chip.json
 
-## Visualization outputs
+# Libraries:
+#   src/grapeancestry/breeding/methods_doc.py
+#   src/grapeancestry/cloud/mas.py · card.py
+#   src/grapeancestry/report/build_report.py
+```
 
-Sample evidence / MAS cards.
+## Outputs
 
-## Claim
+| Artifact | Meaning |
+|----------|---------|
+| Card fields | Top site, N, coverage, Bayes/p summaries as available |
+| Imbalance warnings | Binary case/control n when relevant |
 
-Panel GWAS ≠ customer measured phenotype.
+## Plots
+
+Sample evidence / MAS cards in HTML or Cloud UI.
+
+## Notes
+
+- **Panel GWAS ≠ customer measured phenotype.**
+- Score ≠ phenotype (see also GS Step 11b).

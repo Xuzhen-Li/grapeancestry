@@ -2,35 +2,38 @@
 
 ## Goal
 
-Build the analysis matrix: panel genotypes at chip sites as a dosage `npz` (preferred over merging huge VCFs every run).
-
-## Scripts / entrypoints
-
-| Role | Path |
-|------|------|
-| Dosage build/load | `src/grapeancestry/core/dosage.py` (`python -m grapeancestry.core.dosage`) |
-| Merge helper (artifact only) | `src/grapeancestry/core/merge_ref.py` |
+Build the analysis matrix: panel genotypes at chip sites as a dosage cache (preferred over merging huge VCFs every run).
 
 ## Inputs
 
-- Panel VCF at chip sites (GT)  
-- Sample order matching metadata  
+- Panel VCF at chip sites (GT)
+- Sample order matching metadata from Step 00a
 
-## Statistical / file outputs
+## Commands
+
+```bash
+# Primary build (module entry — not a grapeancestry subcommand):
+python -m grapeancestry.core.dosage \
+  --panel-vcf data/panel/panel167k_2449.vcf.gz \
+  --out-npz results/cache/panel_dosage_167k.npz --full
+
+# Library: src/grapeancestry/core/dosage.py
+# Optional 2449+query VCF artifact only (not the analysis matrix):
+#   src/grapeancestry/core/merge_ref.py
+```
+
+## Outputs
 
 | Artifact | Meaning |
 |----------|---------|
 | `results/cache/panel_dosage_*.npz` | **Primary analysis matrix** for IBS/PCA/ADMIX/GS |
-| Optional merged VCF | 2449+query convenience file—not the analysis matrix |
+| Optional merged VCF | Convenience 2449+query file — not the analysis matrix |
 
-## Visualization outputs
+## Plots
 
 None at build time.
 
-## CLI example
+## Notes
 
-```bash
-python -m grapeancestry.core.dosage \
-  --panel-vcf data/panel/panel167k_2449.vcf.gz \
-  --out-npz results/cache/panel_dosage_167k.npz --full
-```
+- Prefer `panel_dosage_167k.npz`; smoke tests may fall back to a smaller cache.
+- Downstream identity / project / GS all resolve the cache via `src/grapeancestry/core/dosage.py` (`resolve_cache`).

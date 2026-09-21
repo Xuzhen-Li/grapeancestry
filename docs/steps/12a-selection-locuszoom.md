@@ -2,16 +2,36 @@
 
 ## Goal
 
-Interactive regional view of among-Grp Fst / selection windows.
+Interactive regional view of among-Grp Fst / selection windows (panel context).
 
-## Scripts
+## Inputs
 
-`interactive_dashboard.py` + selection `locuszoom.json`
+- `results/selection/locuszoom.json` (from `grapeancestry selection` / selscan)
+- Query GT only as overlay counts
 
-## Statistical / file outputs
+## Commands
 
-Window site metrics; query GT counts in window
+```bash
+grapeancestry selection --half-bp 50000 --top 40
+grapeancestry analyze --sample Ages
 
-## Visualization outputs
+# Interactive embed:
+#   src/grapeancestry/report/interactive_dashboard.py
+#   selection locuszoom.json payload
+```
 
-LocusZoom scatter + gene track + GT legend.
+## Outputs
+
+| Artifact | Meaning |
+|----------|---------|
+| Window site metrics | Among-all-Grps panel regional context |
+| Query GT counts in window | Overlay only |
+
+## Plots
+
+LocusZoom scatter + gene track + GT legend (Selection door).
+
+## Notes
+
+- Selection LocusZoom is **among-all-Grps panel regional context only**.
+- Sweep rows still point at exact Manhattan points (09a/09b), not arbitrary LZ windows.
