@@ -1,5 +1,5 @@
 # platform/
 
-Seams and notes for four doors: **pipeline**, **report**, **viz**, **cloud**.
+Local notes for grapevine suite seams (pipeline / report / viz / cloud).
 
-Thick engines live under `src/grapeancestry/`. This tree documents the seams, not a second implementation dump.
+**Not** the kit SPI. Thin cross-crop contracts live in [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit) `platform/`. Prefer that repo for “add another crop”; keep this folder as grape-lab seam notes only.
