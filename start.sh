@@ -12,6 +12,8 @@ TAR="grapeancestry-v1.0.0-amd64.tar"
 ALLOW_INCOMPLETE="${ALLOW_INCOMPLETE:-0}"
 
 mkdir -p input output settings
+# Host uid (e.g. 501 on macOS) must write auth.json; image default mambauser may differ.
+chmod a+rwx input output settings 2>/dev/null || true
 
 # Colima sockets
 if [[ -S "${HOME}/.colima/default/docker.sock" ]]; then
@@ -76,9 +78,14 @@ if docker ps -a --format '{{.Names}}' | grep -qx "$NAME"; then
   docker rm -f "$NAME" >/dev/null 2>&1 || true
 fi
 
-echo "Starting $NAME ($IMAGE) on :8501 (UI) and :8502 (reports)…"
+HOST_UID="$(id -u)"
+HOST_GID="$(id -g)"
+
+echo "Starting $NAME ($IMAGE) on :8501 (UI) and :8502 (reports) as ${HOST_UID}:${HOST_GID}…"
 echo "NEVER docker push $IMAGE (panel assets inside)."
 docker run -d --name "$NAME" \
+  --user "${HOST_UID}:${HOST_GID}" \
+  -e HOME=/tmp \
   -p 8501:8501 -p 8502:8502 \
   -v "$ROOT/input:/input" \
   -v "$ROOT/output:/output" \

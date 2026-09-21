@@ -21,15 +21,15 @@ GrapeAncestry places a **new grapevine query** against a **frozen 2449 × 167K**
 
 | Path | What you do | Outcome |
 |------|-------------|---------|
-| **Docker kit** | Download tar from **`[DOCKER_TAR_URL — fill before publish]`**, put next to `start.sh`, run `./start.sh` | Product report **`*.sample-first-v2.report.html`** (UI **8501** · reports **8502**) |
+| **Docker kit** | Download tar from **`Zenodo Restricted record — DOI after publish`**, put next to `start.sh`, run `./start.sh` | Product report **`*.sample-first-v2.report.html`** (UI **8501** · reports **8502**) |
 | **Demo on GitHub** | Screenshots below + [`docs/GUIDELINE.md`](docs/GUIDELINE.md) + [`demo/`](demo/) Ages HTML | **View-only** — no product report from this path |
 | **DIY, no kit** | Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git. Follow [`docs/steps/`](docs/steps/) / [`docs/DIY_SPINE.md`](docs/DIY_SPINE.md) `00a`–`13b`. | Your own **`*.sample-first-v2.report.html`** |
 
-**v1 product report is `*.sample-first-v2.report.html` only.** Optional Cloud `chip.json` is Cloud demoted — not a fourth parallel path ([`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md)).
+**v1 product report is `*.sample-first-v2.report.html` only.** Optional Cloud `chip.json` is demoted — not a fourth parallel path ([`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md)).
 
 ## Path A — Docker kit (load published tar)
 
-1. Download **`grapeancestry-v1.0.0-amd64.tar`** from **`[DOCKER_TAR_URL — fill before publish]`** (published elsewhere — not a public GitHub Release).
+1. Download **`grapeancestry-v1.0.0-amd64.tar`** via **Zenodo Restricted record — DOI after publish** (not a public GitHub Release).
 2. Place the tar next to `start.sh` / `start.command` / `start.bat` in this repo (or your customer drop folder).
 3. Run:
 
@@ -151,9 +151,9 @@ ADMIXTURE 1.3.0 (linux x86_64): [download](https://dalexander.github.io/admixtur
 |-----|------|
 | [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) | How to start (kit + public browse) |
 | [`docs/FAQ.md`](docs/FAQ.md) · [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | First hour, FAQ, terms |
+| [`docs/CODE_AVAILABILITY.md`](docs/CODE_AVAILABILITY.md) | Git URL + Docker/Zenodo note |
 | [`docs/GUIDELINE.md`](docs/GUIDELINE.md) | How to read the report |
 | [`docs/steps/`](docs/steps/) · [`docs/DIY_SPINE.md`](docs/DIY_SPINE.md) | How to reproduce (DIY `00a`–`13b`) |
-| [`docs/GROKBOT_GITHUB_PROMPTS.md`](docs/GROKBOT_GITHUB_PROMPTS.md) | Worker cards for maintainers |
 
 ## Author
 

@@ -14,7 +14,7 @@ Same three paths as the [README](../README.md#three-ways-in) (Docker kit → Dem
 
 | Path | What you get |
 |------|----------------|
-| **Docker kit** | Download tar from **`[DOCKER_TAR_URL — fill before publish]`**, put next to `start.sh`, `./start.sh` → full UI. Demos Ages + HUN89_query. FASTQ/BAM/VCF → V2 HTML. |
+| **Docker kit** | Download tar from **`Zenodo Restricted record — DOI after publish`**, put next to `start.sh`, `./start.sh` → full UI. Demos Ages + HUN89_query. FASTQ/BAM/VCF → V2 HTML. |
 | **Demo on GitHub** | README screenshots + GUIDELINE + `demo/` Ages HTML (view-only). |
 | **DIY, no kit** | Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git. Follow `docs/steps/00a`–`13b`. |
 | **Cloud `chip.json`** | Optional Cloud JSON only — **not** the v1 product. |
@@ -28,7 +28,7 @@ Steps that need the fat image are marked **(image)**. Public-clone browse steps 
 ## 1. First start **(image)**
 
 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/). On **Apple Silicon**, use a **linux/amd64** engine (ADMIXTURE 1.3.0 is x86_64: [download page](https://dalexander.github.io/admixture/download.html)).
-2. Download `grapeancestry-v1.0.0-amd64.tar` from **`[DOCKER_TAR_URL — fill before publish]`**. Place it next to `start.sh` (or `start.command` / `start.bat`). Create folders as needed — the launcher runs `mkdir -p input output settings`.
+2. Download `grapeancestry-v1.0.0-amd64.tar` from **`Zenodo Restricted record — DOI after publish`**. Place it next to `start.sh` (or `start.command` / `start.bat`). Create folders as needed — the launcher runs `mkdir -p input output settings`.
 3. Run:
 
 ```bash

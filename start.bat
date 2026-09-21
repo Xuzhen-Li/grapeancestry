@@ -1,11 +1,16 @@
 @echo off
 REM GrapeAncestry v1.0.0 — NEVER docker push the fat image (panel inside).
+REM Prefer start.sh on macOS/Linux/Colima (sets --user host uid for bind mounts).
 setlocal
 cd /d "%~dp0"
 
 if not exist input mkdir input
 if not exist output mkdir output
 if not exist settings mkdir settings
+REM world-writable mounts so container can write auth.json / reports
+icacls input /grant Everyone:(OI)(CI)F >nul 2>&1
+icacls output /grant Everyone:(OI)(CI)F >nul 2>&1
+icacls settings /grant Everyone:(OI)(CI)F >nul 2>&1
 
 set IMAGE=grapeancestry:1.0.0
 set NAME=grapeancestry
@@ -45,7 +50,7 @@ if errorlevel 1 (
       echo STOP: No Dockerfile and no tar.
       exit /b 1
     )
-    echo ALLOW_INCOMPLETE=1 — building incomplete image (Analyze expected to stop without private assets) ...
+    echo ALLOW_INCOMPLETE=1 — building incomplete image ...
     docker build --platform linux/amd64 -t %IMAGE% .
     if errorlevel 1 (
       echo STOP: docker build failed.
@@ -62,7 +67,8 @@ if errorlevel 1 (
 docker rm -f %NAME% >nul 2>&1
 echo Starting %NAME% on :8501 and :8502 ...
 echo NEVER docker push %IMAGE%.
-docker run -d --name %NAME% -p 8501:8501 -p 8502:8502 -v "%cd%\input:/input" -v "%cd%\output:/output" -v "%cd%\settings:/settings" %IMAGE%
+REM Docker Desktop on Windows usually maps binds as writable; HOME=/tmp avoids writing under /home/mambauser.
+docker run -d --name %NAME% -e HOME=/tmp -p 8501:8501 -p 8502:8502 -v "%cd%\input:/input" -v "%cd%\output:/output" -v "%cd%\settings:/settings" %IMAGE%
 if errorlevel 1 (
   echo STOP: docker run failed.
   exit /b 1

@@ -6,7 +6,7 @@ Fact-checked from Gemini Pass A (corrected). Commands and claims fenced to this 
 
 Use the same three paths as the README (**Three ways in**) — do not treat this section as a second entrance map:
 
-1. **Docker kit** — [README Path A](../README.md#path-a--docker-kit-load-published-tar). Tar from `[DOCKER_TAR_URL — fill before publish]` → `./start.sh` (macOS `start.command` / Windows `start.bat`).
+1. **Docker kit** — [README Path A](../README.md#path-a--docker-kit-load-published-tar). Tar from `Zenodo Restricted record — DOI after publish` → `./start.sh` (macOS `start.command` / Windows `start.bat`).
 2. **Demo on GitHub** — [README Path B](../README.md#path-b--demo-on-github-no-docker). Ages HTML via `demo/` http.server is a **view-only showcase — not a product hand-in** ([GUIDELINE](GUIDELINE.md)).
 3. **DIY, no kit** — [README Path C](../README.md#path-c--diy-without-our-kit) and [`DIY_SPINE.md`](DIY_SPINE.md). Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git.
 
@@ -15,7 +15,7 @@ Data bans: [`DATA_NOTICE.md`](../DATA_NOTICE.md). Glossary: [`GLOSSARY.md`](GLOS
 ## FAQ
 
 1. **BAM `@SQ` fail?** Accepted BAM must already use **VS-1** contig names. `chr1` / 12X / PN40024 → fail → use FASTQ.
-2. **Missing tar?** A docs-only clone cannot finish Analyze. Get `grapeancestry-v1.0.0-amd64.tar` from `[DOCKER_TAR_URL — fill before publish]`.
+2. **Missing tar?** A docs-only clone cannot finish Analyze. Get `grapeancestry-v1.0.0-amd64.tar` from `Zenodo Restricted record — DOI after publish`.
 3. **MIT ≠ panel?** **MIT = code license only.** Panel genotypes/phenotypes are not MIT (`DATA_NOTICE.md`).
 4. **ENA 12Xv2 BAM URL?** Download-demo only (`ERR16654874` / `PRJEB94459`). It is **not** VS-1; Analyze-as-BAM must fail `@SQ`.
 5. **8501 vs 8502?** 8501 = product UI; 8502 = `*.sample-first-v2.report.html` server.
