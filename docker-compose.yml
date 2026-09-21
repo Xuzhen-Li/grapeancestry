@@ -1,3 +1,4 @@
+# Local compose wiring for the GrapeAncestry companion stack.
 # Customer image: Streamlit UI + linux ADMIXTURE. Mount data/ (frozen Q/P + optional panel VCF).
 services:
   grapeancestry:
