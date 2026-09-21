@@ -1,10 +1,5 @@
-# Profiles
+# profiles/
 
-A **profile** is everything that makes the platform speak *your* chip:
+Panel profile hooks: point a capture panel at sites, reference, frozen axes, and hand-in names.
 
-1. Copy [`../templates/`](../templates/) (or the grapevine example).  
-2. Point at your sites BED / panel metadata / frozen-axis files (local paths or download URLs you control).  
-3. Write claim boundaries ([`../docs/CLAIMS.md`](../docs/CLAIMS.md)).  
-4. Keep large matrices **out** of git.
-
-Example: [`examples/grapevine-167k/`](examples/grapevine-167k/).
+Grapevine 167K walkthrough stays in this repo; cross-panel scaffold process: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
