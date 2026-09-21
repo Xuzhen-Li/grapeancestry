@@ -1,9 +1,4 @@
 # grapeancestry
-
-<p align="center">
-  <img src="docs/logo/grapeancestry_logo.png" alt="GrapeAncestry logo" width="160" />
-</p>
-
 **GrapeAncestry v1.0.0** — local Docker app for the grapevine **167K** capture panel on **VS-1**. Place a new query on frozen panel axes and open a sample-first V2 HTML report.
 
 Not a whole-genome resequencing suite. Optional cross-crop scaffold: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).

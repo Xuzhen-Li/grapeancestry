@@ -1,7 +1,3 @@
-# GrapeAncestry mark
+# GrapeAncestry mark (drafts)
 
-**Chosen mark (2026-09-21):** `grapeancestry_logo.png` — grapeC: single berry + frozen-axis crosshair / marker ring.
-
-Source concepts: leaf (A), cluster+query berry (B), single berry+axes (C). Jason picked **C**.
-
-Use for README / app icon drafts. Transparent PNG.
+Temporary grapeC pick was rejected for public README (2026-09-21). Still iterating — do not treat as final.
