@@ -1,8 +1,4 @@
-"""GrapeAncestry Chip Companion — online tool for the 167K capture panel.
-
-Upload a panel-site VCF (no bcftools). In-panel IDs get Science-named K=8
-lookup; every sample gets chip QC, IBS vs 2449, and colour MAS / GS if packed.
-"""
+"""Streamlit UI entry for the GrapeAncestry companion dashboard."""
 
 from __future__ import annotations
 
