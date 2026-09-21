@@ -16,7 +16,7 @@ GitHub does **not** run this HTML in the blob viewer. Clone or download, then:
 
 ```bash
 cd demo
-python -m http.server 8000
+python3 -m http.server 8000
 # open http://localhost:8000/results/Ages.sample-first-v2.report.html
 ```
 

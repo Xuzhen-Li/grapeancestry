@@ -10,7 +10,7 @@
 
 | When | What you can do |
 |------|-----------------|
-| **Public GitHub tree today** (`Xuzhen-Li/grapeancestry`) | Read docs + flowchart + demo screenshots. **No** runnable `grapeancestry` CLI, no VS-1, no 2449 dosage cache in this tree. |
+| **Public GitHub tree today** (`Xuzhen-Li/grapeancestry`) | Read docs + open Ages HTML (`cd demo && python3 -m http.server`). `src/` may be present, but **no** VS-1 / 2449 dosage ship here — end-to-end `grapeancestry run` is **expected to stop** until you have private assets. |
 | **Local lab suite** (private checkout, if you have it) | `http.server` to open finished demo HTML; some CLI paths when conda + assets are installed. |
 | **Customer image in hand** (`grapeancestry:1.0.0` / `./start.sh`) | Full UI at **http://localhost:8501**: three inputs (FASTQ / BAM / VCF on **VS-1**), demos, live log, V2 HTML report. |
 
@@ -113,7 +113,7 @@ Do not strip contig prefixes hoping the caller will “just work”.
 ```bash
 # path = local suite root (not the docs-only GitHub clone)
 cd /path/to/local-suite
-python -m http.server
+python3 -m http.server
 # http://localhost:8000/results/Ages.sample-first-v2.report.html
 ```
 
@@ -193,7 +193,7 @@ Checklist:
 | [`CHIP_COMPANION.md`](CHIP_COMPANION.md) | Cloud vs Lab doors |
 | Public README | Short intro + honest “docs first” status |
 
-**Note:** CLI commands such as `grapeancestry run` and full matrices land with the private suite / customer image — they are **not** copy-paste targets from this docs-only clone until published.
+**Note:** Prefer a **venv** if you `pip install -e .`. Without VS-1 + dosage cache, `grapeancestry run` / Docker `./start.sh` (customer pack only) / `chip-report` are **expected to stop**. Tonight’s copy-paste path on a fresh clone is **Ages `http.server` only**.
 
 ---
 

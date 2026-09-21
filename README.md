@@ -59,9 +59,11 @@ Open the shipped HTML (view-only; does **not** create a hand-in):
 
 ```bash
 cd demo
-python -m http.server 8000
+python3 -m http.server 8000
 # http://localhost:8000/results/Ages.sample-first-v2.report.html
 ```
+
+**Tonight, this is the only command that works on a fresh public clone.** It is view-only.
 
 Keep `demo/assets/` beside `demo/results/`. Notes: [`demo/README.md`](demo/README.md). Full sidebar screenshots live in [`docs/GUIDELINE.md`](docs/GUIDELINE.md) only — not repeated here.
 
@@ -77,9 +79,9 @@ Keep `demo/assets/` beside `demo/results/`. Notes: [`demo/README.md`](demo/READM
 
 Short reminders; full steps stay in USER_GUIDE.
 
-- **B · Docker customer image** — unpack package → `./start.sh` → http://localhost:8501 → hand-in `*.sample-first-v2.report.html`.
-- **C · Cloud** — upload 167K-site query VCF → hand in `chip.json` ([CHIP_COMPANION](docs/CHIP_COMPANION.md)).
-- **D · Local suite** — needs conda env + panel assets not in this clone.
+- **B · Docker (customer package, not this git tree)** — only if you were given the image pack with `start.sh` / `start.command`. Fresh clone has **no** `./start.sh`.
+- **C · Cloud** — when the classroom Streamlit is up: upload 167K-site query VCF → `chip.json` ([CHIP_COMPANION](docs/CHIP_COMPANION.md)). Not guaranteed from GitHub alone tonight.
+- **D · Local suite / `pip install -e .`** — use a **venv**. Without VS-1 + dosage cache, `grapeancestry run` / `chip-report` are **expected to stop**. Do not `pip install` system-wide (PEP 668).
 
 BAM tip: if `@SQ` looks like `chr1` / 12X / PN40024, re-align to VS-1 or start from FASTQ.
 
