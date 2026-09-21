@@ -1,3 +1,4 @@
+# Pip dependencies for the GrapeAncestry suite core.
 # Streamlit Cloud / pip-only chip companion
 streamlit>=1.30
 numpy>=1.24
