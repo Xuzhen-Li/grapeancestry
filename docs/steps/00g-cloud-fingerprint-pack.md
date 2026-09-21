@@ -2,6 +2,8 @@
 
 ## Goal
 
+**Optional** for Cloud / Steps **14a–14b** — not required for DIY **13b** HTML.
+
 Pack compact reference fingerprints for Streamlit Cloud / `chip-report` (no bwa on Cloud).
 
 ## Inputs
