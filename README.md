@@ -1,80 +1,39 @@
-# grapeancestry
-**GrapeAncestry v1.0.0** — local Docker app for the grapevine **167K** capture panel on **VS-1**. Place a new query on frozen panel axes and open a sample-first V2 HTML report.
+# GrapeAncestry
 
-Not a whole-genome resequencing suite. Optional cross-crop scaffold: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
+<p align="center">
+  <img src="docs/logo/grapeancestry_logo.png" alt="GrapeAncestry logo" width="128" />
+</p>
+
+**GrapeAncestry v1.0.0** places a new grapevine query on a frozen **2449 × 167K** panel built on **VS-1**, then writes a sample-first V2 HTML report.
+
+Not a whole-genome resequencing suite. **MIT = code only** (panel genotypes/phenotypes are not MIT — [`DATA_NOTICE.md`](DATA_NOTICE.md)). Author: **李旭真 / Li Xuzhen** · [ORCID 0000-0003-3670-6657](https://orcid.org/0000-0003-3670-6657).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![ORCID](https://img.shields.io/badge/ORCID-0000--0003--3670--6657-a6ce39)](https://orcid.org/0000-0003-3670-6657)
 
-## What this is
+## Analysis flow
 
-GrapeAncestry places a **new grapevine query** against a **frozen 2449 × 167K** reference on **VS-1** (Dong et al. 2023 *Science*, [doi:10.1126/science.add8655](https://doi.org/10.1126/science.add8655)). Same sample → capture QC, identity/kinship, frozen PCA + ADMIXTURE, IBS NJ tree, passport-style cards, and — where evidence supports ranking — colour genomic selection.
+**FASTQ / BAM (already on VS-1) / query VCF → VS-1 → 167K sites → `*.sample-first-v2.report.html`.**
 
-- Query VCF = **167K sites**, not the 2449 dosage matrix.
-- PCA / ADMIXTURE are **frozen**; new samples are projected.
-- Only **OIV 225** colour GS is decision-grade today; **score ≠ phenotype** (rules in GUIDELINE).
-- **ID trap:** panel row `HUN89` ≠ report stem `HUN89_query`.
+![GrapeAncestry analysis flowchart](docs/flowchart_vs1_analysis_v2.png)
 
-**MIT = code only.** Panel genotypes / phenotypes are not MIT. Full data policy: [`DATA_NOTICE.md`](DATA_NOTICE.md).
+*Claim rules and dashed vs solid modules: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). VS-1: Dong et al. 2023 *Science* ([doi:10.1126/science.add8655](https://doi.org/10.1126/science.add8655)).*
 
-## Three ways in
+## Use it
 
 | Path | What you do | Outcome |
 |------|-------------|---------|
-| **Docker kit** | Download tar from **`Zenodo Restricted record — DOI after publish`**, put next to `start.sh`, run `./start.sh` | Product report **`*.sample-first-v2.report.html`** (UI **8501** · reports **8502**) |
-| **Demo on GitHub** | Screenshots below + [`docs/GUIDELINE.md`](docs/GUIDELINE.md) + [`demo/`](demo/) Ages HTML | **View-only** — no product report from this path |
-| **DIY, no kit** | Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git. Follow [`docs/steps/`](docs/steps/) / [`docs/DIY_SPINE.md`](docs/DIY_SPINE.md) `00a`–`13b`. | Your own **`*.sample-first-v2.report.html`** |
+| **Docker kit** | Get `grapeancestry-v1.0.0-amd64.tar` via **Zenodo Restricted — DOI after publish**; put next to `./start.sh`; run it | Product **`*.sample-first-v2.report.html`** — UI **http://127.0.0.1:8501** · reports **:8502** |
+| **Demo** | `cd demo && python3 -m http.server 8000` → Ages HTML | **View-only** showcase |
+| **DIY** | Stage your own VS-1 + frozen 2449×167K assets (not in git) | See **Docs** for `docs/steps/` |
 
-**v1 product report is `*.sample-first-v2.report.html` only.** Optional Cloud `chip.json` is demoted — not a fourth parallel path ([`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md)).
+**Docker (short):** `./start.sh` (macOS `start.command` / Windows `start.bat`) creates `input/` `output/` `settings/`, loads `grapeancestry:1.0.0` when missing, and opens the UI. A docs-only clone without the tar cannot finish Analyze. Never `docker push` the fat image. Detail: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
 
-## Path A — Docker kit (load published tar)
+v1 product file is **`*.sample-first-v2.report.html` only** (optional Cloud `chip.json` is not a fourth path).
 
-1. Download **`grapeancestry-v1.0.0-amd64.tar`** via **Zenodo Restricted record — DOI after publish** (not a public GitHub Release).
-2. Place the tar next to `start.sh` / `start.command` / `start.bat` in this repo (or your customer drop folder).
-3. Run:
+## What you get
 
-```bash
-./start.sh
-# macOS: double-click start.command
-# Windows: start.bat
-```
-
-The launcher creates `input/` `output/` `settings/`, loads `grapeancestry:1.0.0` from the tar when needed, and starts the container on **8501** + **8502**.
-
-4. Open **http://127.0.0.1:8501** — first visit **Setup** (password twice, language, threads, optional lab name). Hash only in `./settings/auth.json` (scrypt). Later visits: password only.
-5. Sidebar: **Analysis** / **Demos** / **Settings**. Put FASTQ / BAM / VCF in `./input` (drag-and-drop, host copy, **Get Ages** / **Get HUN89_query**, or http(s) URL).
-6. Open the product report **`*.sample-first-v2.report.html`** on **http://127.0.0.1:8502** (copies under `./output/results/` + `./output/assets/`).
-
-**Never `docker push`** the fat image (panel inside). A docs-only clone **without** the tar cannot finish Analyze.
-
-Detail: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
-
-### BAM / intake rules (kit)
-
-- Accepted BAM = **VS-1** numeric contigs. `chr1` / 12X / PN40024 → fail → use FASTQ.
-- Sample URL in the UI download box (**download demo only**, not a VS-1 BAM):  
-  `https://ftp.sra.ebi.ac.uk/vol1/run/ERR166/ERR16654874/V5xL1xP2_Ages_3_5070.12Xv2.realigned.bam`  
-  ENA **ERR16654874** / **PRJEB94459**. File is **12Xv2** — Analyze-as-BAM must fail `@SQ`.
-- Treat as query on → report id `{id}_query`.
-- Step knobs = existing flags only (fastp, AdapterRemoval3, `bwa mem -k/-T`, `bwa aln -l/-n/-o`, `bcftools` `-q/-Q/-d/-C`, `--forceall`, `--pca-color`, `--admix-mode`, K=2–8).
-- Packed demos: **Ages** + **HUN89_query** (**ID trap:** panel row `HUN89` ≠ report stem `HUN89_query`).
-- **v1 product report is `*.sample-first-v2.report.html` only** — optional `chip.json` is demoted Cloud, not a parallel hand-in.
-
-## Path B — Demo on GitHub (no Docker)
-
-Browse the shipped Ages report:
-
-```bash
-cd demo
-python3 -m http.server 8000
-# http://127.0.0.1:8000/results/Ages.sample-first-v2.report.html
-```
-
-Keep `demo/assets/` beside `demo/results/`. How to read the sidebar: [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
-
-### Screenshot gallery (Ages)
-
-Packed demos include Ages and HUN89_query — panel id `HUN89` is not the same as report stem `HUN89_query`.
+Ages demo panels (existing shots only). Packed demos include Ages and HUN89_query — panel id `HUN89` ≠ report stem `HUN89_query`. Walkthrough: [`docs/GUIDELINE.md`](docs/GUIDELINE.md). Cite Ages/V5: Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z)).
 
 ![Sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
 
@@ -112,49 +71,19 @@ Packed demos include Ages and HUN89_query — panel id `HUN89` is not the same a
 
 *Panel research — LocusZoom regional panel map with query GT overlay (overlay ≠ “this sample was selected”).*
 
-More panels (incl. methods / downloads): [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
-
-**Ages source cite:** Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z); incl. **Ludovic Orlando**). Sample **V5** as stated in that paper.
-
-## Path C — DIY without our kit
-
-“Kit” here means the private Docker drop and/or [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
-
-If you run the workflow yourself:
-
-1. Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git.
-2. Follow the numbered workflow **[`docs/steps/`](docs/steps/) `00a` → `13b`**: prep → trim/map/call → QC → identity → placement → report HTML.
-3. Use commands that already live in `src/grapeancestry/`, `workflow/Snakefile`, and `config/` (map: [`docs/SCRIPTS.md`](docs/SCRIPTS.md) · science: [`docs/PIPELINE.md`](docs/PIPELINE.md)).
-
-Optional Cloud JSON (`14a`–`14b`) is demoted — not required for v1.
-
-```bash
-python3 -m venv .venv && source .venv/bin/activate
-pip install -e .
-# Without local VS-1 + panel caches, analyze/run are expected to stop.
-```
-
-## Analysis flow
-
-FASTQ / BAM / query VCF → **VS-1** → 167K sites → analyses → **`*.sample-first-v2.report.html`**.
-
-![GrapeAncestry analysis flowchart](docs/flowchart_vs1_analysis_v2.png)
-
-*Detail + claim caption: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). VS-1: Dong et al. 2023 *Science* ([doi:10.1126/science.add8655](https://doi.org/10.1126/science.add8655)).*
-
-
-ADMIXTURE 1.3.0 (linux x86_64): [download](https://dalexander.github.io/admixture/download.html).
-
-## Manuals
+## Docs
 
 | Doc | Role |
 |-----|------|
-| [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) | How to start (kit + public browse) |
-| [`docs/FAQ.md`](docs/FAQ.md) · [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | First hour, FAQ, terms |
-| [`docs/CODE_AVAILABILITY.md`](docs/CODE_AVAILABILITY.md) | Git URL + Docker/Zenodo note |
+| [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) | How to start |
+| [`docs/FAQ.md`](docs/FAQ.md) · [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | First hour + terms |
 | [`docs/GUIDELINE.md`](docs/GUIDELINE.md) | How to read the report |
-| [`docs/steps/`](docs/steps/) · [`docs/DIY_SPINE.md`](docs/DIY_SPINE.md) | How to reproduce (DIY `00a`–`13b`) |
+| [`docs/steps/`](docs/steps/) | DIY reproduce `00a`–`13b` |
+| [`docs/FLOWCHART.md`](docs/FLOWCHART.md) · [`docs/PIPELINE.md`](docs/PIPELINE.md) | Flow claims + methods |
+| [`DATA_NOTICE.md`](DATA_NOTICE.md) · [`docs/CODE_AVAILABILITY.md`](docs/CODE_AVAILABILITY.md) | What is / is not shipped |
 
 ## Author
 
 **李旭真 / Li Xuzhen** · [ORCID 0000-0003-3670-6657](https://orcid.org/0000-0003-3670-6657)
+
+Related: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit) · [grapevine-adna](https://github.com/Xuzhen-Li/grapevine-adna) · [genomics-theory-mining](https://github.com/Xuzhen-Li/genomics-theory-mining)
