@@ -4,11 +4,13 @@ Fact-checked from Gemini Pass A (corrected). Commands and claims fenced to this 
 
 ## First hour
 
-1. **Demo (view-only):** `cd demo && python3 -m http.server 8000` → open `http://127.0.0.1:8000/results/Ages.sample-first-v2.report.html` (keep `demo/assets/` beside `demo/results/`).
-2. **Docker kit:** Download `grapeancestry-v1.0.0-amd64.tar` from `[DOCKER_TAR_URL — fill before publish]`; place next to `start.sh`; run `./start.sh`. UI **http://127.0.0.1:8501** · reports **http://127.0.0.1:8502**.
-3. **DIY:** Stage your own VS-1 + 2449 panel assets, then follow [`docs/steps/`](steps/) **`00a`→`13b`**. Without those assets, analyze/run are expected to stop.
+Use the same three paths as the README (**Three ways in**) — do not treat this section as a second entrance map:
 
-Three paths / outcomes: [README](../README.md). Data bans: [`DATA_NOTICE.md`](../DATA_NOTICE.md).
+1. **Docker kit** — [README Path A](../README.md#path-a--docker-kit-load-published-tar). Tar from `[DOCKER_TAR_URL — fill before publish]` → `./start.sh`.
+2. **Demo on GitHub** — [README Path B](../README.md#path-b--demo-on-github-no-docker). Ages HTML via `demo/` http.server is a **view-only showcase — not a product hand-in**.
+3. **DIY, no kit** — [README Path C](../README.md#path-c--diy-without-our-kit) and [`DIY_SPINE.md`](DIY_SPINE.md). Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git.
+
+Data bans: [`DATA_NOTICE.md`](../DATA_NOTICE.md). Glossary: [`GLOSSARY.md`](GLOSSARY.md) (167K sites vs 2449 panel matrix).
 
 ## FAQ
 
@@ -21,7 +23,7 @@ Three paths / outcomes: [README](../README.md). Data bans: [`DATA_NOTICE.md`](..
 7. **Apple Silicon?** Use a **linux/amd64** engine; ADMIXTURE 1.3.0 is linux x86_64.
 8. **Empty `./input`?** Add FASTQ/BAM/VCF, or use **Get Ages** / **Get HUN89_query** in the kit UI.
 9. **OIV 225?** Only decision-grade colour GS today; **score ≠ phenotype**.
-10. **`chip.json`?** Optional Cloud/classroom path — not the v1 product (v1 = `*.sample-first-v2.report.html` only).
+10. **`chip.json`?** Optional Cloud path — **not** the v1 product (v1 = `*.sample-first-v2.report.html` only).
 11. **Never `docker push`?** The fat image contains panel assets.
 12. **Ages cite?** Sample **V5**; Noraz et al. 2026 *Nat Commun* [doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z).
 

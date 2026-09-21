@@ -28,4 +28,5 @@
 
 ## DIY without the kit
 
-Stage your own VS-1 + 167K panel assets locally, then follow [`docs/steps/`](docs/steps/) (`00a`–`13b`).
+Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git.
+

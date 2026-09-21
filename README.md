@@ -24,7 +24,7 @@ GrapeAncestry places a **new grapevine query** against a **frozen 2449 × 167K**
 |------|-------------|---------|
 | **Docker kit** | Download tar from **`[DOCKER_TAR_URL — fill before publish]`**, put next to `start.sh`, run `./start.sh` | Product report **`*.sample-first-v2.report.html`** (UI **8501** · reports **8502**) |
 | **Demo on GitHub** | Screenshots below + [`docs/GUIDELINE.md`](docs/GUIDELINE.md) + [`demo/`](demo/) Ages HTML | **View-only** — no product report from this path |
-| **DIY, no kit** | Stage your own VS-1 + 167K panel assets; follow [`docs/steps/`](docs/steps/) **`00a`–`13b`** | Your own **`*.sample-first-v2.report.html`** |
+| **DIY, no kit** | Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git. Follow [`docs/steps/`](docs/steps/) / [`docs/DIY_SPINE.md`](docs/DIY_SPINE.md) `00a`–`13b`. | Your own **`*.sample-first-v2.report.html`** |
 
 **v1 product report is `*.sample-first-v2.report.html` only.** Optional Cloud `chip.json` is classroom/Cloud demoted — not a fourth parallel path ([`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md)).
 
@@ -123,7 +123,7 @@ More panels (incl. methods / downloads): [`docs/GUIDELINE.md`](docs/GUIDELINE.md
 
 If you run the workflow yourself:
 
-1. Stage **your own** VS-1 reference + 167K sites / panel dosage / frozen PCA·ADMIXTURE (not in this git — see [`DATA_NOTICE.md`](DATA_NOTICE.md)).
+1. Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git.
 2. Follow the numbered workflow **[`docs/steps/`](docs/steps/) `00a` → `13b`**: prep → trim/map/call → QC → identity → placement → report HTML.
 3. Use commands that already live in `src/grapeancestry/`, `workflow/Snakefile`, and `config/` (map: [`docs/SCRIPTS.md`](docs/SCRIPTS.md) · science: [`docs/PIPELINE.md`](docs/PIPELINE.md)).
 

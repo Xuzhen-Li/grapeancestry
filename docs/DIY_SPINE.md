@@ -1,6 +1,8 @@
 # DIY spine (`00a`→`13b`)
 
-One-page map. Detail pages: [`steps/`](steps/). You must supply **VS-1 + 2449** assets (not in public git).
+One-page map for **Path C** (keep this table out of the README homepage). Detail pages: [`steps/`](steps/).
+
+Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git.
 
 | Step | Goal | Entry |
 |------|------|-------|

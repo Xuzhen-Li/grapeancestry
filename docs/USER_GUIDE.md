@@ -11,7 +11,7 @@
 |------|----------------|
 | **Docker kit** | Download tar from **`[DOCKER_TAR_URL — fill before publish]`**, put next to `start.sh`, `./start.sh` → full UI. Demos Ages + HUN89_query. FASTQ/BAM/VCF → V2 HTML. |
 | **Demo on GitHub** | README screenshots + GUIDELINE + `demo/` Ages HTML (view-only). |
-| **DIY, no kit** | Stage your own VS-1 + 167K panel assets; follow `docs/steps/00a`–`13b`. |
+| **DIY, no kit** | Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git. Follow `docs/steps/00a`–`13b`. |
 | **Cloud `chip.json`** | Optional classroom JSON only — **not** the v1 product. |
 
 v1 customer output: **`*.sample-first-v2.report.html`**. UI **http://127.0.0.1:8501** · report server **http://127.0.0.1:8502**.
