@@ -35,3 +35,6 @@ data/cloud/**
 !/settings/.gitkeep
 # Private customer image blob (never commit)
 /grapeancestry-v1.0.0-amd64.tar
+
+results/cache/
+*.npz

@@ -1,0 +1,31 @@
+# Data notice — GrapeAncestry public tree
+
+## What is in this GitHub repository
+
+- Source code (`src/`, `workflow/`, `app.py`, launchers)
+- Documentation (`docs/`, including GUIDELINE screenshots)
+- Ages **demo HTML** under `demo/` (view-only showcase)
+
+## What is NOT in git (and must not be added)
+
+- VS-1 FASTA / BWA index
+- Panel VCF / 2449 × 167K dosage caches / frozen Q·P·eigenvec
+- Customer FASTQ / BAM / CRAM
+- Fat image blob `grapeancestry-v1.0.0-amd64.tar` (or any `*.amd64.tar`)
+- `results/cache/*.npz`
+
+## License split
+
+- **MIT** applies to **code** in this repository.
+- Panel **genotypes** and **phenotypes** are **not** MIT and are not redistributed here.
+
+## Docker image policy
+
+- Product tag: `grapeancestry:1.0.0`
+- Customer file: `grapeancestry-v1.0.0-amd64.tar` — download from **`[DOCKER_TAR_URL 待填]`** (placeholder until published elsewhere).
+- **Never** `docker push` that fat image (panel assets inside).
+- **Never** attach the tar to a **public** GitHub Release.
+
+## DIY without the kit
+
+Stage your own VS-1 + 167K panel assets locally, then follow [`docs/steps/`](docs/steps/) (`00a`–`13b`).
