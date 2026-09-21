@@ -17,7 +17,7 @@ Not a whole-genome resequencing suite. **MIT = code only** (panel genotypes/phen
 
 ![GrapeAncestry analysis flowchart](docs/flowchart_vs1_analysis_v2.png)
 
-*Claim rules and dashed vs solid modules: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). VS-1: Dong et al. 2023 *Science* ([doi:10.1126/science.add8655](https://doi.org/10.1126/science.add8655)).*
+Solid/dashed rules: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). VS-1: Dong et al. 2023 Science ([doi:10.1126/science.add8655](https://doi.org/10.1126/science.add8655)).
 
 ## Use it
 
@@ -37,13 +37,13 @@ v1 deliverable is **`*.sample-first-v2.report.html` only** (optional Cloud `chip
 
 *First run — setup waterfall: local password, language, and threads (locks UI access only; does not encrypt data).*
 
-![Settings](docs/guideline_shots/ui/03-settings.png)
-
-*Settings — language, default thread count, change password, and log out.*
-
 ![Analysis home](docs/guideline_shots/ui/02-analysis-home.png)
 
 *After login — "2. Choose files" (FASTQ / BAM / VCF into `./input`).*
+
+![Settings](docs/guideline_shots/ui/03-settings.png)
+
+*Settings — language, default thread count, change password, and log out.*
 
 Screenshot gallery — Ages demo (existing shots only). Packed demos include Ages and HUN89_query — panel id `HUN89` ≠ report stem `HUN89_query`. Walkthrough: [`docs/GUIDELINE.md`](docs/GUIDELINE.md). Cite Ages/V5: Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z)).
 
