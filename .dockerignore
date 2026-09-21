@@ -1,3 +1,4 @@
+# Build-context noise for the companion Docker image.
 data/panel/*.vcf.gz
 data/ref/*.fa
 data/ref/*.gff3
