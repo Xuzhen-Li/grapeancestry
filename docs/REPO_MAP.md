@@ -8,7 +8,7 @@ What lives in this public tree, and what does not. Use this when the folder list
 |---------|----------------|
 | **Public GitHub** | Docs, flowchart, Ages HTML, Python source. No VS-1, no 2449 panel, no fat image. |
 | **Private tar + `start.sh`** | Full UI. Demos Ages + HUN89_query. FASTQ/BAM/VCF → V2 HTML. |
-| **Cloud `chip.json`** | Optional classroom path, not v1. |
+| **Cloud `chip.json`** | Optional Cloud path, not v1. |
 
 **One-line role:** grapevine **167K** public walkthrough (docs + Ages demo). Lab `src/` may exist in-tree but is **not** the newcomer default. Cross-panel *scaffold only*: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
 
@@ -24,7 +24,7 @@ What lives in this public tree, and what does not. Use this when the folder list
 | Which script / module does what | [SCRIPTS.md](SCRIPTS.md) |
 | Science / claim rules | [PIPELINE.md](PIPELINE.md) · [ANALYSIS_METHODS.md](ANALYSIS_METHODS.md) |
 | Onboarding / doors A–D | [USER_GUIDE.md](USER_GUIDE.md) |
-| Classroom cloud hand-in | [CHIP_COMPANION.md](CHIP_COMPANION.md) |
+| Optional Cloud JSON | [CHIP_COMPANION.md](CHIP_COMPANION.md) |
 | Add another crop panel | [`../profiles/`](../profiles/) · kit repo above |
 
 ## Top-level folders

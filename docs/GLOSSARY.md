@@ -15,7 +15,7 @@ Fact-checked from Gemini Pass A (corrected). Paper details only from the two cit
 | **OIV 225** | Only decision-grade colour GS today; **score ≠ phenotype**. |
 | **SDR proxy** | Unphased window proxy; not Science haplotypes H1–H5. |
 | **Selection overlay** | Panel Grp contrast + **query GT overlay** on regional maps; overlay ≠ “this sample was selected”. |
-| **chip.json** | Optional Cloud/classroom JSON; **not** the v1 primary product. |
+| **chip.json** | Optional Cloud JSON; **not** the v1 primary product. |
 | **Kit** | Private Docker tar + `start.sh` (and/or [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit) scaffold). |
 | **DIY** | Self-supply VS-1 + panel assets; follow `docs/steps/00a`–`13b`. |
 | **Ages / V5** | Public aDNA demo (Noraz et al. 2026 *Nat Commun*, [doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z)). |

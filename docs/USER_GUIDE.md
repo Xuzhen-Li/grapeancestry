@@ -12,7 +12,7 @@
 | **Docker kit** | Download tar from **`[DOCKER_TAR_URL — fill before publish]`**, put next to `start.sh`, `./start.sh` → full UI. Demos Ages + HUN89_query. FASTQ/BAM/VCF → V2 HTML. |
 | **Demo on GitHub** | README screenshots + GUIDELINE + `demo/` Ages HTML (view-only). |
 | **DIY, no kit** | Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git. Follow `docs/steps/00a`–`13b`. |
-| **Cloud `chip.json`** | Optional classroom JSON only — **not** the v1 product. |
+| **Cloud `chip.json`** | Optional Cloud JSON only — **not** the v1 product. |
 
 v1 customer output: **`*.sample-first-v2.report.html`**. UI **http://127.0.0.1:8501** · report server **http://127.0.0.1:8502**.
 
@@ -94,7 +94,7 @@ Screenshot walkthrough: [`GUIDELINE.md`](GUIDELINE.md).
 
 ## 4. Optional Chip Companion (`chip.json`)
 
-Not the v1 Docker product. When a classroom Cloud UI is available: upload a **167K-site query VCF** → export `chip.json`. See [`CHIP_COMPANION.md`](CHIP_COMPANION.md).
+Not the v1 Docker product. When a Cloud UI is available: upload a **167K-site query VCF** → export `chip.json`. See [`CHIP_COMPANION.md`](CHIP_COMPANION.md).
 
 ---
 
