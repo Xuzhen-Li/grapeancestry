@@ -1,5 +1,7 @@
 # Analysis steps (fine-grained)
 
+**DIY no-kit path:** `00a`–`13b`. **Optional** Chip Companion: `14a`–`14b`.
+
 One markdown per sub-step. Names use **`00a`…`14b`** so order stays obvious.
 
 **Legend:** `00*` = data preparation (before any customer sample) · `01*`+ = per-sample analysis · each page lists scripts, statistical outputs, and visualization outputs.
@@ -39,14 +41,14 @@ One markdown per sub-step. Names use **`00a`…`14b`** so order stays obvious.
 | 12b | [12b-gwas-locuszoom.md](12b-gwas-locuszoom.md) | GWAS LocusZoom (trait leads) |
 | 13a | [13a-build-report-payload.md](13a-build-report-payload.md) | Build report payload |
 | 13b | [13b-render-sample-first-html.md](13b-render-sample-first-html.md) | Render sample-first V2 HTML |
-| 14a | [14a-cloud-analyze-vcf.md](14a-cloud-analyze-vcf.md) | Cloud analyze query VCF |
-| 14b | [14b-emit-chip-json.md](14b-emit-chip-json.md) | Emit chip.json hand-in |
+| 14a | [14a-cloud-analyze-vcf.md](14a-cloud-analyze-vcf.md) | **Optional** Cloud analyze query VCF |
+| 14b | [14b-emit-chip-json.md](14b-emit-chip-json.md) | **Optional** emit `chip.json` (not v1 product) |
 
 ## Suggested reading order
 
 1. Data prep: `00a` → `00g` (skip `00f`/`00g` if ancestry-only)  
-2. Per sample: `01a` → `13b`  
-3. Cloud door: `14a` → `14b`  
+2. Per sample (DIY / v1 product): `01a` → `13b` → `*.sample-first-v2.report.html`  
+3. **Optional** Cloud JSON only: `14a` → `14b` (skip for Docker kit / DIY HTML)  
 
 Also: [../REPO_MAP.md](../REPO_MAP.md) · [../SCRIPTS.md](../SCRIPTS.md) · [../PIPELINE.md](../PIPELINE.md) · [../GUIDELINE.md](../GUIDELINE.md).
 

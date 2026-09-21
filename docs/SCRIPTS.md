@@ -61,7 +61,7 @@ CLI entry: `grapeancestry` (`src/grapeancestry/cli.py`) after `pip install -e .`
 
 | Domain | CLI | Primary modules |
 |--------|-----|-----------------|
-| IBS / kinship / PO | `grapeancestry identity` | `identity/run_ibs.py`, `ibs.py`, `parentage.py`, `fingerprint.py` |
+| IBS / kinship / PO | `grapeancestry identity` | `src/grapeancestry/identity/run_ibs.py`, `ibs.py`, `parentage.py`, `fingerprint.py` |
 | PCA project | `grapeancestry project` | `adna/project.py`, `pca_lock.py`, `smartpca_project.py` (+ `bin/gcta64`) |
 | ADMIXTURE project | `grapeancestry admix-project` | `adna/admix_project.py`, `admixture.py` (+ `bin/admixture`) |
 | Selection / Fst | `grapeancestry selection` | `adna/selection.py`, `popgen/selection_report.py`, `popgen/stats.py` |
@@ -77,7 +77,7 @@ CLI entry: `grapeancestry` (`src/grapeancestry/cli.py`) after `pip install -e .`
 ### Typical commands
 
 ```bash
-conda activate ga
+python3 -m venv .venv && source .venv/bin/activate  # or your lab env
 pip install -e ".[dev,web]"
 export PATH="$PWD/bin:$PATH"
 
@@ -97,11 +97,11 @@ grapeancestry chip-report --vcf results/Ages.vcf.gz --out chip.json
 | Output | Builder | Notes |
 |--------|---------|-------|
 | Interactive PCA / ADMIXTURE / NJ / LocusZoom | `report/interactive_dashboard.py` + `report/interactive_data.py` | Plotly/D3/LocusZoom from `assets/` when present (see grapeancestry `demo/assets`) |
-| Static PNG cards | `report/build_report.py` (matplotlib → base64) | Italy-style figures |
+| Static PNG cards | `src/grapeancestry/report/build_report.py` (matplotlib → base64) | Italy-style figures |
 | Selection Manhattan / heat | `popgen/selection_viz.py` | Panel Grp-vs-rest; query GT overlay only |
 | Damage / fragment length | `adna/damage_lite.py` | aDNA door |
 | Cloud Streamlit plots | `cloud/plot.py`, root `app.py` | VCF → cards |
-| Lab ADMIXTURE QC plots | `scripts/plot_science_k8_check.py`, `plot_k2_k10_purest_align.py` | Archive QC, not customer hand-in |
+| Lab ADMIXTURE QC plots | `scripts/plot_science_k8_check.py`, `plot_k2_k10_purest_align.py` | Archive QC, not the v1 product HTML |
 
 Platform stub dirs `platform/viz/` document the same contracts without duplicating code yet—implementation lives in `src/grapeancestry/`.
 
@@ -111,7 +111,7 @@ Platform stub dirs `platform/viz/` document the same contracts without duplicati
 
 | Hand-in | Builder | Entry |
 |---------|---------|-------|
-| `{sample}.sample-first-v2.report.html` | `report/build_report.py` (`build_bundle`, `render_full_html`) + `interactive_dashboard.py` | `run` / `analyze` → `_post_analyze` |
+| `{sample}.sample-first-v2.report.html` | `src/grapeancestry/report/build_report.py` (`build_bundle`, `render_full_html`) + `interactive_dashboard.py` | `run` / `analyze` → `grapeancestry analyze` / `run` |
 | Optional `*.report.data.json` sidecar | same bundle | downloads section |
 | `chip.json` | `cloud/analyze.py` | `grapeancestry chip-report` / Streamlit |
 | Cloud pack | `scripts/build_cloud_pack.py`, `python -m grapeancestry.cloud` | fingerprints for Cloud |

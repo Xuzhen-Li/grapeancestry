@@ -29,13 +29,13 @@ Diagram: [`flowchart_vs1_analysis_v2.png`](flowchart_vs1_analysis_v2.png) · [`U
 - **Selection** = 2449 panel Grp-vs-rest context; query GT is overlay ≠ “this sample was selected”.
 - **GS score ≠ phenotype**; GWAS p/β are panel results, not the customer’s measured trait.
 
-> **v1 product output:** `*.sample-first-v2.report.html` (Docker UI). Optional classroom JSON: `chip.json` — see CHIP_COMPANION (not v1 primary).
+> **v1 product output:** `*.sample-first-v2.report.html` (Docker UI). Optional Cloud `chip.json` — see CHIP_COMPANION (not v1 primary).
 
 ---
 
 ## Usage flow (how it is used today)
 
-Three lanes. Pick **one** lane for a given night; the hand-in filename must match that lane.
+Three paths. Pick **one** path; the **primary output** filename must match that path.
 
 ### Lane A — Public docs (this GitHub tree)
 
@@ -83,7 +83,7 @@ Ages aDNA SE demo: `--samples config/samples_ages.yaml --sample Ages` (AdapterRe
 | IBS / clone screen | `grapeancestry identity --vcf … --sample …` |
 | PCA project onto frozen axes | `grapeancestry project --vcf … --sample …` |
 | ADMIXTURE for new IDs | `grapeancestry admix-project --vcf …` (lab `-P`) |
-| Cloud / classroom JSON | `grapeancestry chip-report --vcf sample.vcf.gz --out chip.json` |
+| Optional Cloud `chip.json` | `grapeancestry chip-report --vcf sample.vcf.gz --out chip.json` |
 | Pack Streamlit demos | `python -m grapeancestry.cloud` then `streamlit run app.py` |
 
 **View an existing demo report (view-only):**
@@ -109,7 +109,7 @@ python -m http.server
 3. Scan top-to-bottom: QC → self-vs-clone IBS → passport / SDR **proxy** / trait card → purity & parentage → (optional advanced) → **colour GS last**.
 4. Export **`chip.json`** when using the optional Cloud path (not the v1 Docker product).
 
-**Honest stop:** Cloud has no bwa/bcftools/ADMIXTURE binary; new samples use NNLS onto frozen P. Docker / HPC (`environment-hpc.yml`, `docker compose up`) is **Later Lab**, not tonight.
+**Honest stop:** Cloud has no bwa/bcftools/ADMIXTURE binary; new samples use NNLS onto frozen P. Docker / HPC (`environment-hpc.yml`, `docker compose up`) is the lab image path — not the Cloud VCF-only path.
 
 ### After you have a report — how to read it
 
@@ -383,7 +383,7 @@ Demo stem: `Ages` (aDNA SE from V5 / Iron Age Martigues). Modern PE recaptures (
 ![downloads](guideline_shots/panels/07_downloads.png)
 
 *What you see:* Query-scoped download links.  
-*How to read:* Hand-in is a **filename**, not every sidebar tab.
+*How to read:* The **deliverable** / primary output is a **filename**, not every sidebar tab.
 
 ---
 

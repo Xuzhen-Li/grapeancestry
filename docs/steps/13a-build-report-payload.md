@@ -6,7 +6,7 @@ Gather all step artifacts into a structured bundle / interactive JSON payload.
 
 ## Scripts
 
-`report/build_report.py` (`build_bundle`) · `report/interactive_data.py`
+`src/grapeancestry/report/build_report.py` (`build_bundle`) · `report/interactive_data.py`
 
 ## Statistical / file outputs
 

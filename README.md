@@ -47,7 +47,7 @@ Detail: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
   ENA **ERR16654874** / **PRJEB94459**. File is **12Xv2** — Analyze-as-BAM must fail `@SQ`.
 - Treat as query on → report id `{id}_query`.
 - Step knobs = existing flags only (fastp, AdapterRemoval3, `bwa mem -k/-T`, `bwa aln -l/-n/-o`, `bcftools` `-q/-Q/-d/-C`, `--forceall`, `--pca-color`, `--admix-mode`, K=2–8).
-- Packed demos: **Ages** + **HUN89_query**. Optional classroom JSON `chip.json` is **not** the v1 product ([`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md)).
+- Packed demos: **Ages** + **HUN89_query** (**ID trap:** panel row `HUN89` ≠ report stem `HUN89_query`). Optional Cloud JSON `chip.json` is **not** the v1 product ([`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md)).
 
 ## Path B — Demo on GitHub (no Docker)
 
@@ -62,6 +62,8 @@ python3 -m http.server 8000
 Keep `demo/assets/` beside `demo/results/`. How to read the sidebar: [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
 
 ### Screenshot gallery (Ages)
+
+Packed demos include Ages and HUN89_query — panel id `HUN89` is not the same as report stem `HUN89_query`.
 
 ![Sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
 
@@ -135,7 +137,7 @@ GrapeAncestry places a **new grapevine query** against a **frozen 2449 × 167K**
 
 - Query VCF = **167K sites**, not the 2449 dosage matrix.
 - PCA / ADMIXTURE are **frozen**; new samples are projected.
-- Only **OIV 225** colour GS is decision-grade today (rules in GUIDELINE).
+- Only **OIV 225** colour GS is decision-grade today; **score ≠ phenotype** (rules in GUIDELINE).
 - **ID trap:** panel row `HUN89` ≠ report stem `HUN89_query`.
 
 **MIT = code only.** Panel genotypes / phenotypes are not MIT.

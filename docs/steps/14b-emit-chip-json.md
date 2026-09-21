@@ -1,18 +1,19 @@
-# Step 14b — Emit chip.json hand-in
+# Step 14b — Emit chip.json (optional)
 
 ## Goal
 
-Write the Cloud classroom hand-in file.
+**Optional** (not the v1 product). Emit `chip.json` for the Cloud JSON path only. DIY / Docker v1 stops at Step **13b** → `*.sample-first-v2.report.html`.
+
 
 ## Scripts
 
-`cloud/analyze.py` / card serializers · Streamlit download
+`src/grapeancestry/cloud/analyze.py` / card serializers · Streamlit download
 
 ## Statistical / file outputs
 
 | Artifact | Meaning |
 |----------|---------|
-| **`chip.json`** | **Cloud hand-in filename** |
+| **`chip.json`** | Optional Cloud JSON filename (not v1 primary) |
 
 ## Visualization outputs
 

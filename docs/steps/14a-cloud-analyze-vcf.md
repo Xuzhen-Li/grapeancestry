@@ -1,12 +1,13 @@
-# Step 14a — Cloud analyze query VCF
+# Step 14a — Cloud analyze query VCF (optional)
 
 ## Goal
 
-Python-only path: ingest panel-sites VCF against cloud pack.
+**Optional** (not required for v1 Docker / DIY HTML). Analyze a **167K-site query VCF** in the Cloud Chip Companion path.
+
 
 ## Scripts
 
-`grapeancestry chip-report` · `cloud/analyze.py`, `vcf_py.py`, `sites.py`
+`grapeancestry chip-report` · `src/grapeancestry/cloud/analyze.py`, `vcf_py.py`, `sites.py`
 
 ## Statistical / file outputs
 

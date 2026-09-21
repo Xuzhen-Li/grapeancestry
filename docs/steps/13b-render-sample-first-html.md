@@ -2,7 +2,7 @@
 
 ## Goal
 
-Write the Suite hand-in HTML (and optional data sidecar).
+Write the v1 product HTML (and optional data sidecar).
 
 ## Scripts
 
