@@ -75,12 +75,14 @@ Ages demo panels (existing shots only). Packed demos include Ages and HUN89_quer
 
 | Doc | Role |
 |-----|------|
-| [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) | How to start |
-| [`docs/FAQ.md`](docs/FAQ.md) · [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | First hour + terms |
+| [`DATA_NOTICE.md`](DATA_NOTICE.md) | What is / is not in git; Docker tar policy |
+| [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) | Start kit + browse; BAM/intake |
 | [`docs/GUIDELINE.md`](docs/GUIDELINE.md) | How to read the report |
-| [`docs/steps/`](docs/steps/) | DIY reproduce `00a`–`13b` |
-| [`docs/FLOWCHART.md`](docs/FLOWCHART.md) · [`docs/PIPELINE.md`](docs/PIPELINE.md) | Flow claims + methods |
-| [`DATA_NOTICE.md`](DATA_NOTICE.md) · [`docs/CODE_AVAILABILITY.md`](docs/CODE_AVAILABILITY.md) | What is / is not shipped |
+| [`docs/FAQ.md`](docs/FAQ.md) | First hour |
+| [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | Terms (167K vs 2449) |
+| [`docs/steps/`](docs/steps/) | DIY `00a`–`13b` |
+| [`docs/CODE_AVAILABILITY.md`](docs/CODE_AVAILABILITY.md) | Git URL + Docker / Zenodo note |
+| [`docs/FLOWCHART.md`](docs/FLOWCHART.md) | Flowchart claim caption |
 
 ## Author
 
