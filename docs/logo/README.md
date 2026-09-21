@@ -1,3 +1,5 @@
-# GrapeAncestry mark (drafts)
+# GrapeAncestry mark
 
-Temporary grapeC pick was rejected for public README (2026-09-21). Still iterating — do not treat as final.
+**Chosen (2026-09-21):** `grapeancestry_logo.png` — pixel grape cluster with leaf + one crimson query berry (v4 pixelC_red). Jason-selected via Gemini.
+
+Also kept: `grapeancestry_logo_v4_pixelC_red.png` (same asset).
