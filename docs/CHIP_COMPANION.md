@@ -2,7 +2,7 @@
 
 **Not** the GrapeAncestry **v1.0.0** customer product. v1 output is the Docker UI → **`*.sample-first-v2.report.html`**.
 
-This path is an optional classroom helper: **167K-site query VCF → `chip.json`**.
+This path is an optional Cloud helper: **167K-site query VCF → `chip.json`**.
 
 | Path | Output |
 |------|--------|
