@@ -1,5 +1,5 @@
 # analysis/
 
-Calling and report recipes for the 167K panel (FASTQ → panel VCF → ancestry / identity / PCA).
+Short analysis notes and pointers for the 167K companion.
 
-Scripts and recipes land here later. Documentation and demo screenshots are already under [`docs/GUIDELINE.md`](../docs/GUIDELINE.md).
+The main curriculum is `docs/steps/` (prep → report → cloud), not this folder.
