@@ -2,6 +2,14 @@
 
 What lives in this public tree, and what does not. Use this when the folder list feels crowded.
 
+## Honest status
+
+| Surface | What you get |
+|---------|----------------|
+| **Public GitHub** | Docs, flowchart, Ages HTML, Python source. No VS-1, no 2449 panel, no fat image. |
+| **Private tar + `start.sh`** | Full UI. Demos Ages + HUN89_query. FASTQ/BAM/VCF → V2 HTML. |
+| **Cloud `chip.json`** | Optional classroom path, not v1. |
+
 **One-line role:** grapevine **167K** public walkthrough (docs + Ages demo). Lab `src/` may exist in-tree but is **not** the newcomer default. Cross-panel *scaffold only*: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
 
 ## Read this first (by goal)

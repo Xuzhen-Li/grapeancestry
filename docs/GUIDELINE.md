@@ -29,7 +29,7 @@ Diagram: [`flowchart_vs1_analysis_v2.png`](flowchart_vs1_analysis_v2.png) · [`U
 - **Selection** = 2449 panel Grp-vs-rest context; query GT is overlay ≠ “this sample was selected”.
 - **GS score ≠ phenotype**; GWAS p/β are panel results, not the customer’s measured trait.
 
-> Classroom doors: **Cloud** → `chip.json`; **Suite** → `*.sample-first-v2.report.html`. Do not mix filenames.
+> **v1 product output:** `*.sample-first-v2.report.html` (Docker UI). Optional classroom JSON: `chip.json` — see CHIP_COMPANION (not v1 primary).
 
 ---
 
@@ -39,7 +39,7 @@ Three lanes. Pick **one** lane for a given night; the hand-in filename must matc
 
 ### Lane A — Public docs (this GitHub tree)
 
-**Who:** Anyone reviewing the public face; classrooms without a suite checkout.
+**Who:** Anyone reviewing the public face without the private fat image.
 
 **Steps:**
 
@@ -52,13 +52,13 @@ Three lanes. Pick **one** lane for a given night; the hand-in filename must matc
 
 ### Lane B — Local suite (developer / lab Mac)
 
-**Who:** Lab machine with the private `grapeancestry_suite` checkout, conda env `ga`, and panel assets.
+**Who:** Machine with private panel assets (lab checkout or fat image).
 
 **Install (once):**
 
 ```bash
 conda activate ga   # bwa fastp snakemake bcftools samtools python=3.11
-cd /path/to/grapeancestry_suite
+cd /path/to/grapeancestry   # repo or customer drop root
 pip install -e ".[dev,web]"
 export PATH="$PWD/bin:$PATH"   # ADMIXTURE 1.3.0 wrapper
 grapeancestry --help
@@ -89,16 +89,16 @@ Ages aDNA SE demo: `--samples config/samples_ages.yaml --sample Ages` (AdapterRe
 **View an existing demo report (view-only):**
 
 ```bash
-cd /path/to/grapeancestry_suite   # must be suite root so ../assets resolve
+cd /path/to/grapeancestry   # repo or customer drop root   # must be suite root so ../assets resolve
 python -m http.server
 # open http://localhost:8000/results/Ages.sample-first-v2.report.html
 ```
 
-`http.server` does **not** create a hand-in file. Hand-in for Suite is the HTML filename itself (or Cloud `chip.json`).
+`http.server` is view-only. v1 product report is `*.sample-first-v2.report.html` from Docker; optional Cloud JSON is `chip.json`.
 
 **What “done” looks like for Suite:** `*.sample-first-v2.report.html` opens with assets; method coverage shows available vs unavailable; no decision-grade claim beyond OIV 225.
 
-### Lane C — Cloud Chip Companion (classroom night)
+### Lane C — Cloud Chip Companion (optional, not v1 product)
 
 **Who:** Streamlit Cloud (or local `streamlit run app.py`) with packed `data/cloud/` fingerprints.
 
@@ -107,7 +107,7 @@ python -m http.server
 1. Prepare a **167K-site query VCF** (not FASTQ).
 2. Open the Chip Companion app → upload VCF or pick a named demo.
 3. Scan top-to-bottom: QC → self-vs-clone IBS → passport / SDR **proxy** / trait card → purity & parentage → (optional advanced) → **colour GS last**.
-4. Hand in **`chip.json`** (Cloud door).
+4. Export **`chip.json`** when using the optional Cloud path (not the v1 Docker product).
 
 **Honest stop:** Cloud has no bwa/bcftools/ADMIXTURE binary; new samples use NNLS onto frozen P. Docker / HPC (`environment-hpc.yml`, `docker compose up`) is **Later Lab**, not tonight.
 
@@ -371,7 +371,7 @@ Demo stem: `Ages` (aDNA SE from V5 / Iron Age Martigues). Modern PE recaptures (
 
 **Background.** Exportable, query-scoped artifacts support archiving and secondary analysis without shipping the full 2449 matrix.
 
-**What the report shows.** Links to query-only sidecars tied to this report stem. Suite hand-in remains `*.sample-first-v2.report.html`; Cloud remains `chip.json`.
+**What the report shows.** Links to query-only sidecars tied to this report stem. v1 product report remains `*.sample-first-v2.report.html`; optional Cloud JSON remains `chip.json`.
 
 **How a careful reader uses it.** Download what you need; do not expect panel VCFs here. Missing links mean the method was unavailable (see Sample validity).
 
