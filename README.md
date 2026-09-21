@@ -7,13 +7,14 @@ Grapevine **167K** capture companion: place a new query on frozen **VS-1** axes 
 
 ## Tonight hand-in
 
-Hand-in is a **filename**, not every sidebar tab.
+**Tonight you hand in one filename** (not every sidebar tab):
 
 | Door | Hand-in |
 |------|---------|
 | **Cloud** | `chip.json` |
 | **Suite** (Docker / lab image) | `*.sample-first-v2.report.html` |
-| **This public clone alone** | read + open demo — **no** hand-in file |
+
+Opening the Ages demo in this public clone is **practice** — it does not mint a new hand-in file. Use the Suite/Cloud door above when you actually submit.
 
 ## Start here
 
@@ -50,9 +51,9 @@ GrapeAncestry places a **new grapevine query** against a **frozen 2449 × 167K**
 
 ## Demo (Ages)
 
-**Primary demo:** `Ages` — aDNA SE library **V5** (Iron Age Martigues, ~300–200 BCE). Hand-in name when you run Suite/Docker: `Ages.sample-first-v2.report.html`.
+**Primary demo:** `Ages` (`Ages.sample-first-v2.report.html`). Open the shipped HTML to learn the sidebar — you do **not** need to re-run V5 FASTQ tonight.
 
-**Cite (required):** Noraz, R., … & **Orlando, L.** (2026). Ancient DNA reveals 4000 years of grapevine diversity, viticulture and clonal propagation in France. *Nature Communications*. [doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z).
+**Cite the source data:** Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z); incl. **Ludovic Orlando**).
 
 Open the shipped HTML (view-only; does **not** create a hand-in):
 

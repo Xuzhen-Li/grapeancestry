@@ -2,7 +2,9 @@
 
 **user input → our panel assets → software → analyses → outputs**
 
-**Caption:** Inputs must be on **VS-1**. Your sample is then placed on a frozen 2449 × 167K reference; boxes name the software or asset at each step. **Solid** arrows into the output = core path (QC · IBS · PCA · ADMIXTURE · NJ). **Dashed** arrows (f3/f4 · selection/GEA · colour GS · passport/SDR) = report modules — read claim rules before citing.
+> **PNG note:** README embeds `flowchart_vs1_analysis_v2.png`. Until that art is redrawn, treat **this page’s Mermaid + caption** as authoritative for OIV 225 vs Do-not-claim dashed lines.
+
+**Caption:** Inputs must be on **VS-1**. Your sample is then placed on a frozen 2449 × 167K reference; boxes name the software or asset at each step. **Solid** into the output = core path (QC · IBS · PCA · ADMIXTURE · NJ) plus **OIV 225** colour GS (only **decision-grade** score). **Dashed** = **Do not claim** as decision results (f3/f4 · selection/GEA overlay · passport/SDR proxy · other OIV) — exploratory / claim-bounded only.
 
 ```mermaid
 flowchart TB
@@ -61,7 +63,7 @@ flowchart TB
     NJ --> REP
     F34 -.-> REP
     SEL -.-> REP
-    GS -.-> REP
+    GS --> REP
     CARD -.-> REP
   end
 ```
@@ -82,4 +84,4 @@ flowchart TB
 - Panel = our **2449 × 167K** reference (not user upload).
 - PCA / ADMIXTURE: frozen on 2449; query projected / `-P` / NNLS.
 - SDR = proxy ≠ haplotype sex; OIV 225 only decision-grade; score ≠ phenotype; selection overlay ≠ selected.
-- Mermaid: solid → output = core path; dashed → output = optional / claim-bounded modules inside the same file.
+- Mermaid: solid → output = core + OIV 225 decision-grade; dashed → Do not claim (SDR=proxy · selection=overlay · score≠phenotype · OIV241 exploratory).
