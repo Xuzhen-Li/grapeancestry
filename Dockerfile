@@ -1,6 +1,9 @@
-# Customer / lab Docker image for the GrapeAncestry companion UI.
-# GrapeAncestry Suite — linux/amd64 (buildx arm64 optional; ADMIXTURE 1.3.0 is x86_64)
-# Customer UX: Streamlit on 8501. Do NOT copy the Mac bin/admixture Mach-O.
+# GrapeAncestry v1.0.0 — linux/amd64 customer / lab image skeleton.
+# Product fat image grapeancestry:1.0.0 ships privately (panel + VS-1 inside).
+# NEVER docker push a fat image that contains panel genotypes.
+# Public git build: code + deps only; Analyze cannot finish without private assets.
+# ADMIXTURE 1.3.0 is linux x86_64 — do NOT copy a macOS Mach-O from bin/.
+# UI: Streamlit 8501 · report server 8502 (see start.sh mounts: /input /output /settings).
 FROM mambaorg/micromamba:1.5.8
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -28,8 +31,7 @@ RUN micromamba install -y -n base -f environment-hpc.yml && micromamba clean -a 
 ARG MAMBA_DOCKERFILE_ACTIVATE=1
 RUN pip install -e ".[web]"
 ENV PATH=/opt/conda/bin:/usr/local/bin:$PATH
-EXPOSE 8501
-# Frozen Q/P live in data/panel/admixture (volume). Large VS1/panel VCF: same volume.
-#   docker compose up
-#   docker run -p 8501:8501 -v $PWD/data:/opt/grapeancestry/data -v $PWD/results:/opt/grapeancestry/results grapeancestry
+EXPOSE 8501 8502
+# Prefer customer drop: docker load -i grapeancestry-v1.0.0-amd64.tar && ./start.sh
+# Docs-only build cannot Analyze without mounting private VS-1 + 2449 panel.
 CMD ["streamlit", "run", "app.py", "--server.address=0.0.0.0", "--server.port=8501"]

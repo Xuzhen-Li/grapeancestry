@@ -56,7 +56,7 @@ flowchart TB
   end
 
   subgraph OUT["Outputs"]
-    QC --> REP[sample-first-v2 report HTML\nor chip.json]
+    QC --> REP[sample-first-v2 report HTML\nv1 product]
     IBS --> REP
     PROJ --> REP
     ADM --> REP
@@ -76,7 +76,7 @@ flowchart TB
 | Our assets | VS-1, 167K BED, 2449 dosage, frozen PCA, frozen ADMIXTURE, passport, phenotype |
 | Software | fastp/AdapterRemoval, bwa→VS-1, samtools, bcftools, grapeancestry, GCTA64 axes, ADMIXTURE |
 | Analyses | QC, IBS, PCA project, ADMIXTURE, NJ, f3/f4, selection/GEA, GS, passport/SDR proxy |
-| Output | `*.sample-first-v2.report.html` or `chip.json` |
+| Output | v1: `*.sample-first-v2.report.html` · optional: `chip.json` (Chip Companion) |
 
 ## Honest boundaries (footnote)
 

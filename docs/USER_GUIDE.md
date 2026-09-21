@@ -1,202 +1,122 @@
-# User guide — GrapeAncestry (chip companion)
+# User guide — GrapeAncestry v1.0.0
 
-**Audience:** end users who will run the packaged product (Docker UI) or, today, read the public docs and a demo report.  
-**Language:** English.  
-**Suggested path:** `docs/USER_GUIDE.md` on `Xuzhen-Li/grapeancestry`.
+**Audience:** people who will run the private Docker product, or browse the public docs + Ages HTML.  
+**Language:** English.
 
 ---
 
-## 0. Honest status (read this first)
+## 0. Honest status
 
-| When | What you can do |
-|------|-----------------|
-| **Public GitHub tree today** (`Xuzhen-Li/grapeancestry`) | Read docs + open Ages HTML (`cd demo && python3 -m http.server`). `src/` may be present, but **no** VS-1 / 2449 dosage ship here — end-to-end `grapeancestry run` is **expected to stop** until you have private assets. |
-| **Local lab suite** (private checkout, if you have it) | `http.server` to open finished demo HTML; some CLI paths when conda + assets are installed. |
-| **Customer image in hand** (`grapeancestry:1.0.0` / `./start.sh`) | Full UI at **http://localhost:8501**: three inputs (FASTQ / BAM / VCF on **VS-1**), demos, live log, V2 HTML report. |
+| Surface | What you get |
+|---------|----------------|
+| **Public GitHub** | Docs, flowchart, Ages HTML, Python source. No VS-1, no 2449 panel, no fat image. CLI installs; analyze/run **stop** without private assets. |
+| **Private tar + `start.sh`** | Full UI. Demos **Ages** + **HUN89_query**. FASTQ / BAM / VCF → V2 HTML. |
+| **Cloud `chip.json`** | Optional classroom path (VCF→JSON), **not** the v1 customer product. |
 
-This guide is written for the **image-in-hand** workflow as the final customer shape. Steps that only work after the image ships are marked **(image)**. Steps that work on the public docs tree alone are marked **(docs)**.
+v1 customer output: **`*.sample-first-v2.report.html`**. UI **http://127.0.0.1:8501** · report server **http://127.0.0.1:8502**.
 
-**Tonight deliverables (pick one door — do not mix filenames):**
-
-| Door | Hand-in file |
-|------|----------------|
-| **Cloud** | `chip.json` |
-| **Suite / Docker report** | `*.sample-first-v2.report.html` |
+Steps that need the fat image are marked **(image)**. Public-clone browse steps are marked **(docs)**.
 
 ---
 
 ## 1. First start **(image)**
 
-1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/). On **Apple Silicon**, use a **linux/amd64** engine (official ADMIXTURE is x86_64).
-2. Unpack the customer package so you see `start.sh` (or `start.command` on macOS) next to `input/`, `output/`, and `settings/`.
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/). On **Apple Silicon**, use a **linux/amd64** engine (ADMIXTURE 1.3.0 is x86_64: [download page](https://dalexander.github.io/admixture/download.html)).
+2. Place `grapeancestry-v1.0.0-amd64.tar` next to `start.sh` (or `start.command` / `start.bat`). Create folders as needed — the launcher runs `mkdir -p input output settings`.
 3. Run:
 
 ```bash
 ./start.sh
-# macOS alternative: double-click start.command
+# macOS: double-click start.command
+# Windows: start.bat
 ```
 
-What `start.sh` does: creates `input` / `output` / `settings` if missing, loads or builds image tag `grapeancestry:1.0.0`, starts the container, opens **http://localhost:8501**.
+What the launcher does: ensure folders; if image `grapeancestry:1.0.0` is missing, `docker load -i grapeancestry-v1.0.0-amd64.tar` when present, else attempt `docker build --platform linux/amd64` (a docs-only clone **cannot** produce a working fat image); `docker run -d --name grapeancestry -p 8501:8501 -p 8502:8502` with `./input`, `./output`, `./settings` mounted. Colima: if `~/.colima/default/docker.sock` exists and `docker info` fails, set `DOCKER_HOST` to that socket.
 
-4. **First visit — Setup:** choose password + confirm, language, threads, optional lab name. The password hash is stored in `./settings/auth.json` (no plaintext password in the image).
-5. **Later visits:** password only. A wrong password stays on the login page.
-6. Sidebar after login: **Analysis** / **Demos** / **Settings** (change password, language, threads, logout).
+**Never `docker push`** the fat image (panel assets inside).
 
-**Security note:** this login only blocks a casual browser on the same machine. Anyone with `docker exec` can still read data inside the container.
+4. **First visit — Setup:** password twice, language, threads, optional lab name. Hash only in `./settings/auth.json` (scrypt). No plaintext password in the image.
+5. **Later visits:** password only.
+6. Sidebar: **Analysis** / **Demos** / **Settings**.
 
-**Splash (optional):** after the UI is up, a standalone splash may be available at http://localhost:8502/web/splash/index.html.
-
-Finished files under `examples/*/…sample-first-v2.report.html` are demo **outputs**, not the product login UI.
+**Security note:** login only blocks a casual browser on the same machine. Anyone with `docker exec` can still read data inside the container.
 
 ---
 
-## 2. Analysis pages **(image)**
+## 2. Analysis **(image)**
 
-| Step | Page | What you do |
-|------|------|-------------|
-| 1 | Setup / Log in | First visit: password + language. Later: password only |
-| 2 | Choose files | Put FASTQ / BAM / VCF in `./input`, select them, set sample ID, **Start analysis** |
-| 3 | Analysis running | Live log — stay until finish or fail |
-| 4 | Report ready | Open V2 HTML (often via port **8502**) or download HTML / JSON |
+| Step | What you do |
+|------|-------------|
+| 1 | Log in / Setup |
+| 2 | Put FASTQ / BAM / VCF in `./input` (drag-and-drop, host copy, **Get Ages** / **Get HUN89_query**, or http(s) URL). Select files, set sample ID, **Start analysis** |
+| 3 | Live log until finish or fail |
+| 4 | Open V2 HTML on **8502** or download from `./output/results/` (+ `./output/assets/`) |
 
-| Control | Meaning |
-|---------|---------|
-| Input type | FASTQ / BAM / VCF |
-| FASTQ library | PE modern / SE modern / aDNA |
-| Files | From `./input` (compose mount). VCF may also list packed demos |
-| Sample ID | Output name. With “treat as query”, report id becomes `{id}_query` |
-| Threads | Passed to Snakemake / bcftools |
-| Start analysis | Opens the live-log page. Failure shows the log — no fake success |
+**Inputs**
 
-**Reports:**
+| Kind | Notes |
+|------|--------|
+| FASTQ | PE modern / SE modern / aDNA |
+| BAM / CRAM | Must already be **VS-1** numeric contigs. `chr1` / 12X / PN40024 → **fail** → start from FASTQ |
+| VCF | Query at **167K** sites (not the 2449 matrix) |
 
-- Canonical: `results/{sample}.sample-first-v2.report.html`
-- Customer copy: `output/results/` plus `output/assets/` so `../assets` resolves
-- Open in a new tab on port **8502** (report files only; panel / VS-1 are not served as a public browse tree)
-- Download buttons on the finished page
+**Treat as query on:** report id becomes `{id}_query`.
 
-**Runtime (order of magnitude):** a modern capture FASTQ is much slower than a ready VCF. VCF-only analyze is often minutes on a laptop if the panel cache is already in the image.
+**Step settings** (existing flags only): query/force VCF, threads, `--forceall` → snakemake `-F`, fastp, AdapterRemoval3, `bwa mem -k/-T`, `bwa aln -l/-n/-o`, `bcftools mpileup -q/-Q/-d/-C` + optional DP, `--pca-color`, `--admix-mode`, K=2–8.
 
----
+**Sample URL in the UI download box** (download demo only):
 
-## 3. Three inputs (all on VS-1)
+`https://ftp.sra.ebi.ac.uk/vol1/run/ERR166/ERR16654874/V5xL1xP2_Ages_3_5070.12Xv2.realigned.bam`  
+ENA **ERR16654874** / **PRJEB94459**. This BAM is **12Xv2, not VS-1**. Do **not** Analyze it as a VS-1 BAM — `@SQ` must fail.
 
-Final package accepts **one** of:
+**Reports:** `*.sample-first-v2.report.html` on **8502**; copies under `./output/results/` with `./output/assets/`.
 
-| You provide | What happens | Not this |
-|-------------|--------------|----------|
-| **FASTQ** (modern PE or aDNA SE) | Trim → map to **VS-1** → markdup → call at the **167K BED** → analyses → report | Not a whole-genome resequencing deliverable |
-| **BAM / CRAM** | Must already be on **VS-1** → markdup → call at 167K → same downstream | Wrong reference fails (see §4) |
-| **Query VCF** | Sites ∩ 167K on VS-1 → analyses only (skip calling) | **Not** the 2449 × 167K panel matrix |
-
-Cloud path (when Streamlit / Chip Companion is wired): upload a **167K-site query VCF** (not FASTQ) → export **`chip.json`**.
+**Packed demos:** Ages and HUN89_query V2 HTML under **Demos** (Companion tab merged into Demos).
 
 ---
 
-## 4. BAM must be VS-1 **(image)**
+## 3. Browse Ages HTML **(docs)**
 
-The BAM / CRAM must be aligned to **VS-1** numeric contigs.
-
-- If `@SQ` names look like `chr1`, **12X**, or **PN40024**, the job **fails**.
-- Fix: start from FASTQ (map to VS-1) or re-align to VS-1 before upload.
-
-Do not strip contig prefixes hoping the caller will “just work”.
-
----
-
-## 5. Demos **(image)** / **(docs)**
-
-**(image)** Sidebar → **Demos**: primary **Ages** (V5 aDNA; cite Noraz et al. 2026 / Orlando — see README Demo) and optional modern-capture demos. New customer samples use **Analysis**, not Demos.
-
-**(docs)** Without the image, open the walkthrough screenshots in [`GUIDELINE.md`](GUIDELINE.md), or — if you have a local suite checkout with finished HTML:
+No Docker required:
 
 ```bash
-# path = local suite root (not the docs-only GitHub clone)
-cd /path/to/local-suite
-python3 -m http.server
-# http://localhost:8000/results/Ages.sample-first-v2.report.html
+cd demo
+python3 -m http.server 8000
+# http://127.0.0.1:8000/results/Ages.sample-first-v2.report.html
 ```
 
-`http.server` is **view-only**. It does **not** create a hand-in file.
+View-only. Does not create a product report. Keep `demo/assets/` beside `demo/results/`.
 
-### ID trap (read once)
-
-Panel demo / panel row **`HUN89`** (2449-row ID) ≠ capture / report stem **`HUN89_query`** (independent FASTQ recapture).  
-Do not strip `_query` to look up passport or frozen ADMIXTURE Q.
+Screenshot walkthrough: [`GUIDELINE.md`](GUIDELINE.md).
 
 ---
 
-## 6. Apple Silicon **(image)**
+## 4. Optional Chip Companion (`chip.json`)
 
-Use Docker Desktop **linux/amd64** emulation.
-
-Official ADMIXTURE binaries are **x86_64** ([download page](https://dalexander.github.io/admixture/download.html)). Native arm64-only setups are unsupported for the lab ADMIXTURE path.
+Not the v1 Docker product. When a classroom Cloud UI is available: upload a **167K-site query VCF** → export `chip.json`. See [`CHIP_COMPANION.md`](CHIP_COMPANION.md).
 
 ---
 
-## 7. How to read the report (sidebar order)
+## 5. CLI from this clone **(docs / lab)**
 
-Walk top to bottom. Sidebar tabs are a **read path**, not separate hand-in files.
+```bash
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -e .
+```
 
-1. **Sample validity** — calling rate, depth, capture tables. Heterozygosity is a **screen**, not a purity call. Missing aDNA damage on a modern PE library is expected.
-2. **Identity & placement** — IBS / kinship vs the 2449 panel. Non-self Identical and parent–offspring are clone/parentage **screens**. Pin a row to overlay the same ID on PCA / ADMIXTURE / NJ.
-3. **Population placement** — frozen GCTA64 PCA projection, ADMIXTURE (in-panel lookup or `-P` / NNLS), NJ on IBS identity, optional f3/f4. The query is placed on a **frozen** reference — not an unsupervised 2449+N refit.
-4. **Sample evidence** — passport / VIVC, SDR **proxy**, trait card, colour GS (see §8).
-5. **Panel research** — selection / GEA and related panel contrasts. Query GT is an **overlay**.
-6. **Methods** — software and frozen-asset notes for this report.
-7. **Downloads** — export tables/figures from the demo; the public tree does not ship unpublished full 2449 matrices.
-
-Long screenshots for each section: [`GUIDELINE.md`](GUIDELINE.md).
+Without VS-1 + 2449 dosage cache, `grapeancestry run` / analyze paths are **expected to stop**. Do not install system-wide (PEP 668).
 
 ---
 
-## 8. Evidence boundaries (do not skip)
+## 6. Science frame (short)
 
-Before you cite or rank anything:
+- Coordinates: **VS-1** (Dong et al. 2023 *Science*, [doi:10.1126/science.add8655](https://doi.org/10.1126/science.add8655)).
+- Frozen PCA / ADMIXTURE; project new samples.
+- Only **OIV 225** colour GS is decision-grade today.
+- **ID trap:** `HUN89` ≠ `HUN89_query`.
+- Ages source paper: Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z)).
 
-| Topic | Rule |
-|-------|------|
-| **Colour GS** | Only **OIV 225** is decision-grade / rankable today |
-| **OIV 241 / seedlessness** | Exploratory (unbalanced case/control) — no parent ranking, no seedlessness claim |
-| **SDR / flower sex** | Unphased window **proxy** ≠ Science haplotype sex (H1–H5) |
-| **Selection** | Panel Grp-vs-rest context; query GT overlay ≠ “this sample was selected” |
-| **Scores** | **GS score ≠ observed phenotype** |
-| **Hand-in** | Filename matches the door: `chip.json` **or** `*.sample-first-v2.report.html` |
+**MIT = code only.** Panel genotypes / phenotypes are not MIT.
 
-Full claim table and teaching notes: [`GUIDELINE.md`](GUIDELINE.md) · flowchart: [`FLOWCHART.md`](FLOWCHART.md).
-
----
-
-## 9. What “done” looks like
-
-**Cloud:** `chip.json` exported from a 167K-site query VCF.  
-**Suite / Docker:** `*.sample-first-v2.report.html` opens with assets; you can walk §7; you make no decision-grade claim beyond OIV 225.
-
-Checklist:
-
-- [ ] Door chosen (Cloud vs Suite); hand-in **filename** matches that door
-- [ ] Input on **VS-1** (FASTQ mapped, BAM `@SQ` OK, or query VCF ∩ 167K)
-- [ ] Report opens with assets (Suite) **or** `chip.json` written (Cloud)
-- [ ] No decision-grade claim beyond **OIV 225** colour GS
-- [ ] ID trap checked (`HUN89` ≠ `HUN89_query` when relevant)
-
-**Later (not a classroom night):** Docker/HPC rebuilds, full FASTQ→VCF on new libraries, ADMIXTURE `-P` batch work, publishing large matrices — see maintainer Docker notes when shipped.
-
----
-
-## 10. Related docs
-
-| Doc | Use it for |
-|-----|------------|
-| [`GUIDELINE.md`](GUIDELINE.md) | Full demo walk + claim rules |
-| [`FLOWCHART.md`](FLOWCHART.md) | Nodes behind the diagram |
-| [`CHIP_COMPANION.md`](CHIP_COMPANION.md) | Cloud vs Lab doors |
-| Public README | Short intro + honest “docs first” status |
-
-**Note:** Prefer a **venv** if you `pip install -e .`. Without VS-1 + dosage cache, `grapeancestry run` / Docker `./start.sh` (customer pack only) / `chip-report` are **expected to stop**. Tonight’s copy-paste path on a fresh clone is **Ages `http.server` only**.
-
----
-
-## Privacy
-
-Do not put unpublished genotypes, private coordinates, or full 2449 panel matrices into public demos or tickets.
+Author: **李旭真 / Li Xuzhen** · ORCID [0000-0003-3670-6657](https://orcid.org/0000-0003-3670-6657).

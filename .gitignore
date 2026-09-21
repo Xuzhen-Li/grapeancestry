@@ -26,4 +26,12 @@ data/cloud/**
 # Keep a stub README so the empty results/ folder is explained on GitHub
 !results/
 !results/README.md
-
+# Local Docker mounts
+/input/**
+!/input/.gitkeep
+/output/**
+!/output/.gitkeep
+/settings/**
+!/settings/.gitkeep
+# Private customer image blob (never commit)
+/grapeancestry-v1.0.0-amd64.tar

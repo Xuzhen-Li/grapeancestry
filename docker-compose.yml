@@ -1,16 +1,22 @@
-# Local compose wiring for the GrapeAncestry companion stack.
-# Customer image: Streamlit UI + linux ADMIXTURE. Mount data/ (frozen Q/P + optional panel VCF).
+# GrapeAncestry v1.0.0 — local compose sketch.
+# Prefer ./start.sh with private image grapeancestry:1.0.0 and mounts input/output/settings.
+# Public build cannot finish Analyze without private VS-1 + 2449 panel volumes.
+# NEVER docker push a fat image that contains panel genotypes.
 services:
   grapeancestry:
-    image: grapeancestry:latest
+    image: grapeancestry:1.0.0
     build:
       context: .
       platforms:
         - linux/amd64
     ports:
       - "8501:8501"
+      - "8502:8502"
     volumes:
-      - ./data:/opt/grapeancestry/data
-      - ./results:/opt/grapeancestry/results
+      - ./input:/input
+      - ./output:/output
+      - ./settings:/settings
+      # Optional lab mounts when developing without the fat tar:
+      # - ./data:/opt/grapeancestry/data
     environment:
       - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
