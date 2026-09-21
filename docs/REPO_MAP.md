@@ -2,7 +2,7 @@
 
 What lives in this public tree, and what does not. Use this when the folder list feels crowded.
 
-**One-line role:** grapevine **167K** public walkthrough + runnable companion. Cross-panel *scaffold only* lives in [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
+**One-line role:** grapevine **167K** public walkthrough (docs + Ages demo). Lab `src/` may exist in-tree but is **not** the newcomer default. Cross-panel *scaffold only*: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
 
 ## Read this first (by goal)
 
@@ -29,8 +29,8 @@ What lives in this public tree, and what does not. Use this when the folder list
 | **`workflow/`** | Snakemake skeleton (map → call at panel BED) | Not a full HPC dump of every lab job |
 | **`scripts/`** | Thin wrappers / ADMIXTURE paste / pack builders | Prefer package modules for new work |
 | **`config/`** | YAML for local/HPC demos (`samples_ages.yaml`, …) | No cloud secrets |
-| **`profiles/`** + **`templates/`** | Panel profile stubs (sites, reference, hand-in names) | Example only; grape 167K walkthrough stays here, not in kit |
-| **`platform/`** | Seams / notes for pipeline · report · viz · cloud doors | Thick engines live under `src/` |
+| **`profiles/`** + **`templates/`** | Grapevine 167K profile hooks | Cross-crop profiles → **kit**, not here |
+| **`platform/`** | Grapevine lab seam notes | **Not** kit SPI; kit has its own thin `platform/` |
 | **`templates/`** | Starting `profile.yaml` + claims scaffold | Copy out → `profiles/<id>/` |
 | **`chip/`** | Pointers to 167K chip *design* notes | Design detail may also live under grapeancestry `chip/` history |
 | **`analysis/`** | Small analysis notes / pointers | Not the main step curriculum (`docs/steps/`) |
