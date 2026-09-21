@@ -1,3 +1,4 @@
+# Conda environment pin for HPC GrapeAncestry runs.
 name: ga
 channels:
   - conda-forge
