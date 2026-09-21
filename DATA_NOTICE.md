@@ -22,7 +22,7 @@
 ## Docker image policy
 
 - Product tag: `grapeancestry:1.0.0`
-- Customer file: `grapeancestry-v1.0.0-amd64.tar` — via **Zenodo Restricted (DOI TBD — fill before publish)**.
+- Customer file: `grapeancestry-v1.0.0-amd64.tar` — via **Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632))**.
 - **Never** `docker push` that fat image (panel assets inside).
 - **Never** attach the tar to a **public** GitHub Release.
 

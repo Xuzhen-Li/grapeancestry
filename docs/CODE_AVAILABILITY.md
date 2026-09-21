@@ -3,7 +3,7 @@
 | Surface | Location |
 |---------|----------|
 | **Source + docs + Ages demo** | https://github.com/Xuzhen-Li/grapeancestry |
-| **Docker fat image** (`grapeancestry:1.0.0` / `grapeancestry-v1.0.0-amd64.tar`) | Zenodo Restricted (DOI TBD — fill before publish) (`[待填]`) |
+| **Docker fat image** (`grapeancestry:1.0.0` / `grapeancestry-v1.0.0-amd64.tar`) | Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)) |
 | **Panel genotypes / phenotypes** | Not redistributed with the public git tree (see [`DATA_NOTICE.md`](../DATA_NOTICE.md)) |
 
 **Never** `docker push` the fat image (panel assets inside). **Never** attach the tar to a public GitHub Release.
