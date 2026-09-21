@@ -4,11 +4,11 @@ Fact-checked from Gemini Pass A (corrected). Commands and claims fenced to this 
 
 ## First hour
 
-Use the same three paths as the README (**Three ways in**) — do not treat this section as a second entrance map:
+Use the same three paths as the README ([Use it](../README.md#use-it)) — do not treat this section as a second entrance map:
 
-1. **Docker kit** — [README Path A](../README.md#path-a--docker-kit-load-published-tar). Tar from `Zenodo Restricted (DOI TBD — fill before publish)` → `./start.sh` (macOS `start.command` / Windows `start.bat`).
-2. **Demo on GitHub** — [README Path B](../README.md#path-b--demo-on-github-no-docker). Ages HTML via `demo/` http.server is a **view-only showcase — not a product hand-in** ([GUIDELINE](GUIDELINE.md)).
-3. **DIY, no kit** — [README Path C](../README.md#path-c--diy-without-our-kit) and [`DIY_SPINE.md`](DIY_SPINE.md). Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git.
+1. **Docker kit** — [README · Use it](../README.md#use-it). Tar from `Zenodo Restricted (DOI TBD — fill before publish)` → `./start.sh` (macOS `start.command` / Windows `start.bat`).
+2. **Demo** — [README · Use it](../README.md#use-it). Ages HTML via `demo/` http.server is a **view-only showcase — not a product hand-in** ([GUIDELINE](GUIDELINE.md)).
+3. **DIY** — [README · Use it](../README.md#use-it). Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git; see [`docs/steps/`](steps/).
 
 Data bans: [`DATA_NOTICE.md`](../DATA_NOTICE.md). Glossary: [`GLOSSARY.md`](GLOSSARY.md) (167K sites vs 2449 panel matrix).
 
