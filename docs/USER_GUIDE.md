@@ -7,6 +7,11 @@
 
 ## 0. Honest status
 
+### First hour
+
+Same three paths as the [README](../README.md#three-ways-in) (Docker kit → Demo → DIY). Detail Q&A: [`FAQ.md`](FAQ.md).
+
+
 | Path | What you get |
 |------|----------------|
 | **Docker kit** | Download tar from **`[DOCKER_TAR_URL — fill before publish]`**, put next to `start.sh`, `./start.sh` → full UI. Demos Ages + HUN89_query. FASTQ/BAM/VCF → V2 HTML. |

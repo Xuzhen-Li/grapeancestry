@@ -20,7 +20,7 @@ Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, 
 | 05a–05b | ADMIXTURE family + project Q | `grapeancestry admix-project` |
 | 06a–06b | IBS distance + NJ | report-path only (`src/grapeancestry/popgen/tree_nj.py`) |
 | 07a–07b | Optional aDNA damage | report-path / damage lite |
-| 08–10 | f3/f4 · selection · GWAS | `grapeancestry selection` · `gwas` · f-stats report-path |
+| 08–10 | f3/f4 · selection · GWAS | `grapeancestry selection` · `gwas` · f-stats **report-path only** (no `fstats` CLI) |
 | 11a–11b | GS train/predict | `grapeancestry gs-train` · `gs-predict` (OIV 225 decision-grade) |
 | 12a–12b | LocusZoom | report-path |
 | 13a–13b | Sample-first V2 HTML | `grapeancestry analyze` / `run` → `*.sample-first-v2.report.html` |

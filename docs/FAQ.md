@@ -6,8 +6,8 @@ Fact-checked from Gemini Pass A (corrected). Commands and claims fenced to this 
 
 Use the same three paths as the README (**Three ways in**) — do not treat this section as a second entrance map:
 
-1. **Docker kit** — [README Path A](../README.md#path-a--docker-kit-load-published-tar). Tar from `[DOCKER_TAR_URL — fill before publish]` → `./start.sh`.
-2. **Demo on GitHub** — [README Path B](../README.md#path-b--demo-on-github-no-docker). Ages HTML via `demo/` http.server is a **view-only showcase — not a product hand-in**.
+1. **Docker kit** — [README Path A](../README.md#path-a--docker-kit-load-published-tar). Tar from `[DOCKER_TAR_URL — fill before publish]` → `./start.sh` (macOS `start.command` / Windows `start.bat`).
+2. **Demo on GitHub** — [README Path B](../README.md#path-b--demo-on-github-no-docker). Ages HTML via `demo/` http.server is a **view-only showcase — not a product hand-in** ([GUIDELINE](GUIDELINE.md)).
 3. **DIY, no kit** — [README Path C](../README.md#path-c--diy-without-our-kit) and [`DIY_SPINE.md`](DIY_SPINE.md). Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git.
 
 Data bans: [`DATA_NOTICE.md`](../DATA_NOTICE.md). Glossary: [`GLOSSARY.md`](GLOSSARY.md) (167K sites vs 2449 panel matrix).
