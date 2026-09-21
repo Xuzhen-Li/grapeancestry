@@ -38,3 +38,4 @@ data/cloud/**
 
 results/cache/
 *.npz
+*.amd64.tar
