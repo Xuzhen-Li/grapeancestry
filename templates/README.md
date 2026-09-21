@@ -1,9 +1,5 @@
-# Empty profile template
+# templates/
 
-Copy this folder to `profiles/<your-panel-id>/` and fill:
+Starter `profile.yaml` (+ claims scaffold) for a **new** capture panel.
 
-- `profile.yaml` — sites count, path pointers, labels  
-- `CLAIMS.md` — decision-grade vs exploratory  
-- `MANIFEST.md` — what large files you stage locally  
-
-Do not commit matrices or FASTQs.
+Copy to `profiles/<your-id>/`, then rewrite sites, reference, and frozen-axis paths.
