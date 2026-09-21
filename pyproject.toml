@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "grapeancestry"
 version = "0.1.0"
-description = "Analysis suite for the grapevine 167K capture panel (GrapeAncestry Array)"
+description = "GrapeAncestry: grapevine 167K capture companion (CLI + report)"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.11"
