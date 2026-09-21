@@ -79,39 +79,39 @@ Packed demos include Ages and HUN89_query — panel id `HUN89` is not the same a
 
 ![Sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
 
-*Sample validity — report metadata / method coverage (Ages aDNA).*
+*Sample validity — report metadata and method coverage for the Ages aDNA demo (V5; Noraz et al. 2026). *
 
 ![Capture QC](docs/guideline_shots/panels/01_sample_validity_02.png)
 
-*Sample validity — conclusions and capture QC.*
+*Sample validity — capture QC (depth, calling, on-target) on the 167K sites.*
 
 ![aDNA damage](docs/guideline_shots/panels/01_sample_validity_damage.png)
 
-*aDNA damage — misincorporation + fragment length.*
+*aDNA damage — terminal misincorporation and fragment-length patterns (Ages).*
 
 ![Identity](docs/guideline_shots/panels/02_identity_01.png)
 
-*Identity — clone/PO screen and IBS / kinship.*
+*Identity — clone / parent–offspring screen and IBS kinship (panel `HUN89` ≠ stem `HUN89_query`).*
 
 ![PCA](docs/guideline_shots/panels/03_pca.png)
 
-*Population — query on frozen GCTA64 PCA.*
+*Population — query projected onto frozen GCTA64 PCA axes (VS-1 frame).*
 
 ![ADMIXTURE](docs/guideline_shots/panels/03_admixture.png)
 
-*Population — projected on frozen ADMIXTURE K=8.*
+*Population — ADMIXTURE using frozen Q/P for K=2–8 (no 2449+N refit).*
 
 ![NJ](docs/guideline_shots/panels/03_nj.png)
 
-*Population — IBS neighbour-joining tree.*
+*Population — IBS neighbour-joining tree (use with identity tables).*
 
 ![Sample evidence](docs/guideline_shots/panels/04_sample_evidence_01.png)
 
-*Sample evidence — only **OIV 225** colour GS is decision-grade.*
+*Sample evidence — only **OIV 225** colour GS is decision-grade (**score ≠ phenotype**).*
 
 ![LocusZoom](docs/guideline_shots/panels/05_locuszoom.png)
 
-*Panel research — LocusZoom + query genotype overlay.*
+*Panel research — LocusZoom regional panel map with query GT overlay (overlay ≠ “this sample was selected”).*
 
 More panels (incl. methods / downloads): [`docs/GUIDELINE.md`](docs/GUIDELINE.md).
 
@@ -151,8 +151,9 @@ ADMIXTURE 1.3.0 (linux x86_64): [download](https://dalexander.github.io/admixtur
 | Doc | Role |
 |-----|------|
 | [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) | How to start (kit + public browse) |
+| [`docs/FAQ.md`](docs/FAQ.md) · [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | First hour, FAQ, terms |
 | [`docs/GUIDELINE.md`](docs/GUIDELINE.md) | How to read the report |
-| [`docs/steps/`](docs/steps/) | How to reproduce (DIY `00a`–`13b`) |
+| [`docs/steps/`](docs/steps/) · [`docs/DIY_SPINE.md`](docs/DIY_SPINE.md) | How to reproduce (DIY `00a`–`13b`) |
 | [`docs/GROKBOT_GITHUB_PROMPTS.md`](docs/GROKBOT_GITHUB_PROMPTS.md) | Worker cards for maintainers |
 
 ## Author
