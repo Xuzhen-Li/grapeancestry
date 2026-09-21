@@ -26,7 +26,7 @@ GrapeAncestry places a **new grapevine query** against a **frozen 2449 × 167K**
 | **Demo on GitHub** | Screenshots below + [`docs/GUIDELINE.md`](docs/GUIDELINE.md) + [`demo/`](demo/) Ages HTML | **View-only** — no product report from this path |
 | **DIY, no kit** | Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git. Follow [`docs/steps/`](docs/steps/) / [`docs/DIY_SPINE.md`](docs/DIY_SPINE.md) `00a`–`13b`. | Your own **`*.sample-first-v2.report.html`** |
 
-**v1 product report is `*.sample-first-v2.report.html` only.** Optional Cloud `chip.json` is classroom/Cloud demoted — not a fourth parallel path ([`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md)).
+**v1 product report is `*.sample-first-v2.report.html` only.** Optional Cloud `chip.json` is Cloud demoted — not a fourth parallel path ([`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md)).
 
 ## Path A — Docker kit (load published tar)
 
@@ -59,7 +59,7 @@ Detail: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
 - Treat as query on → report id `{id}_query`.
 - Step knobs = existing flags only (fastp, AdapterRemoval3, `bwa mem -k/-T`, `bwa aln -l/-n/-o`, `bcftools` `-q/-Q/-d/-C`, `--forceall`, `--pca-color`, `--admix-mode`, K=2–8).
 - Packed demos: **Ages** + **HUN89_query** (**ID trap:** panel row `HUN89` ≠ report stem `HUN89_query`).
-- **v1 product report is `*.sample-first-v2.report.html` only** — optional `chip.json` is demoted Cloud/classroom, not a parallel hand-in.
+- **v1 product report is `*.sample-first-v2.report.html` only** — optional `chip.json` is demoted Cloud, not a parallel hand-in.
 
 ## Path B — Demo on GitHub (no Docker)
 
