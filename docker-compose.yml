@@ -1,14 +1,15 @@
 # GrapeAncestry v1.0.0 — local compose sketch.
 # Prefer ./start.sh with private image grapeancestry:1.0.0 and mounts input/output/settings.
-# Public build cannot finish Analyze without private VS-1 + 2449 panel volumes.
+# No `build:` here: a public-clone Dockerfile build cannot Analyze (no VS-1 / 2449 panel).
+# Load grapeancestry-v1.0.0-amd64.tar first (Zenodo Restricted record — DOI after publish).
 # NEVER docker push a fat image that contains panel genotypes.
 services:
   grapeancestry:
     image: grapeancestry:1.0.0
-    build:
-      context: .
-      platforms:
-        - linux/amd64
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      - HOME=/tmp
+      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
     ports:
       - "8501:8501"
       - "8502:8502"
@@ -16,7 +17,3 @@ services:
       - ./input:/input
       - ./output:/output
       - ./settings:/settings
-      # Optional lab mounts when developing without the fat tar:
-      # - ./data:/opt/grapeancestry/data
-    environment:
-      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false

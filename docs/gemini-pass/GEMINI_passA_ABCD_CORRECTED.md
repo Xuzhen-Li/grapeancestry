@@ -21,13 +21,13 @@
 ### First hour
 
 1. **Demo (view-only):** `cd demo && python3 -m http.server 8000` → open `http://127.0.0.1:8000/results/Ages.sample-first-v2.report.html` (keep `demo/assets/` beside `demo/results/`).
-2. **Docker kit:** Download `grapeancestry-v1.0.0-amd64.tar` from `[DOCKER_TAR_URL — fill before publish]`; place next to `start.sh`; run `./start.sh` (loads image via `docker load` when `grapeancestry:1.0.0` is missing). UI **http://127.0.0.1:8501** · reports **http://127.0.0.1:8502**.
+2. **Docker kit:** Download `grapeancestry-v1.0.0-amd64.tar` from `Zenodo Restricted record — DOI after publish`; place next to `start.sh`; run `./start.sh` (loads image via `docker load` when `grapeancestry:1.0.0` is missing). UI **http://127.0.0.1:8501** · reports **http://127.0.0.1:8502**.
 3. **DIY:** Stage your own VS-1 + 2449 panel assets, then start at `docs/steps/` **`00a`** (panel sites/metadata) through **`13b`** (sample-first V2 HTML). Without those assets, analyze/run are expected to stop.
 
 ### FAQ
 
 1. **BAM `@SQ` fail?** Accepted BAM must already be on **VS-1** contig names. `chr1` / 12X / PN40024 → fail → use FASTQ.
-2. **Missing tar?** Docs-only clone cannot finish Analyze. Get `grapeancestry-v1.0.0-amd64.tar` from `[DOCKER_TAR_URL — fill before publish]`.
+2. **Missing tar?** Docs-only clone cannot finish Analyze. Get `grapeancestry-v1.0.0-amd64.tar` from `Zenodo Restricted record — DOI after publish`.
 3. **MIT ≠ panel?** **MIT = code license only.** Panel genotypes/phenotypes are not MIT (`DATA_NOTICE.md`).
 4. **ENA 12Xv2 BAM URL?** Download-demo only (`ERR16654874` / `PRJEB94459`). It is **not** VS-1; Analyze-as-BAM must fail `@SQ`.
 5. **8501 vs 8502?** 8501 = product UI; 8502 = `*.sample-first-v2.report.html` server.
