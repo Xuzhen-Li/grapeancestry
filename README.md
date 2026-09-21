@@ -23,7 +23,7 @@ Solid/dashed rules: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). VS-1: Dong et al. 
 
 | Path | What you do | Outcome |
 |------|-------------|---------|
-| **Docker kit** | Download `grapeancestry-v1.0.0-amd64.tar` from Zenodo Restricted (DOI TBD — fill before publish); put next to `./start.sh`; run it | Product **`*.sample-first-v2.report.html`** — UI **http://127.0.0.1:8501** · reports **:8502** |
+| **Docker kit** | Download `grapeancestry-v1.0.0-amd64.tar` from Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)); put next to `./start.sh`; run it | Product **`*.sample-first-v2.report.html`** — UI **http://127.0.0.1:8501** · reports **:8502** |
 | **Demo** | `cd demo && python3 -m http.server 8000` → Ages HTML | **View-only** showcase |
 | **DIY** | Stage your own VS-1 + frozen 2449×167K assets (not in git) | See **Docs** for `docs/steps/` |
 
