@@ -22,3 +22,7 @@ data/cloud/**
 *.fastq.gz
 *.fq.gz
 # keep demo HTML package; ignore other large VCFs if added under data/
+
+# Keep a stub README so the empty results/ folder is explained on GitHub
+!results/
+!results/README.md
