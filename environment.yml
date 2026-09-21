@@ -1,3 +1,4 @@
+# Conda environment for local GrapeAncestry suite runs.
 # Streamlit Community Cloud (no aligner / caller binaries).
 # Local lab: conda env create -f environment-hpc.yml
 name: grapeancestry-cloud
