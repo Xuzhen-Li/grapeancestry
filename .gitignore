@@ -1,3 +1,4 @@
+# Ignore large matrices, FASTQ/BAM, results, and vendor binaries.
 __pycache__/
 *.py[cod]
 *.egg-info/
