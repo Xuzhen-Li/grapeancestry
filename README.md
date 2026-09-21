@@ -79,7 +79,7 @@ Packed demos include Ages and HUN89_query — panel id `HUN89` is not the same a
 
 ![Sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
 
-*Sample validity — report metadata and method coverage for the Ages aDNA demo (V5; Noraz et al. 2026). *
+*Sample validity — report metadata and method coverage for the Ages aDNA demo (V5; Noraz et al. 2026).*
 
 ![Capture QC](docs/guideline_shots/panels/01_sample_validity_02.png)
 
@@ -91,7 +91,7 @@ Packed demos include Ages and HUN89_query — panel id `HUN89` is not the same a
 
 ![Identity](docs/guideline_shots/panels/02_identity_01.png)
 
-*Identity — clone / parent–offspring screen and IBS kinship (panel `HUN89` ≠ stem `HUN89_query`).*
+*Identity — Ages clone / parent–offspring screen and IBS kinship vs the frozen panel.*
 
 ![PCA](docs/guideline_shots/panels/03_pca.png)
 
@@ -107,7 +107,7 @@ Packed demos include Ages and HUN89_query — panel id `HUN89` is not the same a
 
 ![Sample evidence](docs/guideline_shots/panels/04_sample_evidence_01.png)
 
-*Sample evidence — only **OIV 225** colour GS is decision-grade (**score ≠ phenotype**).*
+*Sample evidence — only **OIV 225** colour GS is decision-grade (**score ≠ phenotype**); SDR remains a proxy.*
 
 ![LocusZoom](docs/guideline_shots/panels/05_locuszoom.png)
 

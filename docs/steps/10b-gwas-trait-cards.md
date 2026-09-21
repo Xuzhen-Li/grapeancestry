@@ -35,5 +35,8 @@ Sample evidence / MAS cards in HTML or Cloud UI.
 
 ## Notes
 
+DIY / v1 product stops at **13b** (`*.sample-first-v2.report.html`). `chip-report` → `chip.json` is **Steps 14\*** only.
+
+
 - **Panel GWAS ≠ customer measured phenotype.**
 - Score ≠ phenotype (see also GS Step 11b).
