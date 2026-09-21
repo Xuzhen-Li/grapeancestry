@@ -57,7 +57,7 @@ Three paths. Pick **one** path; the **primary output** filename must match that 
 **Install (once):**
 
 ```bash
-conda activate ga   # bwa fastp snakemake bcftools samtools python=3.11
+# use a venv/conda env with: bwa fastp snakemake bcftools samtools python=3.11
 cd /path/to/grapeancestry   # repo or customer drop root
 pip install -e ".[dev,web]"
 export PATH="$PWD/bin:$PATH"   # ADMIXTURE 1.3.0 wrapper
