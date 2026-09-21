@@ -9,15 +9,14 @@
 
 ### First hour
 
-Same three paths as the [README](../README.md#three-ways-in) (Docker kit → Demo → DIY). Detail Q&A: [`FAQ.md`](FAQ.md).
+Same three paths as the [README · Use it](../README.md#use-it) (Docker kit → Demo → DIY). Detail Q&A: [`FAQ.md`](FAQ.md).
 
 
 | Path | What you get |
 |------|----------------|
 | **Docker kit** | Download tar from **`Zenodo Restricted (DOI TBD — fill before publish)`**, put next to `start.sh`, `./start.sh` → full UI. Demos Ages + HUN89_query. FASTQ/BAM/VCF → V2 HTML. |
-| **Demo on GitHub** | README screenshots + GUIDELINE + `demo/` Ages HTML (view-only). |
-| **DIY, no kit** | Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git. Follow `docs/steps/00a`–`13b`. |
-| **Cloud `chip.json`** | Optional Cloud JSON only — **not** the v1 product. |
+| **Demo** | README screenshots + GUIDELINE + `demo/` Ages HTML (view-only). |
+| **DIY** | Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git. Follow `docs/steps/00a`–`13b`. |
 
 v1 customer output: **`*.sample-first-v2.report.html`**. UI **http://127.0.0.1:8501** · report server **http://127.0.0.1:8502**.
 

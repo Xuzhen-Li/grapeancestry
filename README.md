@@ -37,14 +37,6 @@ v1 deliverable is **`*.sample-first-v2.report.html` only** (optional Cloud `chip
 
 *First run — setup waterfall: local password, language, and threads (locks UI access only; does not encrypt data).*
 
-![Analysis home](docs/guideline_shots/ui/02-analysis-home.png)
-
-*After login — "2. Choose files" (FASTQ / BAM / VCF into `./input`).*
-
-![Settings](docs/guideline_shots/ui/03-settings.png)
-
-*Settings — language, default thread count, change password, and log out.*
-
 Screenshot gallery — Ages demo (existing shots only). Packed demos include Ages and HUN89_query — panel id `HUN89` ≠ report stem `HUN89_query`. Walkthrough: [`docs/GUIDELINE.md`](docs/GUIDELINE.md). Cite Ages/V5: Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z)).
 
 ![Sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
