@@ -2,35 +2,42 @@
 
 ## Goal
 
-Fit or ingest frozen ADMIXTURE **P** (and panel Q) for K=2–8 so new samples only project (`-P` / NNLS).
-
-## Scripts / entrypoints
-
-| Role | Path |
-|------|------|
-| Core I/O | `src/grapeancestry/adna/admixture.py`, `panel167k_nogwas.py` |
-| Lab fit / ingest | `scripts/prep_admixture_bed.py`, `run_admixture_local.sh`, `submit_admixture_k*.sh`, `ingest_admixture_qp.py`, `admixture_fit_qc.py` |
-| QC plots | `scripts/plot_science_k8_check.py`, `plot_k2_k10_purest_align.py` |
-| Binary | `bin/admixture` |
+Fit or ingest frozen ADMIXTURE **P** (and panel Q) for K=2–8 so new samples only project (`admixture -P` / NNLS).
 
 ## Inputs
 
-- Panel BED/fam for the chosen site family  
-- HPC or local ADMIXTURE runs  
+- Panel BED/fam for the chosen site family (`panel167k_nogwas` when ingested)
+- HPC or local ADMIXTURE runs (`bin/admixture`)
 
-## Statistical / file outputs
+## Commands
+
+```bash
+# Lab fit / ingest (scripts/ — not grapeancestry subcommands):
+#   scripts/prep_admixture_bed.py
+#   scripts/run_admixture_local.sh · scripts/submit_admixture_k*.sh
+#   scripts/ingest_admixture_qp.py · scripts/admixture_fit_qc.py
+#   scripts/rebuild_manual_qp.py
+# Core I/O: src/grapeancestry/adna/admixture.py · panel167k_nogwas.py
+
+# Customer / batch projection after ingest (dedicated CLI):
+grapeancestry admix-project --vcf results/Ages.vcf.gz
+```
+
+## Outputs
 
 | Artifact | Meaning |
 |----------|---------|
-| Frozen `*.P` / `*.Q` per K | Column order must match sites file |
-| `science_manifest.json` / family provenance | Which archive is active |
+| Frozen `*.P` / `*.Q` per K under `data/panel/admixture/` | Column order must match sites file |
+| Family provenance / manifest | Which archive is active (`panel167k_nogwas` preferred) |
 
-## Visualization outputs
+## Plots
 
 | Artifact | Meaning |
 |----------|---------|
-| Lab purest-align / K-check PNGs | Archive QC only |
+| Lab purest-align / K-check PNGs (`scripts/plot_*.py`) | Archive QC only — not v1 product HTML |
 
-## Contract
+## Notes
 
-In-panel IDs → Q lookup; new IDs → project with frozen P.
+- In-panel IDs → Q **lookup**; new IDs → project with frozen P.
+- Do not unsupervised-refit 2449+N customers each night.
+- `grapeancestry run` / `analyze` accept `--admix-k8-only`; that flag is **not** an `admix-project` option.

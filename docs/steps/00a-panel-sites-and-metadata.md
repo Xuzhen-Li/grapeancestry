@@ -4,21 +4,29 @@
 
 Define the chip: which sites belong to the panel, and which reference sample IDs / groups exist.
 
-## Scripts / helpers
+## Inputs
 
-| Role | Path |
-|------|------|
-| Profile stub | `profiles/examples/grapevine-167k/profile.yaml`, `templates/profile.yaml` |
-| Manifest (lab inventory) | `data/MANIFEST.md` |
-| Panel export helpers | `src/grapeancestry/resource/panel_export.py` |
-
-## Inputs you prepare (not shipped in git)
-
-- Target site list → BED (one row per chip site)  
-- Panel sample list + metadata table (ID, origin, Grp, use, …)  
+- Target site list → BED (one row per chip site)
+- Panel sample list + metadata table (ID, origin, Grp, use, …)
 - Optional: probe/loci BED for on-target QC
+- Profile stub under `profiles/examples/` (grapevine example: `grapevine_167k`)
 
-## Statistical / file outputs
+## Commands
+
+No dedicated `grapeancestry` CLI. Prepare files and declare them in the profile / config:
+
+```bash
+# Profile stub (example id uses underscore)
+# profiles/examples/grapevine_167k/profile.yaml
+# templates/profile.yaml
+
+# Helpers (library / export — not a suite CLI):
+#   src/grapeancestry/resource/panel_export.py
+```
+
+Document inventory in `data/MANIFEST.md` (paths are local; matrices stay out of git).
+
+## Outputs
 
 | Artifact | Meaning |
 |----------|---------|
@@ -26,10 +34,11 @@ Define the chip: which sites belong to the panel, and which reference sample IDs
 | `data/panel/*.info` / sample annot | Grp colours, passport fields |
 | Profile `panel_n_sites` | Declared site count for method coverage |
 
-## Visualization outputs
+## Plots
 
-None required. Document site count and ID rules in the profile README.
+None required. Document site count and ID rules in the profile README / `CLAIMS.md`.
 
-## Other chips
+## Notes
 
-This is the first fork point: your BED + metadata replace the grapevine 167K example.
+- First fork point for other chips: your BED + metadata replace the grapevine 167K example.
+- Keep panel IDs distinct from independent recapture stems (e.g. panel `HUN89` ≠ report `HUN89_query`).

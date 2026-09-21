@@ -2,32 +2,39 @@
 
 ## Goal
 
-Stage phenotypes and trait dictionaries for panel GWAS/GS (not required for ancestry-only doors).
-
-## Scripts / entrypoints
-
-| Role | Path |
-|------|------|
-| ETL | `scripts/build_phenotype.py`, `src/grapeancestry/breeding/phenotype.py` |
-| OIV / trait locus | `resource/oiv.py`, `data/trait_locus.tsv` (local) |
-| Template | `data/phenotype_template.tsv` |
+Stage phenotypes and trait dictionaries for panel GWAS/GS (skip for ancestry-only doors).
 
 ## Inputs
 
-- Long-table phenotypes joined to panel IDs  
-- Trait scale rules (ordinal/binary)  
+- Long-table phenotypes joined to panel IDs
+- Trait scale rules (ordinal/binary); OIV / trait locus tables as available
 
-## Statistical / file outputs
+## Commands
+
+```bash
+# ETL helpers (no grapeancestry phenotype subcommand):
+python scripts/build_phenotype.py --help
+# Library: src/grapeancestry/breeding/phenotype.py
+# OIV helpers: src/grapeancestry/resource/oiv.py
+
+# Downstream suite CLIs that consume data/phenotype.tsv:
+grapeancestry gwas --pheno data/phenotype.tsv --curated
+grapeancestry gs-train --pheno data/phenotype.tsv --curated
+```
+
+## Outputs
 
 | Artifact | Meaning |
 |----------|---------|
-| `data/phenotype.tsv` | Training input; trait needs enough overlapping IDs (suite rule of thumb ≥50) |
-| Trait dictionary TSVs | Binary rules, labels |
+| `data/phenotype.tsv` | Training input; suite rule of thumb ≥50 overlapping panel IDs per trait |
+| Trait dictionary / template TSVs | Binary rules, labels (`data/phenotype_template.tsv`) |
 
-## Visualization outputs
+## Plots
 
 None at prep; used later in Steps 10–11 cards.
 
-## Claim note
+## Notes
 
-Declare which traits will be decision-grade in profile `CLAIMS.md` before training.
+- Declare which traits are **decision-grade** in profile `CLAIMS.md` before treating scores as rankable.
+- Grapevine example: only **OIV 225** colour GS is decision-grade; other traits may be exploratory.
+- Uti (WINE/TABLE) is not used as a breeding trait.

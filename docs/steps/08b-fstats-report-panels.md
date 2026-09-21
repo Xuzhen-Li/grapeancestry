@@ -4,18 +4,33 @@
 
 Surface highest shared drift / largest |Z| summaries in the UI.
 
-## Scripts
+## Inputs
 
-`fstats_report.py` · interactive sections
+- f3/f4 contrast tables from 08a (report payload)
 
-## Statistical / file outputs
+## Commands
 
-Summary strings + optional `results/{sample}.fstats.png`
+```bash
+# Report path only (same as 08a):
+grapeancestry analyze --sample Ages
 
-## Visualization outputs
+# Libraries:
+#   src/grapeancestry/popgen/fstats_report.py
+#   src/grapeancestry/report/interactive_dashboard.py
+```
 
-Outgroup-f3 / pairwise f4 panels.
+## Outputs
 
-## Claim
+| Artifact | Meaning |
+|----------|---------|
+| Summary strings in payload | Highest shared drift / |Z| highlights |
+| Optional `results/{sample}.fstats.png` | Static card when written |
 
-Exploratory only—not ADMIXTOOLS qp graphs.
+## Plots
+
+Outgroup-f3 / pairwise f4 panels in the interactive HTML.
+
+## Notes
+
+- Exploratory only — not ADMIXTOOLS qp graphs.
+- No dedicated f-stats CLI; panels are assembled by the report builder.

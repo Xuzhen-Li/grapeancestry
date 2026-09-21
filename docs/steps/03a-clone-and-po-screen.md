@@ -2,23 +2,40 @@
 
 ## Goal
 
-Flag Identical / Parent-Offspring hits against the reference screen (non-self).
+Flag Identical / Parent-Offspring hits against the reference screen (**non-self**).
 
-## Scripts
+## Inputs
 
-`identity/run_ibs.py`, `parentage.py`, `fingerprint.py` · `grapeancestry identity`
+- Query VCF at panel sites
+- Panel dosage cache (Step 00c)
+- Sample id (report stem)
 
-## Statistical / file outputs
+## Commands
+
+```bash
+grapeancestry identity \
+  --vcf results/HUN89_query.vcf.gz \
+  --sample HUN89_query \
+  --out-tsv results/HUN89_query.ibs.tsv
+
+# Inside full analyze:
+grapeancestry analyze --sample HUN89 --as-query
+
+# Libraries: src/grapeancestry/identity/run_ibs.py · parentage.py · fingerprint.py · ibs.py
+```
+
+## Outputs
 
 | Artifact | Meaning |
 |----------|---------|
 | Clone/PO hit table | Identical + PO only; empty if none |
-| Self-in-panel QC | If query ID already in panel, report self then nearest non-self |
+| Self-in-panel QC | If query ID already in panel, report self then nearest **non-self** |
 
-## Visualization outputs
+## Plots
 
-Identity section “Clone + PO list”; click-to-pin.
+Identity section “Clone + PO list”; click-to-pin in interactive HTML.
 
-## ID trap
+## Notes
 
-Panel `HUN89` ≠ stem `HUN89_query`.
+- **ID trap:** panel `HUN89` ≠ stem `HUN89_query` (independent chip FASTQ). Do not strip `_query` to look up Q/passport.
+- Clone-screen = non-self Identical + Parent-Offspring only.
