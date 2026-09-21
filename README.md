@@ -23,17 +23,17 @@ Not a whole-genome resequencing suite. **MIT = code only** (panel genotypes/phen
 
 | Path | What you do | Outcome |
 |------|-------------|---------|
-| **Docker kit** | Get `grapeancestry-v1.0.0-amd64.tar` via **Zenodo Restricted — DOI after publish**; put next to `./start.sh`; run it | Product **`*.sample-first-v2.report.html`** — UI **http://127.0.0.1:8501** · reports **:8502** |
+| **Docker kit** | Download `grapeancestry-v1.0.0-amd64.tar` from Zenodo Restricted (DOI TBD — fill before publish); put next to `./start.sh`; run it | Product **`*.sample-first-v2.report.html`** — UI **http://127.0.0.1:8501** · reports **:8502** |
 | **Demo** | `cd demo && python3 -m http.server 8000` → Ages HTML | **View-only** showcase |
 | **DIY** | Stage your own VS-1 + frozen 2449×167K assets (not in git) | See **Docs** for `docs/steps/` |
 
 **Docker (short):** `./start.sh` (macOS `start.command` / Windows `start.bat`) creates `input/` `output/` `settings/`, loads `grapeancestry:1.0.0` when missing, and opens the UI. A docs-only clone without the tar cannot finish Analyze. Never `docker push` the fat image. Detail: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
 
-v1 product file is **`*.sample-first-v2.report.html` only** (optional Cloud `chip.json` is not a fourth path).
+v1 deliverable is **`*.sample-first-v2.report.html` only** (optional Cloud `chip.json` is not a fourth path).
 
 ## What you get
 
-Ages demo panels (existing shots only). Packed demos include Ages and HUN89_query — panel id `HUN89` ≠ report stem `HUN89_query`. Walkthrough: [`docs/GUIDELINE.md`](docs/GUIDELINE.md). Cite Ages/V5: Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z)).
+Screenshot gallery — Ages demo (existing shots only). Packed demos include Ages and HUN89_query — panel id `HUN89` ≠ report stem `HUN89_query`. Walkthrough: [`docs/GUIDELINE.md`](docs/GUIDELINE.md). Cite Ages/V5: Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z)).
 
 ![Sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
 
