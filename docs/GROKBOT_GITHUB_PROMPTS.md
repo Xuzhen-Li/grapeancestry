@@ -50,3 +50,11 @@ Public clone: Ages `http.server` works. Kit needs tar. DIY needs private assets.
 ## Gemini (after W1+W3)
 
 Optional: flowchart PNG claim labels (OIV225 solid vs do-not-claim). One prompt at a time on gemini.google.com.
+
+## Gemini Pass A / B (second brain)
+
+- **Pass A (first):** one gemini.google.com prompt → markdown drafts only (Captions / First-hour+FAQ / DIY spine / Glossary). Fact fence: src + Snakefile + PIPELINE/SCRIPTS/steps + two DOIs only.
+- Lead forwards: captions → W1+W3 · first-hour/FAQ → W2 · DIY spine → W4+W5 · glossary → W8. Delete any command/paper detail not in fence.
+- Workers land `docs/FAQ.md` and `docs/GLOSSARY.md` after fact-check.
+- **Pass B:** page review after push (Lead kicks separately).
+- Kick Pass A **in parallel with W6+W7**.
