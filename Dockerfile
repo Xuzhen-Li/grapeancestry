@@ -1,3 +1,4 @@
+# Customer / lab Docker image for the GrapeAncestry companion UI.
 # GrapeAncestry Suite — linux/amd64 (buildx arm64 optional; ADMIXTURE 1.3.0 is x86_64)
 # Customer UX: Streamlit on 8501. Do NOT copy the Mac bin/admixture Mach-O.
 FROM mambaorg/micromamba:1.5.8
