@@ -7,19 +7,30 @@ Not a whole-genome resequencing suite. Optional cross-crop scaffold: [gtbs-chip-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![ORCID](https://img.shields.io/badge/ORCID-0000--0003--3670--6657-a6ce39)](https://orcid.org/0000-0003-3670-6657)
 
+## What this is
+
+GrapeAncestry places a **new grapevine query** against a **frozen 2449 × 167K** reference on **VS-1** (Dong et al. 2023 *Science*, [doi:10.1126/science.add8655](https://doi.org/10.1126/science.add8655)). Same sample → capture QC, identity/kinship, frozen PCA + ADMIXTURE, IBS NJ tree, passport-style cards, and — where evidence supports ranking — colour genomic selection.
+
+- Query VCF = **167K sites**, not the 2449 dosage matrix.
+- PCA / ADMIXTURE are **frozen**; new samples are projected.
+- Only **OIV 225** colour GS is decision-grade today; **score ≠ phenotype** (rules in GUIDELINE).
+- **ID trap:** panel row `HUN89` ≠ report stem `HUN89_query`.
+
+**MIT = code only.** Panel genotypes / phenotypes are not MIT. Full data policy: [`DATA_NOTICE.md`](DATA_NOTICE.md).
+
 ## Three ways in
 
-| Path | What you get |
-|------|----------------|
-| **Docker kit** | Download tar from **`[DOCKER_TAR_URL 待填]`**, put it next to `start.sh`, run `./start.sh` → UI **8501** · reports **8502** |
-| **Demo on GitHub** | Screenshots below + [`docs/GUIDELINE.md`](docs/GUIDELINE.md) + [`demo/`](demo/) Ages HTML (**view-only**) |
-| **DIY, no kit** | Stage your own VS-1 + 167K panel assets, then follow [`docs/steps/`](docs/steps/) **`00a`–`13b`** (data prep → map/call → analyses → V2 HTML) |
+| Path | What you do | Outcome |
+|------|-------------|---------|
+| **Docker kit** | Download tar from **`[DOCKER_TAR_URL — fill before publish]`**, put next to `start.sh`, run `./start.sh` | Product report **`*.sample-first-v2.report.html`** (UI **8501** · reports **8502**) |
+| **Demo on GitHub** | Screenshots below + [`docs/GUIDELINE.md`](docs/GUIDELINE.md) + [`demo/`](demo/) Ages HTML | **View-only** — no product report from this path |
+| **DIY, no kit** | Stage your own VS-1 + 167K panel assets; follow [`docs/steps/`](docs/steps/) **`00a`–`13b`** | Your own **`*.sample-first-v2.report.html`** |
 
-Full data policy: [`DATA_NOTICE.md`](DATA_NOTICE.md).
+**v1 product report is `*.sample-first-v2.report.html` only.** Optional Cloud `chip.json` is classroom/Cloud demoted — not a fourth parallel path ([`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md)).
 
-## Path A — Docker kit (from scratch)
+## Path A — Docker kit (load published tar)
 
-1. Download **`grapeancestry-v1.0.0-amd64.tar`** from **`[DOCKER_TAR_URL 待填]`** (published elsewhere — not a public GitHub Release).
+1. Download **`grapeancestry-v1.0.0-amd64.tar`** from **`[DOCKER_TAR_URL — fill before publish]`** (published elsewhere — not a public GitHub Release).
 2. Place the tar next to `start.sh` / `start.command` / `start.bat` in this repo (or your customer drop folder).
 3. Run:
 
@@ -47,7 +58,8 @@ Detail: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
   ENA **ERR16654874** / **PRJEB94459**. File is **12Xv2** — Analyze-as-BAM must fail `@SQ`.
 - Treat as query on → report id `{id}_query`.
 - Step knobs = existing flags only (fastp, AdapterRemoval3, `bwa mem -k/-T`, `bwa aln -l/-n/-o`, `bcftools` `-q/-Q/-d/-C`, `--forceall`, `--pca-color`, `--admix-mode`, K=2–8).
-- Packed demos: **Ages** + **HUN89_query** (**ID trap:** panel row `HUN89` ≠ report stem `HUN89_query`). Optional Cloud JSON `chip.json` is **not** the v1 product ([`docs/CHIP_COMPANION.md`](docs/CHIP_COMPANION.md)).
+- Packed demos: **Ages** + **HUN89_query** (**ID trap:** panel row `HUN89` ≠ report stem `HUN89_query`).
+- **v1 product report is `*.sample-first-v2.report.html` only** — optional `chip.json` is demoted Cloud/classroom, not a parallel hand-in.
 
 ## Path B — Demo on GitHub (no Docker)
 
@@ -131,16 +143,6 @@ FASTQ / BAM / query VCF → **VS-1** → 167K sites → analyses → **`*.sample
 
 *Detail + claim caption: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). VS-1: Dong et al. 2023 *Science* ([doi:10.1126/science.add8655](https://doi.org/10.1126/science.add8655)).*
 
-## What this is
-
-GrapeAncestry places a **new grapevine query** against a **frozen 2449 × 167K** reference on **VS-1**. Same sample → capture QC, identity/kinship, frozen PCA + ADMIXTURE, IBS NJ tree, passport-style cards, and — where evidence supports ranking — colour genomic selection.
-
-- Query VCF = **167K sites**, not the 2449 dosage matrix.
-- PCA / ADMIXTURE are **frozen**; new samples are projected.
-- Only **OIV 225** colour GS is decision-grade today; **score ≠ phenotype** (rules in GUIDELINE).
-- **ID trap:** panel row `HUN89` ≠ report stem `HUN89_query`.
-
-**MIT = code only.** Panel genotypes / phenotypes are not MIT.
 
 ADMIXTURE 1.3.0 (linux x86_64): [download](https://dalexander.github.io/admixture/download.html).
 

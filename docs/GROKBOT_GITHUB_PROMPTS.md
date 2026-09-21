@@ -6,7 +6,7 @@ Lead: GitHub bot merges. Workers return ①必改 / ②建议 (or draft text). D
 
 (see also repo README / DATA_NOTICE.md)
 
-- Product: local Docker app, grapevine 167K on VS-1; image `grapeancestry:1.0.0`; tar `grapeancestry-v1.0.0-amd64.tar` from `[DOCKER_TAR_URL 待填]`.
+- Product: local Docker app, grapevine 167K on VS-1; image `grapeancestry:1.0.0`; tar `grapeancestry-v1.0.0-amd64.tar` from `[DOCKER_TAR_URL — fill before publish]`.
 - Public git = code + docs + Ages HTML. No VS-1 / 2449 / tar in git. Never docker push fat image. Never public Release for tar.
 - UI 8501 + reports 8502. Setup auth scrypt in `./settings/auth.json`. Sidebar Analysis / Demos / Settings.
 - Product file: `*.sample-first-v2.report.html`. `chip.json` optional only.
@@ -17,7 +17,7 @@ Lead: GitHub bot merges. Workers return ①必改 / ②建议 (or draft text). D
 
 ## W1 — README lead (LAST)
 
-Rewrite/keep README: project intro; honest three-path table; Docker from-scratch with `[DOCKER_TAR_URL 待填]`; **screenshot gallery** using `docs/guideline_shots/panels/*.png` (do not delete shots); link USER_GUIDE, GUIDELINE, steps; DIY first-class; author line. No Tonight. Lead merges after W3/W4/W6 exist.
+Rewrite/keep README: project intro; honest three-path table; Docker from-scratch with `[DOCKER_TAR_URL — fill before publish]`; **screenshot gallery** using `docs/guideline_shots/panels/*.png` (do not delete shots); link USER_GUIDE, GUIDELINE, steps; DIY first-class; author line. No Tonight. Lead merges after W3/W4/W6 exist.
 
 ## W2 — USER_GUIDE product path
 
