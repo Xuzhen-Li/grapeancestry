@@ -36,16 +36,26 @@ if errorlevel 1 (
     )
   ) else (
     echo Image %IMAGE% not found and %TAR% is missing.
+    echo A docs-only GitHub clone cannot produce a working fat image.
     if not "%ALLOW_INCOMPLETE%"=="1" (
-      echo STOP: Refusing incomplete build. Place %TAR% here or set ALLOW_INCOMPLETE=1.
+      echo STOP: Refusing incomplete build. Place %TAR% next to this script, or set ALLOW_INCOMPLETE=1.
       exit /b 1
     )
     if not exist Dockerfile (
-      echo STOP: No Dockerfile.
+      echo STOP: No Dockerfile and no tar.
       exit /b 1
     )
-    echo ALLOW_INCOMPLETE=1 — building incomplete image ...
+    echo ALLOW_INCOMPLETE=1 — building incomplete image (Analyze expected to stop without private assets) ...
     docker build --platform linux/amd64 -t %IMAGE% .
+    if errorlevel 1 (
+      echo STOP: docker build failed.
+      exit /b 1
+    )
+    docker image inspect %IMAGE% >nul 2>&1
+    if errorlevel 1 (
+      echo STOP: docker build did not produce tag %IMAGE%.
+      exit /b 1
+    )
   )
 )
 
@@ -53,6 +63,10 @@ docker rm -f %NAME% >nul 2>&1
 echo Starting %NAME% on :8501 and :8502 ...
 echo NEVER docker push %IMAGE%.
 docker run -d --name %NAME% -p 8501:8501 -p 8502:8502 -v "%cd%\input:/input" -v "%cd%\output:/output" -v "%cd%\settings:/settings" %IMAGE%
+if errorlevel 1 (
+  echo STOP: docker run failed.
+  exit /b 1
+)
 echo UI:     http://127.0.0.1:8501
 echo Report: http://127.0.0.1:8502
 start http://127.0.0.1:8501
