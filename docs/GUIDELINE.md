@@ -1,6 +1,6 @@
-# GrapeAncestry guideline (chip companion)
+# GrapeAncestry guideline
 
-**Status:** public docs on `Xuzhen-Li/grapeancestry` (demo walkthrough). Full suite CLI lands later on this public tree.  
+**Status:** public docs and source on `Xuzhen-Li/grapeancestry`. Analyze needs the private Docker tar (not in git).  
 **Language:** English primary.
 
 This page has two jobs:
