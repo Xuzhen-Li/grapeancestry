@@ -17,11 +17,11 @@ Fact-checked from Gemini Pass A (corrected). Paper details only from the two cit
 | **Selection overlay** | Panel Grp contrast + **query GT overlay** on regional maps; overlay ≠ “this sample was selected”. |
 | **chip.json** | Optional Cloud JSON; **not** the v1 primary product. |
 | **Kit** | Private Docker tar + `start.sh` (and/or [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit) scaffold). |
-| **DIY** | Self-supply VS-1 + panel assets; follow `docs/steps/00a`–`13b`. |
+| **DIY** | Self-supply VS-1 + panel assets; follow `steps/00a`–`13b`. |
 | **Ages / V5** | Public aDNA demo (Noraz et al. 2026 *Nat Commun*, [doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z)). |
 | **HUN89** | Panel row id in the 2449. |
 | **HUN89_query** | Independent FASTQ recapture report stem (≠ panel `HUN89`). |
 | **8501 / 8502** | Kit Streamlit UI / report server. |
 | **MIT** | Code license only; not panel genotypes/phenotypes. |
 
-See also: [`FAQ.md`](FAQ.md) · [`steps/`](steps/) · [`PIPELINE.md`](PIPELINE.md).
+See also: [`FAQ.md`](FAQ.md) · [`steps/`](../steps/) · [`PIPELINE.md`](PIPELINE.md).

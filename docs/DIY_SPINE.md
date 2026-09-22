@@ -1,16 +1,16 @@
 # DIY spine (`00a`→`13b`)
 
-One-page map for **Path C** (keep this table out of the README homepage). Detail pages: [`steps/`](steps/).
+One-page map for **Path C** (keep this table out of the README homepage). Detail pages: [`steps/`](../steps/).
 
 Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git.
 
 | Step | Goal | Entry |
 |------|------|-------|
-| 00a | Panel sites + sample metadata | [`steps/00a`](steps/00a-panel-sites-and-metadata.md) |
-| 00b | Reference genome (VS-1) | [`steps/00b`](steps/00b-reference-genome.md) |
-| 00c | Panel VCF + dosage cache | [`steps/00c`](steps/00c-panel-vcf-and-dosage-cache.md) · `python -m grapeancestry.core.dosage` |
-| 00d | Freeze PCA axes | [`steps/00d`](steps/00d-frozen-pca-axes.md) · suite `gcta64` |
-| 00e | Freeze ADMIXTURE Q/P (K=2–8) | [`steps/00e`](steps/00e-frozen-admixture-qp.md) · ADMIXTURE 1.3.0 |
+| 00a | Panel sites + sample metadata | [`steps/00a`](../steps/00a-panel-sites-and-metadata.md) |
+| 00b | Reference genome (VS-1) | [`steps/00b`](../steps/00b-reference-genome.md) |
+| 00c | Panel VCF + dosage cache | [`steps/00c`](../steps/00c-panel-vcf-and-dosage-cache.md) · `python -m grapeancestry.core.dosage` |
+| 00d | Freeze PCA axes | [`steps/00d`](../steps/00d-frozen-pca-axes.md) · suite `gcta64` |
+| 00e | Freeze ADMIXTURE Q/P (K=2–8) | [`steps/00e`](../steps/00e-frozen-admixture-qp.md) · ADMIXTURE 1.3.0 |
 | 00f–00g | Phenotypes / optional cloud pack | skip if ancestry-only |
 | 01a | Trim + map to VS-1 | `grapeancestry run` · Snakefile `fastp` / AdapterRemoval3 → `bwa` |
 | 01b | Markdup + call at 167K BED | same · `samtools markdup` → `bcftools … -T` BED |

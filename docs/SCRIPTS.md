@@ -8,7 +8,7 @@ Folder roles and what is not in git: **[REPO_MAP.md](../REPO_MAP.md)**.
 
 ## Step-by-step docs
 
-One markdown per analysis step (scripts · stats · viz): **[steps/README.md](steps/README.md)**.
+One markdown per analysis step (scripts · stats · viz): **[steps/README.md](../steps/README.md)**.
 
 
 Cross-panel scaffold process (Gemini-led): [Xuzhen-Li/gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).  

@@ -16,7 +16,7 @@ Same three paths as the [README · Use it](../README.md#use-it) (Docker kit → 
 |------|----------------|
 | **Docker kit** | Download tar from **Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632))**, put next to `start.sh`, `./start.sh` → full UI. Demos Ages + HUN89_query. FASTQ/BAM/VCF → V2 HTML. |
 | **Demo** | README screenshots + GUIDELINE + `demo/` Ages HTML (view-only). |
-| **DIY** | Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git. Follow `docs/steps/00a`–`13b`. |
+| **DIY** | Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git. Follow [`steps/`](../steps/) `00a`–`13b`. |
 
 v1 customer output: **`*.sample-first-v2.report.html`**. UI **http://127.0.0.1:8501** · report server **http://127.0.0.1:8502**.
 
