@@ -8,7 +8,7 @@ Use the same three paths as the README ([Use it](../README.md#use-it)) — this 
 
 1. **Docker kit** — [README · Use it](../README.md#use-it). Tar from Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)) → `./start.sh` (macOS `start.command` / Windows `start.bat`).
 2. **Demo** — [README · Use it](../README.md#use-it). Ages HTML via `demo/` http.server is a **view-only showcase — not a v1 deliverable** ([GUIDELINE](GUIDELINE.md)).
-3. **DIY** — [README · Use it](../README.md#use-it). Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git; see [`docs/steps/`](steps/).
+3. **DIY** — [README · Use it](../README.md#use-it). Stage your own VS-1 + frozen 2449×167K panel assets (FASTA/indices, sites BED, dosage, PCA·ADMIXTURE) — not in public git; see [`steps/`](../steps/).
 
 Data bans: [`DATA_NOTICE.md`](../DATA_NOTICE.md). Glossary: [`GLOSSARY.md`](GLOSSARY.md) (167K sites vs 2449 panel matrix).
 

@@ -20,7 +20,7 @@ What lives in this public tree, and what does not. Use this when the folder list
 | See the pipeline picture | [FLOWCHART.md](docs/FLOWCHART.md) · `docs/flowchart_vs1_analysis_v2.png` |
 | Screenshot walkthrough (Ages) | [GUIDELINE.md](docs/GUIDELINE.md) · `docs/guideline_shots/` |
 | Open interactive demo HTML | [`demo/`](demo/) |
-| Step docs (prep → report → cloud) | [`docs/steps/`](docs/steps/) |
+| Step docs (prep → report → cloud) | [`steps/`](steps/) |
 | Which script / module does what | [SCRIPTS.md](docs/SCRIPTS.md) |
 | Science / claim rules | [PIPELINE.md](docs/PIPELINE.md) · [ANALYSIS_METHODS.md](docs/ANALYSIS_METHODS.md) |
 | How to start (Docker kit / Demo / DIY) | [USER_GUIDE.md](docs/USER_GUIDE.md) |
@@ -34,7 +34,8 @@ What lives in this public tree, and what does not. Use this when the folder list
 | **`config/`** | YAML for local/HPC demos (`samples_ages.yaml`, …) | No cloud secrets |
 | **`data/`** | **Placeholders + READMEs** for where to stage assets | **No** FASTQ, VS-1 fasta, or 2449×167K dosage in git |
 | **`demo/`** | Ages sample-first HTML (view-only) + Plotly/D3/LocusZoom `assets/` | Not a full panel matrix; not FASTQ |
-| **`docs/`** | Human docs: GUIDELINE, flowchart, methods, DIY `steps/` `00a`–`13b` | Not the runnable engines |
+| **`steps/`** | DIY step curriculum `00a`–`13b` (+ optional `14*`) | Not the runnable engines |
+| **`docs/`** | Human docs: GUIDELINE, flowchart, methods, FAQ, SCRIPTS | Not the runnable engines; DIY steps live in root `steps/` |
 | **`input/`** | Host mount from `start.sh`; FASTQ / BAM / VCF land here | Empty in git; not panel dosage |
 | **`output/`** | Host mount from `start.sh`; run results land here | Empty in git; not committed lab dumps |
 | **`results/`** | Local run outputs (gitignored content) | Empty on a fresh clone |
@@ -80,7 +81,7 @@ What lives in this public tree, and what does not. Use this when the folder list
 | `resource/` | Panel/export/portal helpers |
 | `cli.py` | `grapeancestry` entry |
 
-## `docs/steps/` bands
+## `steps/` bands
 
 | Band | IDs | Meaning |
 |------|-----|---------|
@@ -93,7 +94,7 @@ What lives in this public tree, and what does not. Use this when the folder list
 | Panel research | `08*`–`12*` | f-stats, Fst, GWAS, GS, LocusZoom |
 | Hand-ins | `13*`–`14*` | Sample-first HTML · cloud `chip.json` |
 
-Index: [steps/README.md](docs/steps/README.md).
+Index: [steps/README.md](steps/README.md).
 
 ## What is *not* in git
 

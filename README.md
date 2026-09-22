@@ -24,8 +24,8 @@ Solid/dashed rules: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). VS-1: Dong et al. 
 | Path | What you do | Outcome |
 |------|-------------|---------|
 | **Docker kit** | Download `grapeancestry-v1.0.0-amd64.tar` from Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)); put next to `./start.sh`; run it | Product **`*.sample-first-v2.report.html`** — UI **http://127.0.0.1:8501** · reports **:8502** |
-| **Demo** | `cd demo && python3 -m http.server 8000` → Ages HTML | **View-only** showcase |
-| **DIY** | Stage your own VS-1 + frozen 2449×167K assets (not in git) | See **Docs** for `docs/steps/` |
+| **Demo** | [`demo/`](demo/) — `cd demo && python3 -m http.server 8000` → Ages HTML | **View-only** showcase |
+| **DIY** | Stage your own VS-1 + frozen 2449×167K assets (not in git) | Follow [`steps/`](steps/) `00a`–`13b` |
 
 **Docker (short):** `./start.sh` (macOS `start.command` / Windows `start.bat`) creates `input/` `output/` `settings/`, loads `grapeancestry:1.0.0` when missing, and opens the UI. A docs-only clone without the tar cannot finish Analyze. Never `docker push` the fat image. Detail: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
 
@@ -80,12 +80,13 @@ Screenshot gallery — Ages demo (existing shots only). Packed demos include Age
 | Doc | Role |
 |-----|------|
 | [`DATA_NOTICE.md`](DATA_NOTICE.md) | What is / is not in git; Docker tar policy |
+| [`demo/`](demo/) | Ages sample-first HTML (view-only) |
+| [`steps/`](steps/) | DIY `00a`–`13b` |
 | [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) | Start kit + browse; BAM/intake |
 | [`docs/GUIDELINE.md`](docs/GUIDELINE.md) | How to read the report |
 | [`docs/FAQ.md`](docs/FAQ.md) | First hour |
 | [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | Terms (167K vs 2449) |
 | [`REPO_MAP.md`](REPO_MAP.md) | What each top-level folder holds |
-| [`docs/steps/`](docs/steps/) | DIY `00a`–`13b` |
 | [`docs/CODE_AVAILABILITY.md`](docs/CODE_AVAILABILITY.md) | Git URL + Docker / Zenodo note |
 | [`docs/FLOWCHART.md`](docs/FLOWCHART.md) | Flowchart claim caption |
 
