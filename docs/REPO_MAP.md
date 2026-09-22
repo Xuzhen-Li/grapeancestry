@@ -16,14 +16,14 @@ What lives in this public tree, and what does not. Use this when the folder list
 
 | You want… | Go to |
 |-----------|--------|
-| Understand what the product is | [README.md](../README.md) → *What this is* |
+| Understand the product | [README.md](../README.md) |
 | See the pipeline picture | [FLOWCHART.md](FLOWCHART.md) · `flowchart_vs1_analysis_v2.png` |
 | Screenshot walkthrough (Ages) | [GUIDELINE.md](GUIDELINE.md) · `guideline_shots/` |
 | Open interactive demo HTML | [`demo/`](../demo/) |
 | Step docs (prep → report → cloud) | [`steps/`](steps/) |
 | Which script / module does what | [SCRIPTS.md](SCRIPTS.md) |
 | Science / claim rules | [PIPELINE.md](PIPELINE.md) · [ANALYSIS_METHODS.md](ANALYSIS_METHODS.md) |
-| Onboarding / doors A–D | [USER_GUIDE.md](USER_GUIDE.md) |
+| How to start (Docker kit / Demo / DIY) | [USER_GUIDE.md](USER_GUIDE.md) |
 | Optional Cloud JSON | [CHIP_COMPANION.md](CHIP_COMPANION.md) |
 | Add another crop panel | [`../profiles/`](../profiles/) · kit repo above |
 
@@ -31,23 +31,45 @@ What lives in this public tree, and what does not. Use this when the folder list
 
 | Path | What it is | What it is not |
 |------|------------|----------------|
-| **`docs/`** | Human docs: GUIDELINE, step MDs, flowchart, methods | Not the runnable engines |
-| **`demo/`** | Ages sample-first HTML + Plotly/D3/LocusZoom `assets/` | Not a full panel matrix; not FASTQ |
-| **`src/grapeancestry/`** | Python package (CLI `grapeancestry`, domains below) | Not species-agnostic kit SPI (that is the kit repo) |
-| **`workflow/`** | Snakemake skeleton (map → call at panel BED) | Not a full HPC dump of every lab job |
-| **`scripts/`** | Thin wrappers / ADMIXTURE paste / pack builders | Prefer package modules for new work |
-| **`config/`** | YAML for local/HPC demos (`samples_ages.yaml`, …) | No cloud secrets |
-| **`profiles/`** + **`templates/`** | Grapevine 167K profile hooks | Cross-crop profiles → **kit**, not here |
-| **`platform/`** | Grapevine lab seam notes | **Not** kit SPI; kit has its own thin `platform/` |
-| **`templates/`** | Starting `profile.yaml` + claims scaffold | Copy out → `profiles/<id>/` |
-| **`chip/`** | Pointers to 167K chip *design* notes | Design detail may also live under grapeancestry `chip/` history |
 | **`analysis/`** | Small analysis notes / pointers | Not the main step curriculum (`docs/steps/`) |
-| **`data/`** | **Placeholders + READMEs** for where to stage assets | **No** FASTQ, VS-1 fasta, or 2449×167K dosage in git |
 | **`bin/`** | Lab helper binaries (ADMIXTURE, GCTA) when present | Optional; self-supply on some clones |
+| **`chip/`** | Pointers to 167K chip *design* notes | Design detail may also live under grapeancestry `chip/` history |
+| **`config/`** | YAML for local/HPC demos (`samples_ages.yaml`, …) | No cloud secrets |
+| **`data/`** | **Placeholders + READMEs** for where to stage assets | **No** FASTQ, VS-1 fasta, or 2449×167K dosage in git |
+| **`demo/`** | Ages sample-first HTML (view-only) + Plotly/D3/LocusZoom `assets/` | Not a full panel matrix; not FASTQ |
+| **`docs/`** | Human docs: GUIDELINE, flowchart, methods, DIY `steps/` `00a`–`13b` | Not the runnable engines |
+| **`input/`** | Host mount from `start.sh`; FASTQ / BAM / VCF land here | Empty in git; not panel dosage |
+| **`output/`** | Host mount from `start.sh`; run results land here | Empty in git; not committed lab dumps |
+| **`platform/`** | Grapevine lab seam notes | **Not** kit SPI; kit has its own thin `platform/` |
+| **`profiles/`** | Grapevine 167K profile hooks | Cross-crop profiles → **kit**, not here |
 | **`results/`** | Local run outputs (gitignored content) | Empty on a fresh clone |
-| **`app.py`** | Streamlit / UI entry when you run the companion UI | Not required to read docs or open `demo/` |
+| **`scripts/`** | Thin wrappers / ADMIXTURE paste / pack builders | Prefer package modules for new work |
+| **`settings/`** | Host mount from `start.sh`; local UI auth (`auth.json`) | UI lock only; empty in git |
+| **`src/`** | Python package under `src/grapeancestry/` (CLI `grapeancestry`) | Not species-agnostic kit SPI (that is the kit repo) |
+| **`templates/`** | Starting `profile.yaml` + claims scaffold; copy out → `profiles/<id>/` | Not live grapevine hooks (those are `profiles/`) |
+| **`tests/`** | Placeholder for tests (`.gitkeep` only) | Empty of test files in git |
+| **`workflow/`** | Snakemake skeleton (map → call at panel BED) | Not a full HPC dump of every lab job |
 
-Root also has `Dockerfile`, `docker-compose.yml`, `pyproject.toml`, `requirements*.txt`, `environment*.yml`, `LICENSE`.
+## Top-level files
+
+| Path | What it is | What it is not |
+|------|------------|----------------|
+| **`README.md`** | Public homepage (`# GrapeAncestry`) | Not the step curriculum |
+| **`DATA_NOTICE.md`** | What is / is not in git; Docker tar policy | Not a license text |
+| **`LICENSE`** | Project license | Not the Zenodo access terms |
+| **`app.py`** | Streamlit / UI entry when you run the companion UI | Not required to read docs or open `demo/` |
+| **`Dockerfile`** | Image build recipe for the companion UI stack | Not a substitute for the Zenodo fat tar alone |
+| **`docker-compose.yml`** | Compose wiring for local UI / report ports | Not the Zenodo distribution channel |
+| **`start.sh`** | Loads `grapeancestry:1.0.0`, UI `:8501`, reports `:8502` | Not a docs-only substitute for the fat image |
+| **`start.command`** | macOS wrapper for `start.sh` | Not a Windows launcher |
+| **`start.bat`** | Windows wrapper for `start.sh` | Not a macOS launcher |
+| **`pyproject.toml`** | Package metadata / install entry for `grapeancestry` | Not runtime panel assets |
+| **`requirements.txt`** | Pip deps for local / image Python | Not HPC conda pins |
+| **`requirements-cloud.txt`** | Pip deps for optional Cloud path | Not v1 Docker kit deps |
+| **`environment.yml`** | Conda env for local demos | Not the HPC-full pin set |
+| **`environment-hpc.yml`** | Conda env pins for HPC-style runs | Not the minimal local demo env |
+| **`.gitignore`** | Git ignore rules for local/generated paths | Not Docker build context rules |
+| **`.dockerignore`** | Docker build context ignore rules | Not git ignore rules |
 
 ## `src/grapeancestry/` domains
 
