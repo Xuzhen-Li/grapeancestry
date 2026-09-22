@@ -387,7 +387,6 @@ Demo stem: `Ages` (aDNA SE from V5 / Iron Age Martigues). Modern PE recaptures (
 
 ---
 
-*Section prose adapted from Gemini draft for GUIDELINE Walk the demo report (facts constrained to suite claim boundaries).*
 
 
 ## Privacy
