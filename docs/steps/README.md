@@ -51,6 +51,6 @@ One markdown per sub-step. Names use **`00a`…`14b`** so order stays obvious.
 2. Per sample (**DIY / v1 HTML**): `01a` → `13b` → `*.sample-first-v2.report.html` — **skip 14\*** for v1 HTML  
 3. **Optional** Cloud JSON only: `14a` → `14b` (Chip Companion; skip for Docker kit / DIY HTML)
 
-Also: [../REPO_MAP.md](../REPO_MAP.md) · [../SCRIPTS.md](../SCRIPTS.md) · [../PIPELINE.md](../PIPELINE.md) · [../GUIDELINE.md](../GUIDELINE.md).
+Also: [../../REPO_MAP.md](../../REPO_MAP.md) · [../SCRIPTS.md](../SCRIPTS.md) · [../PIPELINE.md](../PIPELINE.md) · [../GUIDELINE.md](../GUIDELINE.md).
 
-**Other chips:** reuse these step IDs; replace artifacts behind `00a`–`00e` via `profiles/` + `config/`.
+**Other chips:** reuse these step IDs; replace artifacts behind `00a`–`00e` via [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit) + `config/`.

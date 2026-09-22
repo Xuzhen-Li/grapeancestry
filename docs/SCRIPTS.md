@@ -1,10 +1,10 @@
 # Script map (detailed)
 
-This repository now ships both the **grapevine 167K public face** (docs + Ages demo HTML) and the **runnable companion package** under `src/grapeancestry/`. The same modules are the template for **other GBTS / capture panels**: keep code generic at the CLI/domain layer; swap sites, reference, and frozen axes through `profiles/` + `config/`.
+This repository now ships both the **grapevine 167K public face** (docs + Ages demo HTML) and the **runnable companion package** under `src/grapeancestry/`. The same modules are the template for **other GBTS / capture panels**: keep code generic at the CLI/domain layer; swap sites, reference, and frozen axes through `config/` (cross-crop profiles → [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit)).
 
 ## Repository map
 
-Folder roles and what is not in git: **[REPO_MAP.md](REPO_MAP.md)**.
+Folder roles and what is not in git: **[REPO_MAP.md](../REPO_MAP.md)**.
 
 ## Step-by-step docs
 
@@ -103,7 +103,7 @@ grapeancestry chip-report --vcf results/Ages.vcf.gz --out chip.json
 | Cloud Streamlit plots | `cloud/plot.py`, root `app.py` | VCF → cards |
 | Lab ADMIXTURE QC plots | `scripts/plot_science_k8_check.py`, `plot_k2_k10_purest_align.py` | Archive QC, not the v1 product HTML |
 
-Platform stub dirs `platform/viz/` document the same contracts without duplicating code yet—implementation lives in `src/grapeancestry/`.
+Viz contracts live in `src/grapeancestry/` (cross-crop scaffold → [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit)).
 
 ---
 
@@ -133,12 +133,12 @@ V2 contract: provenance IDs, artifact list, method coverage (available/unavailab
 
 ## E · Adding another chip (checklist)
 
-1. Copy `templates/` → `profiles/<your-id>/` and fill `profile.yaml` + `CLAIMS.md`.  
+1. Cross-crop profiles / scaffold: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit) (not in this repo).  
 2. Stage reference, sites BED, panel VCF → build dosage cache via `python -m grapeancestry.core.dosage …`.  
 3. Point `config/*.yaml` `paths:` at your files (or add a new config profile).  
 4. Freeze PCA/ADMIXTURE for *your* panel; do not unsupervised-refit panel+customer each night.  
-5. Declare decision-grade traits in profile `CLAIMS.md` (see `docs/CLAIMS.md`).  
-6. Keep matrices out of git; document them in profile `MANIFEST.md`.
+5. Declare decision-grade traits in profile `CLAIMS.md` (kit profile contract).  
+6. Keep matrices out of git; document them in a local `MANIFEST.md`.
 
 ---
 
