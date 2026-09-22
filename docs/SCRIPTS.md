@@ -11,7 +11,7 @@ Folder roles and what is not in git: **[REPO_MAP.md](../REPO_MAP.md)**.
 One markdown per analysis step (scripts · stats · viz): **[steps/README.md](../steps/README.md)**.
 
 
-Cross-panel scaffold process (Gemini-led): [Xuzhen-Li/gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).  
+[Xuzhen-Li/gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).  
 **Not in git:** panel dosage matrices, FASTQ/BAM, reference genomes — stage under `data/` locally (see `data/MANIFEST.md` and `data/*/README.md`).
 
 ## How modules map to “any chip”

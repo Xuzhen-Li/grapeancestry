@@ -1,6 +1,6 @@
 # FAQ — GrapeAncestry v1.0.0
 
-Fact-checked from Gemini Pass A (corrected). Commands and claims fenced to this repo + Dong et al. 2023 *Science* (VS-1) + Noraz et al. 2026 *Nat Commun* (Ages/V5).
+Commands and claims fenced to this repo + Dong et al. 2023 *Science* (VS-1) + Noraz et al. 2026 *Nat Commun* (Ages/V5).
 
 ## First hour
 

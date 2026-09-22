@@ -1,6 +1,6 @@
 # Glossary — GrapeAncestry v1.0.0
 
-Fact-checked from Gemini Pass A (corrected). Paper details only from the two cited DOIs when named.
+Paper details only from the two cited DOIs when named.
 
 | Term | Meaning |
 |------|---------|
