@@ -1,6 +1,6 @@
 # GrapeAncestry guideline
 
-**Status:** public docs and source on `Xuzhen-Li/grapeancestry`. Analyze needs the private Docker tar (not in git).  
+**Status:** public docs and source on `Xuzhen-Li/grapeancestry`. **Analyze** requires the private Docker tar (not in git).  
 **Language:** English primary.
 
 This page has two jobs:
