@@ -1,8 +1,0 @@
-profile_id: your-panel-id
-label: Your GBTS / capture panel
-panel_n_sites: 0
-# sites_bed: data/panel/sites.bed
-# panel_info: data/panel/samples.info
-# dosage_cache: results/cache/panel_dosage.npz
-# coordinate_system: your-ref
-claims_doc: CLAIMS.md

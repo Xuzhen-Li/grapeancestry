@@ -9,16 +9,15 @@ Define the chip: which sites belong to the panel, and which reference sample IDs
 - Target site list → BED (one row per chip site)
 - Panel sample list + metadata table (ID, origin, Grp, use, …)
 - Optional: probe/loci BED for on-target QC
-- Profile stub under `profiles/examples/` (grapevine example: `grapevine_167k`)
+- Cross-crop profile contract: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit); grapevine paths via `config/`
 
 ## Commands
 
-No dedicated `grapeancestry` CLI. Prepare files and declare them in the profile / config:
+No dedicated `grapeancestry` CLI. Prepare files and declare them in config (cross-crop profiles → kit repo):
 
 ```bash
-# Profile stub (example id uses underscore)
-# profiles/examples/grapevine_167k/profile.yaml
-# templates/profile.yaml
+# Cross-crop profile scaffold: https://github.com/Xuzhen-Li/gtbs-chip-service-kit
+# Grapevine demo paths: config/*.yaml
 
 # Helpers (library / export — not a suite CLI):
 #   src/grapeancestry/resource/panel_export.py

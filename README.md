@@ -84,7 +84,7 @@ Screenshot gallery — Ages demo (existing shots only). Packed demos include Age
 | [`docs/GUIDELINE.md`](docs/GUIDELINE.md) | How to read the report |
 | [`docs/FAQ.md`](docs/FAQ.md) | First hour |
 | [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | Terms (167K vs 2449) |
-| [`docs/REPO_MAP.md`](docs/REPO_MAP.md) | What each top-level folder holds |
+| [`REPO_MAP.md`](REPO_MAP.md) | What each top-level folder holds |
 | [`docs/steps/`](docs/steps/) | DIY `00a`–`13b` |
 | [`docs/CODE_AVAILABILITY.md`](docs/CODE_AVAILABILITY.md) | Git URL + Docker / Zenodo note |
 | [`docs/FLOWCHART.md`](docs/FLOWCHART.md) | Flowchart claim caption |
