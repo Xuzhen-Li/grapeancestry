@@ -48,7 +48,7 @@ Three paths. Pick **one** path; the **primary output** filename must match that 
 3. Open [`USER_GUIDE.md`](USER_GUIDE.md) · [`FLOWCHART.md`](FLOWCHART.md) for the analysis boxes; [`CHIP_COMPANION.md`](CHIP_COMPANION.md) for Cloud vs Lab paths.
 4. Use the screenshots below as a stand-in for the interactive HTML (GitHub cannot run the report in-repo).
 
-**Note:** this tree does **not** ship a runnable `grapeancestry` binary, VS-1, or the 2449 dosage cache. Commands in Lane B live in the private suite package.
+**Note:** this tree does **not** ship a runnable `grapeancestry` binary, VS-1, or the 2449 dosage cache. These commands live in the private suite package.
 
 ### Local suite (developer / lab Mac)
 
