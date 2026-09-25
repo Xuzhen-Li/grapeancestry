@@ -5,7 +5,7 @@
 
 ---
 
-## 0. Honest status
+## 0. What you need
 
 ### First hour
 
@@ -36,7 +36,7 @@ Steps that need the fat image are marked **(image)**. Public-clone browse steps 
 # Windows: start.bat
 ```
 
-What the launcher does: ensure folders; if image `grapeancestry:1.0.0` is missing, `docker load -i grapeancestry-v1.0.0-amd64.tar` when present, else attempt `docker build --platform linux/amd64` (a docs-only clone **cannot** produce a working fat image); `docker run -d --name grapeancestry -p 8501:8501 -p 8502:8502` with `./input`, `./output`, `./settings` mounted. Colima: if `~/.colima/default/docker.sock` exists and `docker info` fails, set `DOCKER_HOST` to that socket.
+What the launcher does: ensure folders; if image `grapeancestry:1.0.0` is missing and `grapeancestry-v1.0.0-amd64.tar` is present, `docker load -i` that tar; without the tar it stops. `ALLOW_INCOMPLETE=1` forces an incomplete build that cannot Analyze. Then `docker run -d --name grapeancestry -p 8501:8501 -p 8502:8502` with `./input`, `./output`, `./settings` mounted. Colima: if `~/.colima/default/docker.sock` exists and `docker info` fails, set `DOCKER_HOST` to that socket.
 
 **Never `docker push`** the fat image (panel assets inside).
 

@@ -1,8 +1,8 @@
 # Repository map
 
-What lives in this public tree, and what does not. Use this when the folder list feels crowded.
+What lives in this public tree, and what does not.
 
-## Honest status
+## What a clone contains
 
 | Surface | What you get |
 |---------|----------------|
@@ -10,7 +10,7 @@ What lives in this public tree, and what does not. Use this when the folder list
 | **Private tar + `start.sh`** | Full UI. Demos Ages + HUN89_query. FASTQ/BAM/VCF → V2 HTML. |
 | **Cloud `chip.json`** | Optional Cloud path, not v1. |
 
-**One-line role:** grapevine **167K** public walkthrough (docs + Ages demo). Lab `src/` may exist in-tree but is **not** the newcomer default. Cross-panel *scaffold only*: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
+grapevine **167K** public walkthrough (docs + Ages demo). Lab `src/` may exist in-tree but is **not** the newcomer default. Cross-panel *scaffold only*: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
 
 ## Read this first (by goal)
 

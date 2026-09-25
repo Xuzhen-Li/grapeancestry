@@ -1,5 +1,7 @@
 # Analysis steps (fine-grained)
 
+Needs the VS-1 genome and 2449 × 167K panel assets you stage yourself (not in git). Install: `pip install -e .`
+
 **DIY no-kit path:** `00a`–`13b` (ends at sample-first V2 HTML).  
 **Optional Chip Companion:** `14a`–`14b` (`chip-report` / Cloud JSON — not required for v1 HTML).
 

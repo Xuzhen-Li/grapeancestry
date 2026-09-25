@@ -1,6 +1,6 @@
 # Script map (detailed)
 
-This repository now ships both the **grapevine 167K public face** (docs + Ages demo HTML) and the **runnable companion package** under `src/grapeancestry/`. The same modules are the template for **other GBTS / capture panels**: keep code generic at the CLI/domain layer; swap sites, reference, and frozen axes through `config/` (cross-crop profiles → [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit)).
+This repository now ships both the **grapevine 167K docs and Ages demo** (docs + Ages demo HTML) and the **Python package** under `src/grapeancestry/`. The same modules are the template for **other GBTS / capture panels**: keep code generic at the CLI/domain layer; swap sites, reference, and frozen axes through `config/` (cross-crop profiles → [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit)).
 
 ## Repository map
 
@@ -34,7 +34,7 @@ CLI entry: `grapeancestry` (`src/grapeancestry/cli.py`) after `pip install -e .`
 
 | Piece | Path | Role |
 |-------|------|------|
-| CLI group | `src/grapeancestry/cli.py` | `run`, `analyze`, `qc`, `identity`, `project`, `admix-project`, `gwas`, `gs-train`, `gs-predict`, `cross-recommend`, `chip-report`, `selection`, `gea`, … |
+| CLI group | `src/grapeancestry/cli.py` | `run`, `analyze`, `qc`, `identity`, `project`, `admix-project`, `gwas`, `gs-train`, `gs-predict`, `cross-recommend`, `chip-report`, `selection`, `gea`, `impute`, `catalog`, `locus-search`, `seq-score` |
 | Snakemake | `workflow/Snakefile` | Mapping → markdup → `bcftools` call at panel BED |
 | Config | `config/mbp_demo.yaml`, `config/hpc_full.yaml`, `config/samples_*.yaml` | Threads, paths, PE vs aDNA |
 
@@ -62,8 +62,8 @@ CLI entry: `grapeancestry` (`src/grapeancestry/cli.py`) after `pip install -e .`
 | Domain | CLI | Primary modules |
 |--------|-----|-----------------|
 | IBS / kinship / PO | `grapeancestry identity` | `src/grapeancestry/identity/run_ibs.py`, `ibs.py`, `parentage.py`, `fingerprint.py` |
-| PCA project | `grapeancestry project` | `adna/project.py`, `pca_lock.py`, `smartpca_project.py` (+ `bin/gcta64`) |
-| ADMIXTURE project | `grapeancestry admix-project` | `adna/admix_project.py`, `admixture.py` (+ `bin/admixture`) |
+| PCA project | `grapeancestry project` | `adna/project.py`, `pca_lock.py`, `smartpca_project.py` (+ `gcta64` on PATH) |
+| ADMIXTURE project | `grapeancestry admix-project` | `adna/admix_project.py`, `admixture.py` (+ `admixture` 1.3.0 on PATH) |
 | Selection / Fst | `grapeancestry selection` | `adna/selection.py`, `popgen/selection_report.py`, `popgen/stats.py` |
 | f3/f4 | (report path) | `adna/fstats.py`, `popgen/fstats_report.py` |
 | NJ tree | (report path) | `popgen/tree_nj.py` |

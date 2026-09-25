@@ -1,6 +1,6 @@
 # Pipeline (as implemented)
 
-See also `docs/BUILD.md`. Default: `grapeancestry run --sample HUN89 --mapping full`.
+Default: `grapeancestry run --sample HUN89 --mapping full`.
 
 ## Modern PE (`type: pe`)
 
@@ -89,4 +89,4 @@ Only OIV 225 colour GS is currently rankable/decision-grade (local `results/gs/i
 
 Official methods: [Dong et al. 2023](https://doi.org/10.1126/science.add8655), [Patterson et al. 2012](https://doi.org/10.1534/genetics.112.145037), [ADMIXTURE](https://doi.org/10.1101/gr.094052.109), [EIGENSOFT (historical/alternative only)](https://doi.org/10.1371/journal.pgen.0020190), [EMMAX](https://doi.org/10.1038/ng.548), and [LocusZoom](https://doi.org/10.1093/bioinformatics/btab186). Theme behavior follows [MDN `prefers-color-scheme`](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) and [MDN `localStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage).
 
-Software: env `ga` + `bin/admixture` (1.3.0). EIGENSOFT smartPCA is historical/alternative only; it is not the current shipped PCA result.
+Software: env `ga` + `admixture` 1.3.0 on PATH. EIGENSOFT smartPCA is historical/alternative only; it is not the current shipped PCA result.

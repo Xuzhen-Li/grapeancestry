@@ -1,7 +1,7 @@
 # GrapeAncestry v1.0.0 — local compose sketch.
 # Prefer ./start.sh with private image grapeancestry:1.0.0 and mounts input/output/settings.
 # No `build:` here: a public-clone Dockerfile build cannot Analyze (no VS-1 / 2449 panel).
-# Load grapeancestry-v1.0.0-amd64.tar first (Zenodo Restricted (DOI TBD — fill before publish)).
+# Load grapeancestry-v1.0.0-amd64.tar first (Zenodo Restricted (doi:10.5281/zenodo.22868632)).
 # NEVER docker push a fat image that contains panel genotypes.
 services:
   grapeancestry:

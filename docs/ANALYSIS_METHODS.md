@@ -41,8 +41,8 @@ Entry: `grapeancestry run --config … --samples … --sample Ages|HUN89 …`
 | Dosage cache (once) | `python -m grapeancestry.core.dosage …` | `core/dosage.py` → `results/cache/panel_dosage_167k.npz` |
 | Merge artifact (2449+query VCF) | inside analyze | `core/merge_ref.py` (analysis still uses **npz**, not merged VCF) |
 | Identity / IBS / kinship | `grapeancestry identity` | `identity/run_ibs.py`, `identity/ibs.py`, `identity/parentage.py` |
-| PCA project | `grapeancestry project` | `adna/project.py`, `adna/pca_lock.py`, `bin/gcta64` (frozen axes) |
-| ADMIXTURE project | `grapeancestry admix-project` | `adna/admix_project.py`, `adna/admixture.py`, `bin/admixture` (`-P` for new IDs) |
+| PCA project | `grapeancestry project` | `adna/project.py`, `adna/pca_lock.py`, `gcta64` on PATH (frozen axes) |
+| ADMIXTURE project | `grapeancestry admix-project` | `adna/admix_project.py`, `adna/admixture.py`, `admixture` 1.3.0 on PATH (`-P` for new IDs) |
 | Selection / Fst context | `grapeancestry selection` | `adna/selection.py`, `popgen/selection_report.py`, `popgen/stats.py` |
 | f3/f4 (exploratory) | inside report build | `adna/fstats.py`, `popgen/fstats_report.py` |
 | NJ tree | inside report build | `popgen/tree_nj.py` |
