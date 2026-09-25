@@ -7,7 +7,6 @@ Self-contained **sample-first V2** HTML for the public aDNA demo **`Ages`** (arc
 | Path | Role |
 |------|------|
 | `results/Ages.sample-first-v2.report.html` | Interactive report (~38 MB; payload embedded) |
-| `results/Ages.sample-first-v2.report.data.json` | Optional query sidecar (downloads section) |
 | `assets/` | Plotly / D3 / LocusZoom (required next to `results/` as `../assets`) |
 
 ## Open locally

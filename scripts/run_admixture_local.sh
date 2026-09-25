@@ -4,7 +4,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 FIT="${FIT:-$ROOT/results/admixture_fit}"
-ADMIX="${ADMIX:-$ROOT/bin/admixture}"
+ADMIX="${ADMIX:-admixture}"
 LOG="${FIT}/admixture_run.log"
 cd "$FIT"
 echo "=== local runner start $(date) pid=$$ ===" | tee -a "$LOG"
