@@ -101,8 +101,6 @@ grapeancestry chip-report --vcf results/Ages.vcf.gz --out chip.json
 | Selection Manhattan / heat | `popgen/selection_viz.py` | Panel Grp-vs-rest; query GT overlay only |
 | Damage / fragment length | `adna/damage_lite.py` | aDNA door |
 | Cloud Streamlit plots | `cloud/plot.py`, root `app.py` | VCF → cards |
-| Lab ADMIXTURE QC plots | `scripts/plot_science_k8_check.py`, `plot_k2_k10_purest_align.py` | Archive QC, not the v1 product HTML |
-
 Viz contracts live in `src/grapeancestry/` (cross-crop scaffold → [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit)).
 
 ---
@@ -112,7 +110,6 @@ Viz contracts live in `src/grapeancestry/` (cross-crop scaffold → [gtbs-chip-s
 | Hand-in | Builder | Entry |
 |---------|---------|-------|
 | `{sample}.sample-first-v2.report.html` | `src/grapeancestry/report/build_report.py` (`build_bundle`, `render_full_html`) + `interactive_dashboard.py` | `run` / `analyze` → `grapeancestry analyze` / `run` |
-| Optional `*.report.data.json` sidecar | same bundle | downloads section |
 | `chip.json` | `cloud/analyze.py` | `grapeancestry chip-report` / Streamlit |
 | Cloud pack | `scripts/build_cloud_pack.py`, `python -m grapeancestry.cloud` | fingerprints for Cloud |
 
@@ -124,9 +121,9 @@ V2 contract: provenance IDs, artifact list, method coverage (available/unavailab
 
 | Script | Role |
 |--------|------|
-| `prep_admixture_bed.py`, `run_admixture_local.sh`, `submit_admixture_k*.sh` | Fit frozen ADMIXTURE archives on HPC |
+| `prep_admixture_bed.py`, `run_admixture_local.sh` | Fit frozen ADMIXTURE archives on HPC |
 | `admixture_fit_qc.py`, `ingest_admixture_qp.py`, `rebuild_manual_qp.py` | Ingest Q/P into suite layout |
-| `build_phenotype.py`, `extract_table_s17.py` | Phenotype ETL |
+| `build_phenotype.py` | Phenotype ETL |
 | `build_cloud_pack.py` | Pack Cloud fingerprints |
 
 ---
