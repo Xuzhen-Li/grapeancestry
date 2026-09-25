@@ -61,9 +61,7 @@ The helper `fst_sites()` is documented only as a **simplified Fst contrast**, no
 
 ### GEA/origin scope / GEA/起源范围
 
-`GEO` is reserved for the separate GEA/origin-longitude analysis.
-
-**CN**：GEO 只用于独立的 GEA/起源经度分析，不用于 Selection。
+`GEO` is used only for the separate GEA/origin-longitude analysis, not for Selection.
 
 ### f3/f4 and breeding evidence / f3/f4 与育种证据
 
