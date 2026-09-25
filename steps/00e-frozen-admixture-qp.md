@@ -14,7 +14,7 @@ Fit or ingest frozen ADMIXTURE **P** (and panel Q) for K=2–8 so new samples on
 ```bash
 # Lab fit / ingest (scripts/ — not grapeancestry subcommands):
 #   scripts/prep_admixture_bed.py
-#   scripts/run_admixture_local.sh · scripts/submit_admixture_k*.sh
+#   scripts/run_admixture_local.sh
 #   scripts/ingest_admixture_qp.py · scripts/admixture_fit_qc.py
 #   scripts/rebuild_manual_qp.py
 # Core I/O: src/grapeancestry/adna/admixture.py · panel167k_nogwas.py

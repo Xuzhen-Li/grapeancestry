@@ -95,7 +95,7 @@ def main() -> None:
     if args.make_bed:
         plink = shutil.which("plink")
         if not plink:
-            print("plink not on PATH; skip --make-bed (run on HPC via admixture_k.sbatch)")
+            print("plink not on PATH; skip --make-bed. Run ADMIXTURE 1.3.0 for K=2–8 on the prepared BED (cluster submission scripts are not included).")
             return
         vcf = bed_dir / "panel167k_nogwas.vcf.gz"
         if not vcf.exists():
