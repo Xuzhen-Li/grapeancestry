@@ -1,49 +1,130 @@
-# GrapeAncestry Suite — core capture pipeline
-# Docs: docs/BUILD.md §5 batch 1
-# Usage:
-#   snakemake -s workflow/Snakefile --configfile config/mbp_demo.yaml \
-#     --config samples_file=config/samples_demo.yaml -j 4 results/HUN89.vcf.gz
+# GrapeAncestry v1 — FASTQ / BAM → 167K panel VCF on VS-1
+#   snakemake -s workflow/Snakefile --configfile config/default.yaml \
+#     --config samples_file=... -j 4 results/{sample}.vcf.gz
 
 import os
 from pathlib import Path
 
-ROOT = Path(workflow.basedir).parent  # grapeancestry_suite/
+ROOT = Path(workflow.basedir).parent
 
-configfile: str(ROOT / "config" / "mbp_demo.yaml")
+configfile: str(ROOT / "config" / "default.yaml")
 
-SAMPLES_FILE = config.get("samples_file", str(ROOT / "config" / "samples_demo.yaml"))
+SAMPLES_FILE = config.get("samples_file", str(ROOT / "config" / "default.yaml"))
 import yaml
 with open(SAMPLES_FILE) as _fh:
     _sdata = yaml.safe_load(_fh)
 SAMPLES = _sdata["samples"]
 
 THREADS = int(config.get("threads", 4))
-MAPPING = config.get("mapping", "subref")
-# Keep data paths absolute; results relative so CLI targets match
+MAPPING = config.get("mapping", "full")
+FASTP_MIN_LEN = int(config.get("fastp_min_length", 15))
+FASTP_QUAL = int(config.get("fastp_qualified_quality", 15))
+FASTP_UNQUAL = int(config.get("fastp_unqualified_percent", 40))
+FASTP_NBASE = int(config.get("fastp_n_base_limit", 5))
+FASTP_POLY_G = str(config.get("fastp_poly_g", "auto"))
+FASTP_CUT_TAIL = bool(config.get("fastp_cut_tail", False))
+FASTP_CUT_MEAN = int(config.get("fastp_cut_mean_quality", 20))
+FASTP_DETECT_PE = bool(config.get("fastp_detect_adapter_pe", True))
+ADNA_MIN_LEN = int(config.get("adna_min_length", 25))
+ADNA_ADAPTER_SEL = str(config.get("adna_adapter_selection", "auto"))
+ADNA_ADAPTER1 = str(config.get("adna_adapter1", "") or "")
+ADNA_QUAL_TRIM = str(config.get("adna_quality_trimming", "mott"))
+ADNA_TRIM_MINQ = int(config.get("adna_trim_min_quality", 2))
+ADNA_MOTT = float(config.get("adna_trim_mott_rate", 0.05))
+ADNA_MIN_OV = int(config.get("adna_min_overlap", 1))
+ADNA_MISMATCH = float(config.get("adna_mismatch_rate", 0.1667))
+ADNA_POLYX = str(config.get("adna_pre_trim_polyx", "auto"))
+ADNA_MIN_MEANQ = int(config.get("adna_min_mean_quality", 0))
+BWA_MEM_SEED = int(config.get("bwa_mem_seed", 19))
+BWA_MEM_T = int(config.get("bwa_mem_min_score", 30))
+BWA_ALN_L = int(config.get("bwa_aln_l", 1024))
+BWA_ALN_N = float(config.get("bwa_aln_n", 0.01))
+BWA_ALN_O = int(config.get("bwa_aln_max_gap", 1))
+MIN_MQ = int(config.get("min_mq", 0))
+MIN_BQ = int(config.get("min_bq", 13))
+MAX_DEPTH = int(config.get("max_depth", 250))
+ADJUST_MQ = int(config.get("adjust_mq", 0))
+MIN_DP = int(config.get("min_dp", 0))
 REF_FA = str(ROOT / config["paths"]["ref_fa"])
-SUBREF_FA = str(ROOT / config["paths"]["subref_fa"])
 PANEL_VCF = str(ROOT / config["paths"]["panel_vcf"])
 SITES_BED = str(ROOT / "data" / "panel" / "panel167k.sites.bed")
-SUBREF_MAP = str(ROOT / "data" / "ref" / "subref167k.map.tsv")
 REF_FAI = REF_FA + ".fai"
 RESULTS = config["paths"].get("results", "results")
 
-ALIGN_REF = SUBREF_FA if MAPPING == "subref" else REF_FA
+ALIGN_REF = REF_FA
+if MAPPING == "subref":
+    raise ValueError("v1 ships VS-1 full mapping only; do not set mapping=subref")
+
+
+def _fastp_extra(*, pe: bool) -> str:
+    parts = [
+        f"--unqualified_percent_limit {FASTP_UNQUAL}",
+        f"--n_base_limit {FASTP_NBASE}",
+    ]
+    if FASTP_POLY_G == "on":
+        parts.append("--trim_poly_g")
+    elif FASTP_POLY_G == "off":
+        parts.append("--disable_trim_poly_g")
+    if FASTP_CUT_TAIL:
+        parts.append(f"--cut_tail --cut_mean_quality {FASTP_CUT_MEAN}")
+    if pe and FASTP_DETECT_PE:
+        parts.append("--detect_adapter_for_pe")
+    return " ".join(parts)
+
+
+def _ar3_extra() -> str:
+    parts = [
+        f"--adapter-selection {ADNA_ADAPTER_SEL}",
+        f"--quality-trimming {ADNA_QUAL_TRIM}",
+        f"--trim-min-quality {ADNA_TRIM_MINQ}",
+        f"--trim-mott-rate {ADNA_MOTT}",
+        f"--min-overlap {ADNA_MIN_OV}",
+        f"--mismatch-rate {ADNA_MISMATCH}",
+        f"--pre-trim-polyx {ADNA_POLYX}",
+    ]
+    if ADNA_ADAPTER1:
+        if any(ch not in "ACGTNacgtn" for ch in ADNA_ADAPTER1):
+            raise ValueError("adna_adapter1 must be ACGTN")
+        parts.append(f"--adapter1 {ADNA_ADAPTER1}")
+    if ADNA_MIN_MEANQ > 0:
+        parts.append(f"--min-mean-quality {ADNA_MIN_MEANQ}")
+    return " ".join(parts)
+
+
+def _dp_filter() -> str:
+    if MIN_DP <= 0:
+        return ""
+    return f"-e 'FORMAT/DP<{MIN_DP}'"
+
+
+def _abs_or_root(path):
+    p = Path(path)
+    return str(p if p.is_absolute() else ROOT / p)
 
 
 def sample_r1(wildcards):
-    return str(ROOT / SAMPLES[wildcards.sample]["r1"])
+    return _abs_or_root(SAMPLES[wildcards.sample]["r1"])
 
 
 def sample_r2(wildcards):
     s = SAMPLES[wildcards.sample]
     if s["type"] != "pe":
         raise ValueError(f"{wildcards.sample} is not PE")
-    return str(ROOT / s["r2"])
+    return _abs_or_root(s["r2"])
+
+
+def sample_bam(wildcards):
+    s = SAMPLES[wildcards.sample]
+    if s["type"] != "bam":
+        raise ValueError(f"{wildcards.sample} is not BAM")
+    return _abs_or_root(s["bam"])
 
 
 def is_pe(sample):
-    return SAMPLES[sample]["type"] == "pe"
+    s = SAMPLES[sample]
+    if s["type"] == "bam":
+        return bool(s.get("paired", False))
+    return s["type"] == "pe"
 
 
 def is_adna(sample):
@@ -54,12 +135,20 @@ def is_se(sample):
     return SAMPLES[sample]["type"] == "se"
 
 
-PE_SAMPLES = [s for s in SAMPLES if is_pe(s)]
+def is_bam(sample):
+    return SAMPLES[sample]["type"] == "bam"
+
+
+PE_SAMPLES = [s for s in SAMPLES if SAMPLES[s]["type"] == "pe"]
 SE_SAMPLES = [s for s in SAMPLES if is_se(s)]
 ADNA_SAMPLES = [s for s in SAMPLES if is_adna(s)]
+BAM_SAMPLES = [s for s in SAMPLES if is_bam(s)]
+FQ_SAMPLES = [s for s in SAMPLES if not is_bam(s)]
 PE_WC = "|".join(PE_SAMPLES) if PE_SAMPLES else "none"
 SE_WC = "|".join(SE_SAMPLES) if SE_SAMPLES else "none"
 ADNA_WC = "|".join(ADNA_SAMPLES) if ADNA_SAMPLES else "none"
+BAM_WC = "|".join(BAM_SAMPLES) if BAM_SAMPLES else "none"
+FQ_WC = "|".join(FQ_SAMPLES) if FQ_SAMPLES else "none"
 ANY_WC = "|".join(SAMPLES) if SAMPLES else "none"
 
 
@@ -78,6 +167,10 @@ rule trim_pe:
         html=os.path.join(RESULTS, "trim", "{sample}.fastp.html"),
         json=os.path.join(RESULTS, "trim", "{sample}.fastp.json"),
     threads: THREADS
+    params:
+        min_len=FASTP_MIN_LEN,
+        qual=FASTP_QUAL,
+        extra=_fastp_extra(pe=True),
     wildcard_constraints:
         sample=PE_WC,
     shell:
@@ -87,7 +180,9 @@ rule trim_pe:
           -i {input.r1} -I {input.r2} \
           -o {output.r1} -O {output.r2} \
           -h {output.html} -j {output.json} \
-          --detect_adapter_for_pe
+          --length_required {params.min_len} \
+          --qualified_quality_phred {params.qual} \
+          {params.extra}
         """
 
 
@@ -99,6 +194,10 @@ rule trim_se:
         html=os.path.join(RESULTS, "trim", "{sample}.fastp.html"),
         json=os.path.join(RESULTS, "trim", "{sample}.fastp.json"),
     threads: THREADS
+    params:
+        min_len=FASTP_MIN_LEN,
+        qual=FASTP_QUAL,
+        extra=_fastp_extra(pe=False),
     wildcard_constraints:
         sample=SE_WC,
     shell:
@@ -106,7 +205,10 @@ rule trim_se:
         mkdir -p $(dirname {output.r1})
         fastp -w {threads} \
           -i {input.r1} -o {output.r1} \
-          -h {output.html} -j {output.json}
+          -h {output.html} -j {output.json} \
+          --length_required {params.min_len} \
+          --qualified_quality_phred {params.qual} \
+          {params.extra}
         """
 
 
@@ -120,6 +222,9 @@ rule trim_adna:
         html=os.path.join(RESULTS, "trim", "{sample}.adapterremoval.html"),
         json=os.path.join(RESULTS, "trim", "{sample}.adapterremoval.json"),
     threads: THREADS
+    params:
+        min_len=ADNA_MIN_LEN,
+        extra=_ar3_extra(),
     wildcard_constraints:
         sample=ADNA_WC,
     shell:
@@ -130,9 +235,27 @@ rule trim_adna:
           --out-file1 {output.r1} \
           --out-html {output.html} \
           --out-json {output.json} \
-          --min-length 25 \
+          --min-length {params.min_len} \
           --threads {threads} \
+          {params.extra} \
           > {output.log} 2>&1
+        """
+
+
+rule ingest_bam:
+    """User BAM already on VS-1: check @SQ, then enter markdup."""
+    input:
+        bam=sample_bam,
+        fai=REF_FAI,
+    output:
+        bam=temp(os.path.join(RESULTS, "bam", "{sample}.lifted.bam")),
+    wildcard_constraints:
+        sample=BAM_WC,
+    shell:
+        """
+        mkdir -p $(dirname {output.bam})
+        python -m grapeancestry.core.ingest_bam \
+          --in-bam {input.bam} --out-bam {output.bam} --ref-fai {input.fai}
         """
 
 
@@ -146,13 +269,17 @@ rule map_pe:
     threads: THREADS
     params:
         rg=lambda w: f"@RG\\tID:{w.sample}\\tSM:{w.sample}\\tPL:ILLUMINA",
+        seed=BWA_MEM_SEED,
+        minsc=BWA_MEM_T,
+        min_mq=MIN_MQ,
     wildcard_constraints:
         sample=PE_WC,
     shell:
         """
         mkdir -p $(dirname {output.bam})
-        bwa mem -t {threads} -R '{params.rg}' {input.ref} {input.r1} {input.r2} \
-          | samtools view -b -o {output.bam}
+        bwa mem -t {threads} -k {params.seed} -T {params.minsc} -R '{params.rg}' \
+          {input.ref} {input.r1} {input.r2} \
+          | samtools view -b -q {params.min_mq} -o {output.bam}
         """
 
 
@@ -165,13 +292,17 @@ rule map_se:
     threads: THREADS
     params:
         rg=lambda w: f"@RG\\tID:{w.sample}\\tSM:{w.sample}\\tPL:ILLUMINA",
+        seed=BWA_MEM_SEED,
+        minsc=BWA_MEM_T,
+        min_mq=MIN_MQ,
     wildcard_constraints:
         sample=SE_WC,
     shell:
         """
         mkdir -p $(dirname {output.bam})
-        bwa mem -t {threads} -R '{params.rg}' {input.ref} {input.r1} \
-          | samtools view -b -o {output.bam}
+        bwa mem -t {threads} -k {params.seed} -T {params.minsc} -R '{params.rg}' \
+          {input.ref} {input.r1} \
+          | samtools view -b -q {params.min_mq} -o {output.bam}
         """
 
 
@@ -185,37 +316,35 @@ rule map_aln:
     threads: THREADS
     params:
         rg=lambda w: f"@RG\\tID:{w.sample}\\tSM:{w.sample}\\tPL:ILLUMINA",
+        seed=BWA_ALN_L,
+        maxn=BWA_ALN_N,
+        maxgap=BWA_ALN_O,
+        min_mq=MIN_MQ,
     wildcard_constraints:
         sample=ADNA_WC,
     shell:
         """
         mkdir -p $(dirname {output.bam})
-        bwa aln -t {threads} -l 1024 -n 0.01 {input.ref} {input.r1} > {output.bam}.sai
+        bwa aln -t {threads} -l {params.seed} -n {params.maxn} -o {params.maxgap} \
+          {input.ref} {input.r1} > {output.bam}.sai
         bwa samse -r '{params.rg}' {input.ref} {output.bam}.sai {input.r1} \
-          | samtools view -b -o {output.bam}
+          | samtools view -b -q {params.min_mq} -o {output.bam}
         rm -f {output.bam}.sai
         """
 
 
 rule lift_or_copy:
-    """Lift subref BAM → VS1 coords; or pass-through if mapping=full."""
+    """v1 is full VS-1 mapping; pass the raw BAM through."""
     input:
         bam=os.path.join(RESULTS, "bam", "{sample}.raw.bam"),
-        map=SUBREF_MAP,
         fai=REF_FAI,
     output:
         bam=temp(os.path.join(RESULTS, "bam", "{sample}.lifted.bam")),
-    params:
-        mapping=MAPPING,
+    wildcard_constraints:
+        sample=FQ_WC,
     shell:
         """
-        if [ "{params.mapping}" = "subref" ]; then
-          python -m grapeancestry.core.lift \
-            --in-bam {input.bam} --out-bam {output.bam} \
-            --map {input.map} --ref-fai {input.fai}
-        else
-          cp {input.bam} {output.bam}
-        fi
+        cp {input.bam} {output.bam}
         """
 
 
@@ -260,10 +389,18 @@ rule call:
         vcf=os.path.join(RESULTS, "{sample}.vcf.gz"),
         tbi=os.path.join(RESULTS, "{sample}.vcf.gz.tbi"),
     threads: THREADS
+    params:
+        min_mq=MIN_MQ,
+        min_bq=MIN_BQ,
+        max_depth=MAX_DEPTH,
+        adjust_mq=ADJUST_MQ,
+        dp_filter=_dp_filter(),
     shell:
         """
         bcftools mpileup -f {input.ref} -T {input.sites} -a FORMAT/DP,FORMAT/AD \
+          -q {params.min_mq} -Q {params.min_bq} -d {params.max_depth} -C {params.adjust_mq} \
           --threads {threads} -Ou {input.bam} \
-        | bcftools call -m -Oz -o {output.vcf}
+        | bcftools call -m -Ou \
+        | bcftools filter {params.dp_filter} -Oz -o {output.vcf}
         bcftools index -t {output.vcf}
         """

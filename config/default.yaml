@@ -1,0 +1,49 @@
+# GrapeAncestry v1 — VS-1 full-genome calling only
+profile: v1
+threads: 4
+mem_gb: 8
+
+paths:
+  ref_fa: data/ref/VS1.final.fa
+  panel_vcf: data/panel/panel167k_2449.vcf.gz
+  panel_info: data/panel/2449.info
+  results: results
+
+mapping: full
+panel_n_sites: 167433
+panel_n_samples: 2449
+
+# Step knobs (UI writes a temp copy). Defaults = tool --help / previous Snakefile.
+# fastp 1.0 help: --length_required 15, --qualified_quality_phred 15,
+# --unqualified_percent_limit 40, --n_base_limit 5, --cut_mean_quality 20
+fastp_min_length: 15
+fastp_qualified_quality: 15
+fastp_unqualified_percent: 40
+fastp_n_base_limit: 5
+fastp_poly_g: auto
+fastp_cut_tail: false
+fastp_cut_mean_quality: 20
+fastp_detect_adapter_pe: true
+# AdapterRemoval3 3.0.1 --help (ga env)
+adna_min_length: 25
+adna_adapter_selection: auto
+adna_adapter1: ""
+adna_quality_trimming: mott
+adna_trim_min_quality: 2
+adna_trim_mott_rate: 0.05
+adna_min_overlap: 1
+adna_mismatch_rate: 0.1667
+adna_pre_trim_polyx: auto
+adna_min_mean_quality: 0
+# bwa mem / aln (http://bio-bwa.sourceforge.net/bwa.shtml)
+bwa_mem_seed: 19
+bwa_mem_min_score: 30
+bwa_aln_l: 1024
+bwa_aln_n: 0.01
+bwa_aln_max_gap: 1
+# bcftools mpileup: -q 0, -Q 13, -d 250, -C 0
+min_mq: 0
+min_bq: 13
+max_depth: 250
+adjust_mq: 0
+min_dp: 0

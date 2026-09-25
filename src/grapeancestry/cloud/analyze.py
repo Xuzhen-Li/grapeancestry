@@ -16,6 +16,9 @@ from grapeancestry.cloud.sites import N_PANEL_SITES, load_panel_sites
 from grapeancestry.cloud.vcf_py import ParsedVcf, align_dosage
 from grapeancestry.identity.ibs import is_clone, nearest_neighbors, pair_stats
 
+# Product UI: only the two shipped capture VCFs (not 2449 in-panel case studies).
+PRODUCT_PACKED_DEMO_IDS = ("Ages", "HUN89-capture")
+
 
 @dataclass
 class SampleReport:
@@ -373,7 +376,7 @@ def demo_from_fingerprint(root: Path, sample: str = "HUN89") -> ParsedVcf | None
 
 
 def list_demos(root: Path) -> list[dict]:
-    """Named case-study demos shipped in data/cloud/."""
+    """Packed demos on the Demos page: Ages + HUN89_query only."""
     rows: list[dict] = []
     man = pack_dir(root) / "demos.json"
     if man.exists():
@@ -383,8 +386,16 @@ def list_demos(root: Path) -> list[dict]:
             rows = json.loads(man.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
             rows = []
+    rows = [r for r in rows if isinstance(r, dict) and r.get("id") in PRODUCT_PACKED_DEMO_IDS]
     if not rows:
-        packed = load_fingerprint(root)
-        if packed and "HUN89" in packed[1]:
-            rows = [{"id": "HUN89", "label": "HUN89 (fingerprint row)", "kind": "in_panel"}]
+        for demo_id, label, fname in (
+            ("Ages", "Ages — aDNA capture VCF", "demo_Ages.npz"),
+            (
+                "HUN89-capture",
+                "HUN89_query — independent chip VCF",
+                "demo_HUN89_capture.npz",
+            ),
+        ):
+            if (pack_dir(root) / fname).exists():
+                rows.append({"id": demo_id, "label": label, "kind": "capture"})
     return rows
