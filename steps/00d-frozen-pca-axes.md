@@ -8,7 +8,7 @@ Compute **once** the panel PCA / GRM axes that every customer query will project
 
 - Panel dosage at the sites used for PCA (example family: `panel167k_nogwas`)
 - Sample keep list / GCTA inputs produced in the lab archive
-- Binary: `bin/gcta64`
+- Binary: `gcta64` on PATH
 
 ## Commands
 

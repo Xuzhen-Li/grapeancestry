@@ -2,7 +2,7 @@
 # Product fat image grapeancestry:1.0.0 ships privately (panel + VS-1 inside).
 # NEVER docker push a fat image that contains panel genotypes.
 # Public git build: code + deps only; Analyze cannot finish without private assets.
-# ADMIXTURE 1.3.0 is linux x86_64 — do NOT copy a macOS Mach-O from bin/.
+# ADMIXTURE 1.3.0 is linux x86_64.
 # UI: Streamlit 8501 · report server 8502 (see start.sh mounts: /input /output /settings).
 FROM mambaorg/micromamba:1.5.8
 USER root
@@ -23,6 +23,8 @@ COPY --chown=$MAMBA_USER:$MAMBA_USER environment-hpc.yml pyproject.toml README.m
 COPY --chown=$MAMBA_USER:$MAMBA_USER src ./src
 COPY --chown=$MAMBA_USER:$MAMBA_USER workflow ./workflow
 COPY --chown=$MAMBA_USER:$MAMBA_USER config ./config
+COPY --chown=$MAMBA_USER:$MAMBA_USER web ./web
+COPY --chown=$MAMBA_USER:$MAMBA_USER .streamlit ./.streamlit
 COPY --chown=$MAMBA_USER:$MAMBA_USER tests ./tests
 COPY --chown=$MAMBA_USER:$MAMBA_USER scripts ./scripts
 COPY --chown=$MAMBA_USER:$MAMBA_USER app.py ./

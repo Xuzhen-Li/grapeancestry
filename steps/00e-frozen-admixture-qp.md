@@ -7,7 +7,7 @@ Fit or ingest frozen ADMIXTURE **P** (and panel Q) for K=2–8 so new samples on
 ## Inputs
 
 - Panel BED/fam for the chosen site family (`panel167k_nogwas` when ingested)
-- HPC or local ADMIXTURE runs (`bin/admixture`)
+- HPC or local ADMIXTURE runs (`admixture` 1.3.0 on PATH)
 
 ## Commands
 

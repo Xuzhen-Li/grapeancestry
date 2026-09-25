@@ -8,7 +8,7 @@ Write query Q for each requested K using frozen **P** (`admixture -P` or NNLS).
 
 - Query VCF(s) at panel sites
 - Complete `panel167k_nogwas` P/Q ingest (required for `admix-project`)
-- `bin/admixture`
+- `admixture` 1.3.0 on PATH
 
 ## Commands
 

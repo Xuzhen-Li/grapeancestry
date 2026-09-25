@@ -3,7 +3,7 @@
 **Status:** public docs and source on `Xuzhen-Li/grapeancestry`. **Analyze** requires the private Docker tar (not in git).  
 **Language:** English primary.
 
-This page has two jobs:
+This page covers:
 
 1. **How to use** the product as it exists today (three lanes).
 2. **How to read** the demo HTML report — every sidebar section and every screenshot below has an intro.
@@ -37,20 +37,20 @@ Diagram: [`flowchart_vs1_analysis_v2.png`](flowchart_vs1_analysis_v2.png) · [`U
 
 Three paths. Pick **one** path; the **primary output** filename must match that path.
 
-### Lane A — Public docs (this GitHub tree)
+### Public docs (this GitHub tree)
 
-**Who:** Anyone reviewing the public face without the private fat image.
+**Who:** Anyone reviewing the repository without the private fat image.
 
 **Steps:**
 
 1. Clone or browse `https://github.com/Xuzhen-Li/grapeancestry`.
 2. Read this GUIDELINE top-to-bottom (usage → report walkthrough).
-3. Open [`USER_GUIDE.md`](USER_GUIDE.md) · [`FLOWCHART.md`](FLOWCHART.md) for the analysis boxes; [`CHIP_COMPANION.md`](CHIP_COMPANION.md) for Cloud vs Lab doors.
+3. Open [`USER_GUIDE.md`](USER_GUIDE.md) · [`FLOWCHART.md`](FLOWCHART.md) for the analysis boxes; [`CHIP_COMPANION.md`](CHIP_COMPANION.md) for Cloud vs Lab paths.
 4. Use the screenshots below as a stand-in for the interactive HTML (GitHub cannot run the report in-repo).
 
-**Honest stop:** this tree does **not** ship a runnable `grapeancestry` binary, VS-1, or the 2449 dosage cache. Commands in Lane B live in the private suite package.
+**Note:** this tree does **not** ship a runnable `grapeancestry` binary, VS-1, or the 2449 dosage cache. Commands in Lane B live in the private suite package.
 
-### Lane B — Local suite (developer / lab Mac)
+### Local suite (developer / lab Mac)
 
 **Who:** Machine with private panel assets (lab checkout or fat image).
 
@@ -98,7 +98,7 @@ python -m http.server
 
 **What “done” looks like for Suite:** `*.sample-first-v2.report.html` opens with assets; method coverage shows available vs unavailable; no decision-grade claim beyond OIV 225.
 
-### Lane C — Cloud Chip Companion (optional, not v1 product)
+### Cloud Chip Companion (optional, not v1 product)
 
 **Who:** Streamlit Cloud (or local `streamlit run app.py`) with packed `data/cloud/` fingerprints.
 
@@ -109,7 +109,7 @@ python -m http.server
 3. Scan top-to-bottom: QC → self-vs-clone IBS → passport / SDR **proxy** / trait card → purity & parentage → (optional advanced) → **colour GS last**.
 4. Export **`chip.json`** when using the optional Cloud path (not the v1 Docker product).
 
-**Honest stop:** Cloud has no bwa/bcftools/ADMIXTURE binary; new samples use NNLS onto frozen P. Docker / HPC (`environment-hpc.yml`, `docker compose up`) is the lab image path — not the Cloud VCF-only path.
+**Note:** Cloud has no bwa/bcftools/ADMIXTURE binary; new samples use NNLS onto frozen P. Docker / HPC (`environment-hpc.yml`, `docker compose up`) is the lab image path — not the Cloud VCF-only path.
 
 ### After you have a report — how to read it
 
@@ -136,7 +136,7 @@ Screenshots below are **non-overlapping panel crops** (no full+viewport duplicat
 
 ## Walk the demo report
 
-The GrapeAncestry 167K capture panel analysis companion provides a dedicated analytical framework on the VS-1 reference genome, utilizing a frozen 2449 × 167K dosage cache, GCTA64 principal component axes, ADMIXTURE Q/P matrices (K=2–8), and genomic selection models. This walkthrough uses the **`Ages`** sample-first-v2 report HTML (aDNA SE; archaeological sample **V5**). Cite: Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z); incl. **Ludovic Orlando**). Screenshots below are **non-overlapping panel crops** (no full+viewport duplicates). Panel research stays coarse; **one dedicated LocusZoom** shot is included.
+This walkthrough uses the **`Ages`** sample-first-v2 report HTML (aDNA SE; archaeological sample **V5**). Cite: Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z); incl. **Ludovic Orlando**). Screenshots below are **non-overlapping panel crops** (no full+viewport duplicates). Panel research stays coarse; **one dedicated LocusZoom** shot is included.
 
 Demo stem: `Ages` (aDNA SE from V5 / Iron Age Martigues). Modern PE recaptures (e.g. `HUN89_query`) are a separate door — do not confuse panel IDs with aDNA demo stems.
 
