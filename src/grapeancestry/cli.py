@@ -57,7 +57,7 @@ def query_output_collisions(
 @click.group()
 @click.version_option(__version__, prog_name="grapeancestry")
 def main() -> None:
-    """GrapeAncestry Suite — 167K capture panel analysis."""
+    """GrapeAncestry v1 — 167K capture panel analysis."""
 
 
 def _post_analyze(
@@ -76,10 +76,11 @@ def _post_analyze(
         run_mapdamage,
         write_damage_tsv,
     )
-    from grapeancestry.core.merge_ref import merge_ref
     from grapeancestry.core.qc import qc_sample, write_tsv
     from grapeancestry.identity.run_ibs import kinship_top, run_identity
-    from grapeancestry.report.build_report import build_bundle, render_full_html
+    from grapeancestry.report.build_report import build_bundle, v2_report_path
+    from grapeancestry.report.interactive_dashboard import render_interactive_dashboard
+    from grapeancestry.release_io import publish_v2_report
 
     paths = analysis_paths(root, sample, source_sample=source_sample)
     vcf = paths.vcf
@@ -89,18 +90,8 @@ def _post_analyze(
 
     cache = resolve_cache(root)
     ref = root / "data" / "ref" / "VS1.final.fa"
-    panel_vcf = root / "data" / "panel" / "panel167k_2449.vcf.gz"
     admix_dir = root / "data" / "panel" / "admixture"
-
-    # Merged VCF artifact (2449 + query); analysis still uses npz cache
-    if vcf.exists() and panel_vcf.exists():
-        merged = root / "results" / f"{sample}.merged.vcf.gz"
-        if not Path(str(merged) + ".tbi").exists() and not Path(str(merged) + ".csi").exists():
-            try:
-                merge_ref([vcf], panel_vcf, merged)
-                click.echo(f"merged → {merged}")
-            except Exception as exc:  # noqa: BLE001
-                click.echo(f"[warn] merge_ref failed: {exc}")
+    (root / "results").mkdir(parents=True, exist_ok=True)
 
     if bam.exists() and bed.exists():
         metrics = qc_sample(
@@ -149,7 +140,7 @@ def _post_analyze(
         admix_dir=admix_dir if admix_dir.exists() else None,
         damage_tsv=damage_tsv if damage_tsv and Path(damage_tsv).exists() else None,
         pca_color=pca_color,
-        merged_vcf=root / "results" / f"{sample}.merged.vcf.gz",
+        merged_vcf=None,
         admix_mode=admix_mode,
         admix_all_k=admix_all_k,
         source_sample_id=source_sample,
@@ -166,9 +157,12 @@ def _post_analyze(
         ]
         fh.write(f"{sample}\t" + "\t".join(vals) + f"\t{bundle.pca_method}\n")
 
-    html_path = root / "results" / f"{sample}.report.html"
-    render_full_html(bundle, html_path)
+    html_path = v2_report_path(root / "results", sample)
+    render_interactive_dashboard(bundle, html_path, root)
+    published = publish_v2_report(root, html_path)
     click.echo(f"report → {html_path}")
+    if published.resolve() != html_path.resolve():
+        click.echo(f"report copy → {published}")
 
 
 def _sample_ids_from_yaml(samples_file: Path) -> list[str]:
@@ -180,8 +174,8 @@ def _sample_ids_from_yaml(samples_file: Path) -> list[str]:
 
 
 @main.command()
-@click.option("--config", "config_path", type=click.Path(exists=True), default="config/mbp_demo.yaml")
-@click.option("--samples", "samples_file", type=click.Path(exists=True), default="config/samples_demo.yaml")
+@click.option("--config", "config_path", type=click.Path(exists=True), default="config/default.yaml")
+@click.option("--samples", "samples_file", type=click.Path(exists=True), required=True)
 @click.option("--mapping", type=click.Choice(["subref", "full"]), default=None)
 @click.option("--sample", default=None, help="Target sample id (default: all in samples file)")
 @click.option("-j", "--jobs", default=4, show_default=True)
@@ -218,6 +212,12 @@ def _sample_ids_from_yaml(samples_file: Path) -> list[str]:
     show_default=True,
     help="Project every K in 2–8 (default on for customer reports)",
 )
+@click.option(
+    "--forceall",
+    is_flag=True,
+    default=False,
+    help="Pass snakemake -F (rerun every rule even if outputs exist)",
+)
 def run(
     config_path: str,
     samples_file: str,
@@ -230,6 +230,7 @@ def run(
     pca_color: str,
     admix_mode: str,
     admix_all_k: bool,
+    forceall: bool,
 ) -> None:
     """End-to-end: fastq → panel VCF (+ default analyses)."""
     import subprocess
@@ -254,6 +255,8 @@ def run(
     if mapping:
         cmd.append(f"mapping={mapping}")
     cmd.extend(["-j", str(jobs)])
+    if forceall:
+        cmd.append("-F")
     if sample:
         cmd.append(f"results/{sample}.vcf.gz")
     manifest_ids = _sample_ids_from_yaml(samp)
@@ -740,6 +743,13 @@ def cross_recommend(
 @main.command()
 @click.option("--sample", required=True, help="Accession / VCF sample id (e.g. HUN89)")
 @click.option(
+    "--vcf",
+    "vcf_path",
+    type=click.Path(exists=True),
+    default=None,
+    help="Existing VCF; copied to results/{sample}.vcf.gz",
+)
+@click.option(
     "--source-sample",
     default=None,
     help="Original sample id for source BAM/mapDamage lineage",
@@ -775,6 +785,7 @@ def cross_recommend(
 )
 def analyze(
     sample: str,
+    vcf_path: str | None,
     source_sample: str | None,
     force_query_vcf: bool,
     as_query: bool,
@@ -782,12 +793,16 @@ def analyze(
     admix_all_k: bool,
     pca_color: str,
 ) -> None:
-    """QC + IBS + PCA + ADMIXTURE HTML from an existing results/{sample}.vcf.gz."""
+    """QC + IBS + PCA + V2 HTML from results/{sample}.vcf.gz or --vcf."""
     from grapeancestry.adna.panel167k_nogwas import panel167k_assets_complete
     from grapeancestry.core.merge_ref import write_query_vcf
+    from grapeancestry.release_io import stage_vcf
 
     root = ROOT
+    (root / "results").mkdir(parents=True, exist_ok=True)
     src = root / "results" / f"{sample}.vcf.gz"
+    if vcf_path:
+        stage_vcf(Path(vcf_path), src)
     if as_query:
         original_id = sample
         if sample.endswith("_query"):

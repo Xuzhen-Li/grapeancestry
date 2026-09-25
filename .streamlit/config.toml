@@ -1,0 +1,14 @@
+[server]
+# Streamlit needs a number (MB). No app-level cap; 1 TiB is the widget ceiling.
+maxUploadSize = 1048576
+headless = true
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "dark"
+backgroundColor = "#12090d"
+secondaryBackgroundColor = "#1a0e12"
+textColor = "#f4efe6"
+primaryColor = "#c4a574"

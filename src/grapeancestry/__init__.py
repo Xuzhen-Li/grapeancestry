@@ -1,3 +1,3 @@
 """GrapeAncestry Suite — grapevine 167K capture panel analysis."""
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"

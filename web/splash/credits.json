@@ -1,0 +1,18 @@
+{
+  "product": "GrapeAncestry",
+  "version": "1.0.0",
+  "tagline_en": "167K grapevine capture · sample-first ancestry report",
+  "tagline_zh": "葡萄 167K 捕获芯片 · 样本优先祖源报告",
+  "copyright": "© 2026 GrapeAncestry Suite contributors",
+  "copyright_source": "LICENSE",
+  "author": {
+    "name_en": "Xuzhen Li",
+    "name_zh": "李旭真",
+    "affiliations": [
+      "State Key Laboratory for Conservation and Utilization of Bio-Resources in Yunnan, Yunnan Agricultural University, Kunming 650201, China",
+      "Yunnan Research Institute for Local Plateau Agriculture and Industry, Kunming 650201, China"
+    ],
+    "affiliation_source": "Dong et al. 2023 Science author list, doi:10.1126/science.add8655"
+  },
+  "panel_citation": "Dong Y. et al. Dual domestications and origin of traits in grapevine evolution. Science (2023). doi:10.1126/science.add8655"
+}
