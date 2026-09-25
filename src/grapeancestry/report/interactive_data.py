@@ -7,6 +7,7 @@ PCA scatter + ADMIXTURE bar + NJ tips, all with customdata=IID for click→highl
 from __future__ import annotations
 
 import json
+import os
 import re
 from collections import defaultdict
 from pathlib import Path
@@ -92,10 +93,8 @@ def _load_info(info_path: Path) -> dict[str, dict[str, str]]:
     return meta
 
 
-_ITALY_3057 = Path(
-    "/Users/lixuzhen/Desktop/script/00_italy_2center"
-    "/Final_ana_3057_adna/final_3057_sample.info"
-)
+_extra_info = os.environ.get("GRAPEANCESTRY_EXTRA_INFO")
+_ITALY_3057 = Path(_extra_info) if _extra_info else None
 
 
 def _load_dong_passport(root: Path) -> dict[str, dict[str, str]]:
@@ -103,7 +102,7 @@ def _load_dong_passport(root: Path) -> dict[str, dict[str, str]]:
     local = root / "data" / "panel" / "dong_passport.tsv"
     if local.exists():
         return _load_info(local)
-    if _ITALY_3057.exists():
+    if _ITALY_3057 is not None and _ITALY_3057.exists():
         return _load_info(_ITALY_3057)
     return {}
 

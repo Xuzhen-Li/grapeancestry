@@ -844,7 +844,7 @@ def render_methods_markdown(
         lines.append("")
         lines.append("```bash")
         lines.append("conda activate ga")
-        lines.append("cd grapeancestry_suite")
+        lines.append("cd grapeancestry")
         lines.append("python scripts/build_phenotype.py")
         lines.append(
             'grapeancestry gwas --pheno data/phenotype.tsv --trait "OIV 225" --source euvitis --binary'
