@@ -71,8 +71,6 @@ grapeancestry analyze --sample Ages   # QC + identity + PCA/ADMIX + HTML bundle
 | LocusZoom (selection + GWAS) | report JS + `assets/locuszoom-*.js` | Panel regional context / trait leads |
 | Static PNG fallbacks (Italy-style) | `report/build_report.py` (matplotlib → base64) | Used when building older/full bundles |
 | Cloud Streamlit plots | `cloud/plot.py`, `app.py` | Classroom VCF → cards |
-| One-off science checks | `scripts/plot_science_k8_check.py`, `scripts/plot_k2_k10_purest_align.py` | Lab QC of ADMIXTURE archives, not customer path |
-
 Front-end libraries shipped beside the HTML: `demo/assets/` (Plotly, D3, LocusZoom).
 
 ## C · Report production scripts
@@ -93,8 +91,8 @@ Public demo file: [`../demo/results/Ages.sample-first-v2.report.html`](../demo/r
 
 These support **panel ADMIXTURE archives and phenotype ETL**, not the nightly customer hand-in:
 
-- `prep_admixture_bed.py`, `run_admixture_local.sh`, `submit_admixture_k*.sh`, `admixture_fit_qc.py`, `ingest_admixture_qp.py`, `rebuild_manual_qp.py`
-- `build_phenotype.py`, `extract_table_s17.py`, `build_cloud_pack.py`
+- `prep_admixture_bed.py`, `run_admixture_local.sh`, `admixture_fit_qc.py`, `ingest_admixture_qp.py`, `rebuild_manual_qp.py`
+- `build_phenotype.py`, `build_cloud_pack.py`
 
 ## E · Typical customer commands (lab suite)
 

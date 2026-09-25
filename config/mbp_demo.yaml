@@ -1,5 +1,4 @@
 # MBP demo profile — Apple M1 Pro 16GB safe defaults
-# Source: docs/BUILD.md §1 / §5 batch 0
 
 profile: mbp_demo
 threads: 4

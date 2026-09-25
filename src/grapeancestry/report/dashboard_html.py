@@ -323,7 +323,7 @@ function go(id) {{
   </div>
 </section>
 
-<p class="muted" style="padding:8px 22px 24px">GrapeAncestry Suite · sidebar form ≈ Italy <code>grouping_663</code> dashboard · see docs/BUILD.md</p>
+<p class="muted" style="padding:8px 22px 24px">GrapeAncestry v1.0.0</p>
 </div>
 </body></html>"""
     out_html.parent.mkdir(parents=True, exist_ok=True)

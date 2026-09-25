@@ -1,6 +1,6 @@
 """Merge user sample VCF(s) with the 2449-sample reference panel.
 
-Strategy (docs/BUILD.md):
+Strategy:
 - Align user sites to panel site set (missing → ./.)
 - Harmonize REF/ALT against panel
 - bcftools merge → merged.vcf.gz with n_samples = 2449 + N

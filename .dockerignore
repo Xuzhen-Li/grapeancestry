@@ -8,6 +8,5 @@ results/
 .git/
 *.egg-info/
 .pytest_cache/
-bin/admixture.x86_64
 **/*.pyc
 __pycache__/
