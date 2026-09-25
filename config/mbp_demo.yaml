@@ -5,7 +5,7 @@ profile: mbp_demo
 threads: 4
 mem_gb: 6
 
-# Paths relative to grapeancestry_suite/
+# Paths relative to the repository root
 paths:
   ref_fa: data/ref/VS1.final.fa
   subref_fa: data/ref/subref167k.fa
