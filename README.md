@@ -11,6 +11,16 @@ Not a whole-genome resequencing suite. **MIT = code only** (panel genotypes/phen
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![ORCID](https://img.shields.io/badge/ORCID-0000--0003--3670--6657-a6ce39)](https://orcid.org/0000-0003-3670-6657)
 
+## What it does
+
+- Takes FASTQ, a BAM already on VS-1, or a VCF at the 167K panel sites
+- Places the sample on a frozen 2449-sample × 167K-site VS-1 panel
+- Screens clones and parent–offspring, and reports IBS kinship against the panel
+- Projects the sample onto frozen PCA axes and ADMIXTURE K=2–8, and draws an NJ tree
+- Summarises aDNA damage for ancient samples
+- Reports an OIV 225 berry-colour genomic score (score ≠ phenotype)
+- Writes one self-contained HTML report per sample; the kit runs locally in Docker
+
 ## Analysis flow
 
 **FASTQ / BAM (already on VS-1) / query VCF → VS-1 → 167K sites → `*.sample-first-v2.report.html`.**
@@ -24,12 +34,19 @@ Solid/dashed rules: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). VS-1: Dong et al. 
 | Path | What you do | Outcome |
 |------|-------------|---------|
 | **Docker kit** | Download `grapeancestry-v1.0.0-amd64.tar` from Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)); put next to `./start.sh`; run it | Product **`*.sample-first-v2.report.html`** — UI **http://127.0.0.1:8501** · reports **:8502** |
-| **Demo** | [`demo/`](demo/) — `cd demo && python3 -m http.server 8000` → Ages HTML | **View-only** showcase |
-| **DIY** | Stage your own VS-1 + frozen 2449×167K assets (not in git) | Follow [`steps/`](steps/) `00a`–`13b` |
+| **Demo** | Download or clone the repo, then `cd demo && python3 -m http.server 8000` and open http://localhost:8000/results/Ages.sample-first-v2.report.html (GitHub does not render this HTML). | **View-only** showcase |
+| **DIY** | Stage your own VS-1 + frozen 2449×167K assets (not in git) · CLI: `pip install -e .` (see docs/USER_GUIDE.md §5) | Follow [`steps/`](steps/) `00a`–`13b` |
+
+### Docker kit, step by step
+
+1. Install [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) or [Docker Desktop for Mac](https://docs.docker.com/desktop/setup/install/mac-install/). On Apple Silicon Macs, turn on x86_64/amd64 emulation in Docker Desktop settings.
+2. Download this repository (green Code button → Download ZIP) and the tar `grapeancestry-v1.0.0-amd64.tar` (~1.7 GB). Put the tar in the unzipped folder.
+3. Mac: double-click `start.command`. Windows: double-click `start.bat`. Linux / terminal: `./start.sh`
+4. The browser opens http://127.0.0.1:8501. First visit: set a local password. Then choose files, start the analysis, and open the report (port 8502). A copy is saved in `output/results/`.
 
 **Docker (short):** `./start.sh` (macOS `start.command` / Windows `start.bat`) creates `input/` `output/` `settings/`, loads `grapeancestry:1.0.0` when missing, and opens the UI. A docs-only clone without the tar cannot finish Analyze. Never `docker push` the fat image. Detail: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
 
-v1 deliverable is **`*.sample-first-v2.report.html` only** (optional Cloud `chip.json` is not a fourth path).
+v1 deliverable is **`*.sample-first-v2.report.html` only** (optional Cloud `chip.json` is not part of v1).
 
 ## What you get
 
@@ -37,7 +54,7 @@ v1 deliverable is **`*.sample-first-v2.report.html` only** (optional Cloud `chip
 
 *First run — setup waterfall: local password, language, and threads (locks UI access only; does not encrypt data).*
 
-Screenshot gallery — Ages demo (existing shots only). Packed demos include Ages and HUN89_query — panel id `HUN89` ≠ report stem `HUN89_query`. Walkthrough: [`docs/GUIDELINE.md`](docs/GUIDELINE.md). Cite Ages/V5: Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z)).
+Screenshots below are from the Ages demo report. The Docker kit also ships a second demo, HUN89_query — panel id `HUN89` ≠ report stem `HUN89_query`. Walkthrough: [`docs/GUIDELINE.md`](docs/GUIDELINE.md). Cite Ages/V5: Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z)).
 
 ![Sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
 
