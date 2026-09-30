@@ -11,6 +11,11 @@ Not a whole-genome resequencing suite. **MIT = code only** (panel genotypes/phen
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![ORCID](https://img.shields.io/badge/ORCID-0000--0003--3670--6657-a6ce39)](https://orcid.org/0000-0003-3670-6657)
 
+<p align="center">
+  <a href="https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.batch.report.html"><strong>Open the demo</strong></a><br/>
+  28 archaeological seeds · Ramos-Madrigal et al. 2019 <em>Nat. Plants</em>
+</p>
+
 ## What it does
 
 - Takes FASTQ, a BAM already on VS-1, or a VCF at the 167K panel sites
@@ -34,18 +39,18 @@ Solid/dashed rules: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). VS-1: Dong et al. 
 
 | Path | What you do | Outcome |
 |------|-------------|---------|
-| **Docker kit** | Download `grapeancestry-v1.0.0-amd64.tar` from Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)); put next to `./start.sh`; run it | Product **`*.sample-first-v2.report.html`** — UI **http://127.0.0.1:8501** · reports **:8502** |
-| **Demo** | Download or clone the repo, then `cd demo && python3 -m http.server 8000` and open http://localhost:8000/results/ramos2019_np.batch.report.html (GitHub does not render this HTML). | **View-only.** 28 archaeological seeds ([Ramos-Madrigal et al. 2019](https://doi.org/10.1038/s41477-019-0437-5), *Nat. Plants*) |
+| **Docker kit** | Download `grapeancestry-v1.1.0-amd64.tar` from Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)); put next to `./start.sh`; run it | Product **`*.sample-first-v2.report.html`** — UI **http://127.0.0.1:8501** · reports **:8502** |
+| **Demo** | [Open the 28-seed report](https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.batch.report.html). | **View-only.** Ramos-Madrigal et al. 2019, *Nat. Plants* ([doi:10.1038/s41477-019-0437-5](https://doi.org/10.1038/s41477-019-0437-5)) |
 | **DIY** | Stage your own VS-1 + frozen 2449×167K assets (not in git) · CLI: `pip install -e .` (see docs/USER_GUIDE.md §5) | Follow [`steps/`](steps/) `00a`–`13b` |
 
 ### Docker kit, step by step
 
 1. Install [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) or [Docker Desktop for Mac](https://docs.docker.com/desktop/setup/install/mac-install/). On Apple Silicon Macs, turn on x86_64/amd64 emulation in Docker Desktop settings.
-2. Download this repository (green Code button → Download ZIP) and the tar `grapeancestry-v1.0.0-amd64.tar` (~1.7 GB). Put the tar in the unzipped folder.
+2. Download this repository (green Code button → Download ZIP) and the tar `grapeancestry-v1.1.0-amd64.tar` (~1.7 GB). Put the tar in the unzipped folder.
 3. Mac: double-click `start.command`. Windows: double-click `start.bat`. Linux / terminal: `./start.sh`
 4. The browser opens http://127.0.0.1:8501. First visit: set a local password. Then choose files, start the analysis, and open the report (port 8502). A copy is saved in `output/results/`.
 
-**Docker (short):** `./start.sh` (macOS `start.command` / Windows `start.bat`) creates `input/` `output/` `settings/`, loads `grapeancestry:1.0.0` when missing, and opens the UI. A docs-only clone without the tar cannot finish Analyze. Never `docker push` the fat image. Detail: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
+**Docker (short):** `./start.sh` (macOS `start.command` / Windows `start.bat`) creates `input/` `output/` `settings/`, loads `grapeancestry:1.1.0` when missing, and opens the UI. A docs-only clone without the tar cannot finish Analyze. Never `docker push` the fat image. Detail: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
 
 v1 deliverable is **`*.sample-first-v2.report.html` only** (optional Cloud `chip.json` is not part of v1).
 

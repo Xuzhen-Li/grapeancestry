@@ -1,5 +1,5 @@
-# GrapeAncestry v1.0.0 — linux/amd64 customer / lab image skeleton.
-# Product fat image grapeancestry:1.0.0 ships privately (panel + VS-1 inside).
+# GrapeAncestry v1.1.0 — linux/amd64 customer / lab image skeleton.
+# Product fat image grapeancestry:1.1.0 ships privately (panel + VS-1 inside).
 # NEVER docker push a fat image that contains panel genotypes.
 # Public git build: code + deps only; Analyze cannot finish without private assets.
 # ADMIXTURE 1.3.0 is linux x86_64.
@@ -34,6 +34,6 @@ ARG MAMBA_DOCKERFILE_ACTIVATE=1
 RUN pip install -e ".[web]"
 ENV PATH=/opt/conda/bin:/usr/local/bin:$PATH
 EXPOSE 8501 8502
-# Prefer customer drop: docker load -i grapeancestry-v1.0.0-amd64.tar && ./start.sh
+# Prefer customer drop: docker load -i grapeancestry-v1.1.0-amd64.tar && ./start.sh
 # Docs-only build cannot Analyze without mounting private VS-1 + 2449 panel.
 CMD ["streamlit", "run", "app.py", "--server.address=0.0.0.0", "--server.port=8501"]

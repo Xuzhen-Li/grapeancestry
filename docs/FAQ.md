@@ -15,7 +15,7 @@ Data bans: [`DATA_NOTICE.md`](../DATA_NOTICE.md). Glossary: [`GLOSSARY.md`](GLOS
 ## FAQ
 
 1. **BAM `@SQ` fail?** Accepted BAM must already use **VS-1** contig names. `chr1` / 12X / PN40024 → fail → use FASTQ.
-2. **Missing tar?** A docs-only clone cannot finish Analyze. Get `grapeancestry-v1.0.0-amd64.tar` from Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)).
+2. **Missing tar?** A docs-only clone cannot finish Analyze. Get `grapeancestry-v1.1.0-amd64.tar` from Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)).
 3. **MIT ≠ panel?** **MIT = code license only.** Panel genotypes/phenotypes are not MIT (`DATA_NOTICE.md`).
 4. **ENA 12Xv2 BAM URL?** Download-demo only (`ERR16654874` / `PRJEB94459`). It is **not** VS-1; Analyze-as-BAM must fail `@SQ`.
 5. **8501 vs 8502?** 8501 = product UI; 8502 = `*.sample-first-v2.report.html` server.

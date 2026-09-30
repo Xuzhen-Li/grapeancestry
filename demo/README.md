@@ -1,5 +1,7 @@
 # Demo — 28 archaeological seeds
 
+[Open the report](https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.batch.report.html).
+
 View-only batch report for the 28 waterlogged grape seeds in Ramos-Madrigal et al. 2019, *Nature Plants*.
 
 ## Files
@@ -11,7 +13,7 @@ View-only batch report for the 28 waterlogged grape seeds in Ramos-Madrigal et a
 
 ## Open locally
 
-GitHub does not run this HTML in the blob viewer. Clone or download, then:
+The link above is the hosted copy. The GitHub blob viewer does not run this HTML. To open a local copy:
 
 ```bash
 cd demo

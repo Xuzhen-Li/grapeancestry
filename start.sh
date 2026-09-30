@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# GrapeAncestry v1.0.0 launcher (customer drop or this repo root).
-# Private fat image: grapeancestry:1.0.0 (linux/amd64). NEVER docker push (panel inside).
+# GrapeAncestry v1.1.0 launcher (customer drop or this repo root).
+# Private fat image: grapeancestry:1.1.0 (linux/amd64). NEVER docker push (panel inside).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT"
 
-IMAGE="grapeancestry:1.0.0"
+IMAGE="grapeancestry:1.1.0"
 NAME="grapeancestry"
-TAR="grapeancestry-v1.0.0-amd64.tar"
+TAR="grapeancestry-v1.1.0-amd64.tar"
 ALLOW_INCOMPLETE="${ALLOW_INCOMPLETE:-0}"
 
 mkdir -p input output settings

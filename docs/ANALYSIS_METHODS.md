@@ -1,7 +1,7 @@
 # Analysis methods and script map
 
 This page summarizes **how GrapeAncestry analyzes a query** and **which suite modules own each step**.  
-The runnable Python package lives in the private lab suite today; this public tree ships the **docs face**, the **Ages demo HTML**, and this map. Module paths below are suite layout (`src/grapeancestry/…`).
+The runnable Python package lives in the private lab suite today; this public tree ships the **docs face**, the **28-seed demo HTML**, and this map. Module paths below are suite layout (`src/grapeancestry/…`).
 
 Related: [`PIPELINE.md`](PIPELINE.md) (science contracts) · [`FLOWCHART.md`](FLOWCHART.md) · [`GUIDELINE.md`](GUIDELINE.md) · demo HTML [`../demo/`](../demo/).
 

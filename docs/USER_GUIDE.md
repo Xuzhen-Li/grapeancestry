@@ -27,7 +27,7 @@ Steps that need the fat image are marked **(image)**. Public-clone browse steps 
 ## 1. First start **(image)**
 
 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/). On **Apple Silicon**, use a **linux/amd64** engine (ADMIXTURE 1.3.0 is x86_64: [download page](https://dalexander.github.io/admixture/download.html)).
-2. Download `grapeancestry-v1.0.0-amd64.tar` from **Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632))**. Place it next to `start.sh` (or `start.command` / `start.bat`). Create folders as needed — the launcher runs `mkdir -p input output settings`.
+2. Download `grapeancestry-v1.1.0-amd64.tar` from **Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632))**. Place it next to `start.sh` (or `start.command` / `start.bat`). Create folders as needed — the launcher runs `mkdir -p input output settings`.
 3. Run:
 
 ```bash
@@ -36,7 +36,7 @@ Steps that need the fat image are marked **(image)**. Public-clone browse steps 
 # Windows: start.bat
 ```
 
-What the launcher does: ensure folders; if image `grapeancestry:1.0.0` is missing and `grapeancestry-v1.0.0-amd64.tar` is present, `docker load -i` that tar; without the tar it stops. `ALLOW_INCOMPLETE=1` forces an incomplete build that cannot Analyze. Then `docker run -d --name grapeancestry -p 8501:8501 -p 8502:8502` with `./input`, `./output`, `./settings` mounted. Colima: if `~/.colima/default/docker.sock` exists and `docker info` fails, set `DOCKER_HOST` to that socket.
+What the launcher does: ensure folders; if image `grapeancestry:1.1.0` is missing and `grapeancestry-v1.1.0-amd64.tar` is present, `docker load -i` that tar; without the tar it stops. `ALLOW_INCOMPLETE=1` forces an incomplete build that cannot Analyze. Then `docker run -d --name grapeancestry -p 8501:8501 -p 8502:8502` with `./input`, `./output`, `./settings` mounted. Colima: if `~/.colima/default/docker.sock` exists and `docker info` fails, set `DOCKER_HOST` to that socket.
 
 **Never `docker push`** the fat image (panel assets inside).
 

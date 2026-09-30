@@ -11,7 +11,7 @@
 - VS-1 FASTA / BWA index
 - Panel VCF / 2449 × 167K dosage caches / frozen Q·P·eigenvec
 - Customer FASTQ / BAM / CRAM
-- Fat image blob `grapeancestry-v1.0.0-amd64.tar` (or any `*.amd64.tar`)
+- Fat image blob `grapeancestry-v1.1.0-amd64.tar` (or any `*.amd64.tar`)
 - `results/cache/*.npz`
 
 ## License split
@@ -21,8 +21,8 @@
 
 ## Docker image policy
 
-- Product tag: `grapeancestry:1.0.0`
-- Customer file: `grapeancestry-v1.0.0-amd64.tar` — via **Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632))**.
+- Product tag: `grapeancestry:1.1.0`
+- Customer file: `grapeancestry-v1.1.0-amd64.tar` — via **Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632))**.
 - **Never** `docker push` that fat image (panel assets inside).
 - **Never** attach the tar to a **public** GitHub Release.
 

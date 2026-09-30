@@ -1,6 +1,6 @@
 # Script map (detailed)
 
-This repository now ships both the **grapevine 167K docs and Ages demo** (docs + Ages demo HTML) and the **Python package** under `src/grapeancestry/`. The same modules are the template for **other GBTS / capture panels**: keep code generic at the CLI/domain layer; swap sites, reference, and frozen axes through `config/` (cross-crop profiles → [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit)).
+This repository now ships both the **grapevine 167K docs and 28-seed demo** (docs + the batch report HTML) and the **Python package** under `src/grapeancestry/`. The same modules are the template for **other GBTS / capture panels**: keep code generic at the CLI/domain layer; swap sites, reference, and frozen axes through `config/` (cross-crop profiles → [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit)).
 
 ## Repository map
 

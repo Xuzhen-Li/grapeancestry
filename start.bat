@@ -1,5 +1,5 @@
 @echo off
-REM GrapeAncestry v1.0.0 — NEVER docker push the fat image (panel inside).
+REM GrapeAncestry v1.1.0 — NEVER docker push the fat image (panel inside).
 REM Prefer start.sh on macOS/Linux/Colima (sets --user host uid for bind mounts).
 setlocal
 cd /d "%~dp0"
@@ -12,9 +12,9 @@ icacls input /grant Everyone:(OI)(CI)F >nul 2>&1
 icacls output /grant Everyone:(OI)(CI)F >nul 2>&1
 icacls settings /grant Everyone:(OI)(CI)F >nul 2>&1
 
-set IMAGE=grapeancestry:1.0.0
+set IMAGE=grapeancestry:1.1.0
 set NAME=grapeancestry
-set TAR=grapeancestry-v1.0.0-amd64.tar
+set TAR=grapeancestry-v1.1.0-amd64.tar
 if "%ALLOW_INCOMPLETE%"=="" set ALLOW_INCOMPLETE=0
 
 where docker >nul 2>&1

@@ -10,7 +10,7 @@ What lives in this public tree, and what does not.
 | **Private tar + `start.sh`** | Full UI. Demos Ages + HUN89_query. FASTQ/BAM/VCF → V2 HTML. |
 | **Cloud `chip.json`** | Optional Cloud path, not v1. |
 
-grapevine **167K** public walkthrough (docs + Ages demo). Cross-panel *scaffold only*: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
+grapevine **167K** public walkthrough (docs + the 28-seed demo). Cross-panel *scaffold only*: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit).
 
 ## Read this first (by goal)
 
@@ -56,7 +56,7 @@ grapevine **167K** public walkthrough (docs + Ages demo). Cross-panel *scaffold 
 | **`app.py`** | Streamlit / UI entry when you run the companion UI | Not required to read docs or open `demo/` |
 | **`Dockerfile`** | Image build recipe for the companion UI stack | Not a substitute for the Zenodo fat tar alone |
 | **`docker-compose.yml`** | Compose wiring for local UI / report ports | Not the Zenodo distribution channel |
-| **`start.sh`** | Loads `grapeancestry:1.0.0`, UI `:8501`, reports `:8502` | Not a docs-only substitute for the fat image |
+| **`start.sh`** | Loads `grapeancestry:1.1.0`, UI `:8501`, reports `:8502` | Not a docs-only substitute for the fat image |
 | **`start.command`** | macOS wrapper for `start.sh` | Not a Windows launcher |
 | **`start.bat`** | Windows wrapper for `start.sh` | Not a macOS launcher |
 | **`pyproject.toml`** | Package metadata / install entry for `grapeancestry` | Not runtime panel assets |
@@ -108,5 +108,5 @@ Stage those under `data/` locally; see `data/MANIFEST.md` and `data/*/README.md`
 
 | Repo | Owns |
 |------|------|
-| **grapeancestry** (this) | Grapevine 167K walkthrough, GUIDELINE, Ages demo, step docs, grape-specific runnable modules |
+| **grapeancestry** (this) | Grapevine 167K walkthrough, GUIDELINE, 28-seed demo, step docs, grape-specific runnable modules |
 | **gtbs-chip-service-kit** | Species-agnostic GBTS scaffold + profile contract only |
