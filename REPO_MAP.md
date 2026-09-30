@@ -17,7 +17,7 @@ grapevine **167K** public walkthrough (docs + the 28-seed demo). Cross-panel *sc
 | You want… | Go to |
 |-----------|--------|
 | Understand the product | [README.md](README.md) |
-| See the pipeline picture | [FLOWCHART.md](docs/FLOWCHART.md) · `docs/flowchart_vs1_analysis_v2.png` |
+| See the pipeline picture | [FLOWCHART.md](docs/FLOWCHART.md) · `docs/flowchart_v1.1.png` |
 | Screenshot walkthrough (Ages) | [GUIDELINE.md](docs/GUIDELINE.md) · `docs/guideline_shots/` |
 | Open interactive demo HTML | [`demo/`](demo/) |
 | Step docs (prep → report → cloud) | [`steps/`](steps/) |

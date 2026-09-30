@@ -16,28 +16,32 @@ Not a whole-genome resequencing suite. **MIT = code only** (panel genotypes/phen
   28 archaeological seeds · Ramos-Madrigal et al. 2019 <em>Nat. Plants</em>
 </p>
 
+## What's new in v1.1
+
+v1.1 adds a relationship graph for a batch of queries. The queries and the panel varieties they match are drawn on one graph, and those queries are placed together on PCA, ADMIXTURE, and the NJ tree. The figure is that graph, from the 28-seed demo.
+
+![v1.1 relationship graph](docs/guideline_shots/panels/v11_relationship_graph.png)
+
+*v1.1 new feature. Blue nodes are queries. Red nodes are panel varieties. Edge colour is the relationship class (identical, parent–offspring, full sib, and more distant).* [Open the live report](https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.batch.report.html).
+
+## Analysis flow
+
+**FASTQ, BAM, or VCF → trim and map to VS-1 → markdup → SNP calling at the 167,433 target sites → QC, relatedness, PCA, ADMIXTURE, NJ, damage → interactive report.**
+
+![GrapeAncestry v1.1 flowchart](docs/flowchart_v1.1.png)
+
+Overview of input, processing, analysis, and the interactive report. Reference data used in the analysis: core genotypes, frozen PCA/ADMIXTURE references, VIVC passport, and OIV descriptors. Step map and claim boundaries: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). VS-1: Dong et al. 2023 Science ([doi:10.1126/science.add8655](https://doi.org/10.1126/science.add8655)).
+
 ## What it does
 
 - Takes FASTQ, a BAM already on VS-1, or a VCF at the 167K panel sites
 - Places the sample on a frozen 2449-sample × 167K-site VS-1 panel
 - Screens clones and parent–offspring, and reports IBS kinship against the panel
 - Projects the sample onto frozen PCA axes and ADMIXTURE K=2–8, and draws an NJ tree
-- v1.1 batch report: queries and panel neighbours on one relationship graph, and the same queries placed together on PCA, ADMIXTURE, and the NJ tree
+- Batch report: the v1.1 relationship graph above, plus joint PCA, ADMIXTURE, and NJ placement
 - Summarises aDNA damage for ancient samples
 - Reports an OIV 225 berry-colour genomic score (score ≠ phenotype)
 - Writes one self-contained HTML report per sample; the kit runs locally in Docker
-
-## Analysis flow
-
-**FASTQ, BAM, or VCF → trim and map to VS-1 → markdup → SNP calling at the 167,433 target sites → QC, relatedness, PCA, ADMIXTURE, NJ, damage → interactive report.**
-
-![GrapeAncestry analysis flowchart](docs/flowchart_vs1_analysis_v2.png)
-
-Overview of input, processing, analysis, and the interactive report. Reference data used in the analysis: core genotypes, frozen PCA/ADMIXTURE references, VIVC passport, and OIV descriptors. Step map and claim boundaries: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). VS-1: Dong et al. 2023 Science ([doi:10.1126/science.add8655](https://doi.org/10.1126/science.add8655)).
-
-![Relationship graph in the 28-seed batch report](docs/guideline_shots/panels/v11_relationship_graph.png)
-
-*v1.1 batch report — 28 archaeological seeds (Ramos-Madrigal et al. 2019, Nat. Plants). Blue nodes are queries; red nodes are panel varieties. Edge colour is the relationship class.* [Open the live report](https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.batch.report.html).
 
 ## Use it
 

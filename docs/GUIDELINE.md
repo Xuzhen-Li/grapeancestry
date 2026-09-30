@@ -8,7 +8,7 @@ This page covers:
 1. **How to use** the product as it exists today (three lanes).
 2. **How to read** the demo HTML report — every sidebar section and every screenshot below has an intro.
 
-Diagram: [`flowchart_vs1_analysis_v2.png`](flowchart_vs1_analysis_v2.png) · [`USER_GUIDE.md`](USER_GUIDE.md) · [`FLOWCHART.md`](FLOWCHART.md) · Cloud notes: [`CHIP_COMPANION.md`](CHIP_COMPANION.md).
+Diagram: [`flowchart_v1.1.png`](flowchart_v1.1.png) · [`USER_GUIDE.md`](USER_GUIDE.md) · [`FLOWCHART.md`](FLOWCHART.md) · Cloud notes: [`CHIP_COMPANION.md`](CHIP_COMPANION.md).
 
 ---
 
