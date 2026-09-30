@@ -2,7 +2,7 @@
 
 **user input → our panel assets → software → analyses → outputs**
 
-> **PNG note:** README embeds `flowchart_vs1_analysis_v2.png`. Until that art is redrawn, treat **this page’s Mermaid + caption** as authoritative for OIV 225 vs Do-not-claim dashed lines.
+> **PNG note:** README embeds `flowchart_vs1_analysis_v2.png` (overview: input, processing, analysis, interactive report). This page’s Mermaid is the DIY step map. Solid into the output = core path plus OIV 225. Dashed = do not claim as a decision result.
 
 **Caption:** Inputs must be on **VS-1**. Your sample is then placed on a frozen 2449 × 167K reference; boxes name the software or asset at each step. **Solid** into the output = core path (QC · IBS · PCA · ADMIXTURE · NJ) plus **OIV 225** colour GS (only **decision-grade** score). **Dashed** = **Do not claim** as decision results (f3/f4 · selection/GEA overlay · passport/SDR proxy · other OIV) — exploratory / claim-bounded only.
 
