@@ -126,3 +126,9 @@ The file under `demo/results/` is the 28-seed batch report. Stills below are fro
 **李旭真 / Li Xuzhen** · [ORCID 0000-0003-3670-6657](https://orcid.org/0000-0003-3670-6657)
 
 Related: [gtbs-chip-service-kit](https://github.com/Xuzhen-Li/gtbs-chip-service-kit) · [grapevine-adna](https://github.com/Xuzhen-Li/grapevine-adna) · [genomics-theory-mining](https://github.com/Xuzhen-Li/genomics-theory-mining)
+
+## Earlier flowchart
+
+![Earlier GrapeAncestry flowchart](docs/flowchart_vs1_analysis_v2.png)
+
+*Previous diagram. The current overview is under Analysis flow.*
