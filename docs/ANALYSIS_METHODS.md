@@ -85,7 +85,7 @@ Front-end libraries shipped beside the HTML: `demo/assets/` (Plotly, D3, LocusZo
 
 **V2 contract:** provenance (`query_id`, `source_sample_id`), artifact list, method coverage (available / unavailable). No invented universal QC pass line. Theme: Light / Dark / System.
 
-Public demo file: [`../demo/results/Ages.sample-first-v2.report.html`](../demo/results/Ages.sample-first-v2.report.html).
+Public demo file: [`../demo/results/ramos2019_np.batch.report.html`](../demo/results/ramos2019_np.batch.report.html).
 
 ## D · Supporting / lab-only scripts (`scripts/`)
 

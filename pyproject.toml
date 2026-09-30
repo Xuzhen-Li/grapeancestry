@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "grapeancestry"
-version = "1.0.0"
-description = "GrapeAncestry v1.0.0 — grapevine 167K capture companion (Docker UI + report)"
+version = "1.1.0"
+description = "GrapeAncestry v1.1.0 — grapevine 167K capture companion (Docker UI + report)"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.11"

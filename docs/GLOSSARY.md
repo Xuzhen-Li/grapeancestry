@@ -1,4 +1,4 @@
-# Glossary — GrapeAncestry v1.0.0
+# Glossary — GrapeAncestry v1.1.0
 
 Paper details only from the two cited DOIs when named.
 

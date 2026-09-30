@@ -7,7 +7,6 @@ PCA scatter + ADMIXTURE bar + NJ tips, all with customdata=IID for click→highl
 from __future__ import annotations
 
 import json
-import os
 import re
 from collections import defaultdict
 from pathlib import Path
@@ -93,8 +92,10 @@ def _load_info(info_path: Path) -> dict[str, dict[str, str]]:
     return meta
 
 
-_extra_info = os.environ.get("GRAPEANCESTRY_EXTRA_INFO")
-_ITALY_3057 = Path(_extra_info) if _extra_info else None
+_ITALY_3057 = Path(
+    "/Users/lixuzhen/Desktop/script/00_italy_2center"
+    "/Final_ana_3057_adna/final_3057_sample.info"
+)
 
 
 def _load_dong_passport(root: Path) -> dict[str, dict[str, str]]:
@@ -102,7 +103,7 @@ def _load_dong_passport(root: Path) -> dict[str, dict[str, str]]:
     local = root / "data" / "panel" / "dong_passport.tsv"
     if local.exists():
         return _load_info(local)
-    if _ITALY_3057 is not None and _ITALY_3057.exists():
+    if _ITALY_3057.exists():
         return _load_info(_ITALY_3057)
     return {}
 
@@ -445,9 +446,24 @@ def _component_payload(admix_dir: Path, k: int, run_family: str) -> dict:
     }
 
 
+_STAR_PALETTE = (
+    "#111111",
+    "#b4234b",
+    "#1d4ed8",
+    "#15803d",
+    "#7c3aed",
+    "#c2410c",
+    "#0f766e",
+    "#a16207",
+)
+
+
 def build_interactive_payload(
     bundle: ReportBundle,
     root: Path,
+    *,
+    star_ids: list[str] | None = None,
+    include_tree: bool = True,
 ) -> dict:
     """Assemble D / SROWS / SIDX / TREE_TIPS for the JS layer."""
     admix_dir = root / "data" / "panel" / "admixture"
@@ -695,6 +711,16 @@ def build_interactive_payload(
         )
     n_pcs = max((len(p["pcs"]) for p in pca_points), default=2)
 
+    star_list = [bundle.sample] if not star_ids else [str(s) for s in star_ids]
+    stars = set(star_list)
+    if len(star_list) == 1:
+        star_color_of = {star_list[0]: "#000000"}
+    else:
+        star_color_of = {
+            sid: _STAR_PALETTE[i % len(_STAR_PALETTE)] for i, sid in enumerate(star_list)
+        }
+    tree_query_label = bundle.sample if not star_ids else ",".join(star_list)
+
     def _tree_plotly(
         tips: dict[str, tuple[float, float]],
         segs: list[tuple[float, float, float, float]],
@@ -717,31 +743,37 @@ def build_interactive_payload(
             tids = by_tg[g]
             is_wild = g.startswith("WWE") or g.startswith("WEE")
             is_bg = g in {"C-Ad", "W-Ad", "OUT", "NA"}
-            tip_traces.append(
-                {
-                    "type": "scatter",
-                    "mode": "markers",
-                    "name": g,
-                    "x": [tips[t][0] for t in tids],
-                    "y": [tips[t][1] for t in tids],
-                    "customdata": tids,
-                    "text": [_hover_label(t, pp_of(t)) for t in tids],
-                    "marker": {
-                        "size": [12 if t == bundle.sample else (5 if is_bg else 7) for t in tids],
-                        "color": [
-                            "#000000" if t == bundle.sample else grp_colors.get(g, SET1[i % len(SET1)])
-                            for t in tids
-                        ],
-                        "symbol": [
-                            "star" if t == bundle.sample else ("square" if is_wild else "circle")
-                            for t in tids
-                        ],
-                        "opacity": 0.5 if is_bg else 0.9,
-                        "line": {"width": 0.4 if is_bg else 0, "color": "#999"},
-                    },
-                    "hovertemplate": "%{text}<extra>" + g + "</extra>",
-                }
-            )
+            multi_star = len(stars) > 1 and g == "QUERY"
+            trace = {
+                "type": "scatter",
+                "mode": "markers+text" if multi_star else "markers",
+                "name": g,
+                "x": [tips[t][0] for t in tids],
+                "y": [tips[t][1] for t in tids],
+                "customdata": tids,
+                "text": [_hover_label(t, pp_of(t)) for t in tids],
+                "marker": {
+                    "size": [12 if t in stars else (5 if is_bg else 7) for t in tids],
+                    "color": [
+                        star_color_of.get(t, "#000000")
+                        if t in stars
+                        else grp_colors.get(g, SET1[i % len(SET1)])
+                        for t in tids
+                    ],
+                    "symbol": [
+                        "star" if t in stars else ("square" if is_wild else "circle")
+                        for t in tids
+                    ],
+                    "opacity": 0.5 if is_bg else 0.9,
+                    "line": {"width": 0.4 if is_bg else 0, "color": "#999"},
+                },
+                "hovertemplate": "%{text}<extra>" + g + "</extra>",
+            }
+            if multi_star:
+                trace["text"] = [t if t in stars else "" for t in tids]
+                trace["textposition"] = "top center"
+                trace["textfont"] = {"size": 10, "color": "#111111"}
+            tip_traces.append(trace)
         xs = [tips[t][0] for t in tips]
         ys = [tips[t][1] for t in tips]
         if circular:
@@ -767,7 +799,7 @@ def build_interactive_payload(
                 "height": 720,
                 "autosize": False,
                 "margin": {"l": 24, "r": 24, "t": 48, "b": 24},
-                "title": f"NJ tree (circular) · {len(tips)} tips · query={bundle.sample}",
+                "title": f"NJ tree (circular) · {len(tips)} tips · query={tree_query_label}",
                 "xaxis": {
                     **_SCIENCE_LAYOUT["xaxis"],
                     **axis_hide,
@@ -794,7 +826,7 @@ def build_interactive_payload(
                 **_SCIENCE_LAYOUT,
                 "height": int(max(480, min(3.05 * len(tips), 10000))),
                 "margin": {"l": 30, "r": 120, "t": 40, "b": 40},
-                "title": f"NJ tree (rectangular) · {len(tips)} tips · query={bundle.sample}",
+                "title": f"NJ tree (rectangular) · {len(tips)} tips · query={tree_query_label}",
                 "xaxis": {**_SCIENCE_LAYOUT["xaxis"], "title": "distance from root", "zeroline": False, "automargin": True},
                 "yaxis": {"visible": False, "autorange": True},
                 "hovermode": "closest",
@@ -821,7 +853,7 @@ def build_interactive_payload(
     tree_fig_rect = None
     tree_tips: dict[str, list[float]] = {}
     tree_tips_rect: dict[str, list[float]] = {}
-    if bundle.tree_obj is not None:
+    if include_tree and bundle.tree_obj is not None:
         tips_c = tip_xy_circular(bundle.tree_obj)
         tree_fig = _tree_plotly(tips_c, tree_edges_circular(bundle.tree_obj, n_arc=6), circular=True)
         tips_r = tip_xy_rectangular(bundle.tree_obj)

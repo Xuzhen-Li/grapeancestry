@@ -89,9 +89,9 @@ Ages aDNA SE demo: `--samples config/samples_ages.yaml --sample Ages` (AdapterRe
 **View an existing demo report (view-only):**
 
 ```bash
-cd /path/to/grapeancestry   # repo or customer drop root   # must be suite root so ../assets resolve
-python -m http.server
-# open http://localhost:8000/results/Ages.sample-first-v2.report.html
+cd demo
+python3 -m http.server 8000
+# open http://localhost:8000/results/ramos2019_np.batch.report.html
 ```
 
 `http.server` is view-only. v1 product report is `*.sample-first-v2.report.html` from Docker; optional Cloud JSON is `chip.json`.

@@ -332,6 +332,7 @@ function refreshStaticControlLabels(){
         setLocalizedAttribute(button,'title','Clear pinned sample','清除已钉住样本');
       }
     );
+    batchCardsToggleLabels();
     Array.prototype.forEach.call(
       document.querySelectorAll('.lang-control'),
       function(control){
@@ -2488,6 +2489,1162 @@ function drawSelScatter(){
   });
 }
 
+var BATCH_QUERY_COLORS=['#111111','#b4234b','#1d4ed8','#15803d','#7c3aed','#c2410c','#0f766e','#a16207'];
+var batchUserAct=false;
+var cloneFilter=null;
+var REL_EDGE_COLOR={
+  'Identical':'#111111',
+  'Parent-Offspring':'#b4234b',
+  'Full Sib':'#1d4ed8',
+  '2nd':'#15803d',
+  '3rd':'#a16207',
+  'Unrelated':'#94a3b8',
+  'Identical_clone':'#111111',
+  'Highly_related':'#1d4ed8',
+  'not_in_paper_bins':'#94a3b8',
+  'IdenticalTwins/SameIndividual':'#111111',
+  'First Degree':'#b4234b',
+  'Second Degree':'#15803d',
+  'Third Degree':'#a16207',
+  'Unrelated/Consistent with Third Degree':'#78716c'
+};
+var REL_SHORT={
+  'Identical':'ID',
+  'Parent-Offspring':'PO',
+  'Full Sib':'FS',
+  '2nd':'2nd',
+  '3rd':'3rd',
+  'Unrelated':'UN',
+  'Identical_clone':'CL',
+  'Highly_related':'HR',
+  'not_in_paper_bins':'OUT',
+  'IdenticalTwins/SameIndividual':'ID',
+  'First Degree':'1st',
+  'Second Degree':'2nd',
+  'Third Degree':'3rd',
+  'Unrelated/Consistent with Third Degree':'UN/3'
+};
+var REL_LEGEND={
+  'Identical':['Identical','完全相同'],
+  'Parent-Offspring':['Parent-Offspring','亲子'],
+  'Full Sib':['Full Sib','全同胞'],
+  '2nd':['2nd','二级亲缘'],
+  '3rd':['3rd','三级亲缘'],
+  'Unrelated':['Unrelated','无关'],
+  'Identical_clone':['Identical clone','克隆（原文）'],
+  'Highly_related':['Highly related','高度相关'],
+  'not_in_paper_bins':['Outside published bins','不在原文区间'],
+  'IdenticalTwins/SameIndividual':['Identical / same individual','同一个体'],
+  'First Degree':['First degree','一级亲缘'],
+  'Second Degree':['Second degree','二级亲缘'],
+  'Third Degree':['Third degree','三级亲缘'],
+  'Unrelated/Consistent with Third Degree':['Unrelated / consistent with 3rd','无关或像三级']
+};
+var KIN_RULES=[
+  {
+    id:'4k', field:'class',
+    en:'4K', cn:'4K',
+    paramsEn:'Identical: R1≥1.2, IBS2*%≥0.99 and KING≥0.3426. Parent–offspring: 0.5<R1<1.2, 0.21≤KING<0.3426 and R0≤0.096. Full sib: 0.177≤KING<0.354. 2nd: 0.0884≤KING<0.177. 3rd: 0.0442≤KING<0.0884. KING is the robust estimator of Manichaikul et al. 2010 (doi:10.1093/bioinformatics/btq559). These degree gates are this kit’s 4K screen.',
+    paramsCn:'完全相同：R1≥1.2，IBS2*%≥0.99，且 KING≥0.3426。亲子：0.5<R1<1.2，0.21≤KING<0.3426，且 R0≤0.096。全同胞：0.177≤KING<0.354。二级：0.0884≤KING<0.177。三级：0.0442≤KING<0.0884。KING 用 Manichaikul 等 2010 的稳健估计（doi:10.1093/bioinformatics/btq559）。上面这些度的门是本工具的 4K 筛查。',
+    classes:['Identical','Parent-Offspring','Full Sib','2nd','3rd','Unrelated'],
+    defaultOn:['Identical','Parent-Offspring'],
+    graphOn:['Identical','Parent-Offspring','Full Sib','2nd']
+  },
+  {
+    id:'ramos2019', field:'ramos',
+    en:'Ramos 2019', cn:'Ramos 2019',
+    paramsEn:'Ramos-Madrigal et al. 2019, Nature Plants (doi:10.1038/s41477-019-0437-5). Identical clone: KING≥0.49 and IBS0≤0.001. Parent–offspring: 0.177<KING<0.354 and IBS0≤0.001. Pairs in that KING window with IBS0>0.001 are shown as highly related, the paper’s name for the full-sib-like class in seed tissue. KING≥0.354 but below 0.49 falls outside those bins.',
+    paramsCn:'Ramos-Madrigal 等 2019，Nature Plants（doi:10.1038/s41477-019-0437-5）。克隆：KING≥0.49 且 IBS0≤0.001。亲子：0.177<KING<0.354 且 IBS0≤0.001。同一 KING 窗口里 IBS0>0.001 的，标成高度相关，也就是原文对种子组织里全同胞样关系的叫法。KING≥0.354 但低于 0.49 的，不在这些区间里。',
+    classes:['Identical_clone','Parent-Offspring','Highly_related','not_in_paper_bins'],
+    defaultOn:['Identical_clone','Parent-Offspring','Highly_related'],
+    graphOn:['Identical_clone','Parent-Offspring','Highly_related']
+  },
+  {
+    id:'readv2', field:'readv2',
+    en:'READv2', cn:'READv2',
+    paramsEn:'Alaçamlı et al. 2024, Genome Biology (doi:10.1186/s13059-024-03350-3); READ2.py v2.01 thresholds 0.953125, 0.90625, 0.8125, 0.625 on P0 divided by the median P0. The 0.90625–0.953125 band needs at least 3000 expected mismatches to be called third degree. First degree is not split into parent–offspring versus siblings: that split needs at least 10000 expected mismatches.',
+    paramsCn:'Alaçamlı 等 2024，Genome Biology（doi:10.1186/s13059-024-03350-3）。READ2.py v2.01 的阈值是 0.953125、0.90625、0.8125、0.625，用在「P0 除以 P0 中位数」上。0.90625–0.953125 这一档至少要有 3000 个期望错配才标成三级。一级亲缘不再拆成亲子或同胞：那一步至少要 10000 个期望错配。',
+    classes:['IdenticalTwins/SameIndividual','First Degree','Second Degree','Third Degree','Unrelated/Consistent with Third Degree','Unrelated'],
+    defaultOn:['IdenticalTwins/SameIndividual','First Degree'],
+    graphOn:['IdenticalTwins/SameIndividual','First Degree','Second Degree']
+  }
+];
+var kinRule='4k';
+var panelPoOn=false;
+function bindBatchUserAct(){
+  if(typeof document==='undefined'||!document.addEventListener||document._gaBatchAct) return;
+  document._gaBatchAct=true;
+  ['pointerdown','mousedown','keydown','touchstart'].forEach(function(type){
+    document.addEventListener(type, function(){ batchUserAct=true; }, true);
+  });
+}
+function relLegendName(cls){
+  var pair=REL_LEGEND[cls];
+  return pair?t(pair[0], pair[1]):String(cls||'');
+}
+function kinRuleDef(id){
+  var found=null;
+  KIN_RULES.forEach(function(rule){ if(rule.id===(id||'4k')) found=rule; });
+  return found||KIN_RULES[0];
+}
+function kinClassRank(cls){
+  var order=kinRuleDef(kinRule).classes||CLONE_CLASS_ORDER;
+  var rank=order.indexOf(cls);
+  return rank<0?99:rank;
+}
+function kinRuleAvailable(ruleId){
+  if(!ruleId||ruleId==='4k') return true;
+  var screen=D&&D.kin_screen;
+  var field=kinRuleDef(ruleId).field;
+  return !!(screen&&screen.edges&&screen.edges.some(function(e){ return e[field]!=null&&e[field]!==''; }));
+}
+function kinRuleBlurb(ruleId){
+  var rule=kinRuleDef(ruleId);
+  var screen=D&&D.kin_screen;
+  var extra='';
+  if(screen&&(screen.note_en||screen.note_cn)){
+    extra=' '+bi(esc(screen.note_en||''), esc(screen.note_cn||''));
+  }
+  return bi(esc(rule.paramsEn), esc(rule.paramsCn))+extra;
+}
+function projectKinScreen(screen, ruleId){
+  var rule=kinRuleDef(ruleId);
+  var qset={};
+  (screen.queries||[]).forEach(function(id){ if(id) qset[id]=1; });
+  ((D.graph&&D.graph.nodes)||[]).forEach(function(n){ if(n.kind==='query') qset[n.id]=1; });
+  var byId={};
+  ((D.graph&&D.graph.nodes)||[]).forEach(function(n){ byId[n.id]=n; });
+  (screen.nodes||[]).forEach(function(n){ if(n&&n.id&&!byId[n.id]) byId[n.id]=n; });
+  Object.keys(qset).forEach(function(id){
+    if(!byId[id]) byId[id]={id:id, kind:'query'};
+  });
+  var edges=[];
+  (screen.edges||[]).forEach(function(e){
+    var cls=rule.field==='class'?(e.class||''):(e[rule.field]||'');
+    if(!cls) return;
+    if(!byId[e.source]) byId[e.source]={id:e.source, kind:qset[e.source]?'query':'panel', label:e.source_label||''};
+    if(!byId[e.target]) byId[e.target]={id:e.target, kind:qset[e.target]?'query':'panel', label:e.target_label||e.label||''};
+    edges.push({
+      source:e.source, target:e.target, class:cls,
+      king:e.king, r1:e.r1, n:e.n, ibs0:e.ibs0, p0:e.p0
+    });
+  });
+  return {nodes:Object.keys(byId).map(function(id){ return byId[id]; }), edges:edges};
+}
+function kinViewSources(){
+  var screen=D&&D.kin_screen;
+  var rule=kinRule||'4k';
+  if(screen&&screen.edges&&(rule==='4k'||kinRuleAvailable(rule))){
+    return {graph:projectKinScreen(screen, rule), pairs:[], screened:true};
+  }
+  return {graph:(D&&D.graph)||{nodes:[],edges:[]}, pairs:(D&&D.pairs)||[], screened:false};
+}
+function fmtKing(v){
+  var n=Number(v);
+  if(!isFinite(n)) return '—';
+  var sign=n<0?-1:1;
+  var rounded=Math.round((Math.abs(n)*1000)+1e-8)/1000;
+  return (sign*rounded).toFixed(3);
+}
+function edgeTag(e){
+  return (REL_SHORT[e.class]||e.class||'')+' '+fmtKing(e&&e.king);
+}
+function panelGraphLabel(node){
+  if(node&&node.label) return node.label;
+  var id=node&&node.id?node.id:'';
+  var r=rowByIid(id);
+  var name=String((r&&(r.acc||r.acc_local))||'').trim();
+  return name?(id+' · '+name):id;
+}
+function fmtFrac(v){
+  var n=Number(v);
+  if(!isFinite(n)) return '';
+  return (Math.abs(n)<0.01?n.toFixed(6):n.toFixed(4));
+}
+function relNodeCard(iid, graph){
+  var lines=[sampleWho(iid)];
+  var r=rowByIid(iid);
+  if(r&&r.comments) lines.push(esc(String(r.comments)));
+  var edges=(graph&&graph.edges||[]).filter(function(e){
+    return e.source===iid||e.target===iid;
+  });
+  edges.forEach(function(e){
+    var other=e.source===iid?e.target:e.source;
+    var otherRow=rowByIid(other);
+    var otherName=(otherRow&&(otherRow.acc||otherRow.acc_local))||graphQueryLabel(other)||other;
+    var bits=[otherName];
+    if(e.bridge) bits.push('4K panel PO');
+    else if(e.class) bits.push(e.class);
+    if(e.king!=null&&isFinite(Number(e.king))) bits.push('KING '+fmtKing(e.king));
+    if(e.r1!=null&&isFinite(Number(e.r1))) bits.push('R1 '+fmtKing(e.r1));
+    if(e.ibs0!=null&&isFinite(Number(e.ibs0))) bits.push('IBS0 '+fmtFrac(e.ibs0));
+    if(e.n!=null&&e.n!=='') bits.push('n '+e.n);
+    if(e.p0!=null&&isFinite(Number(e.p0))) bits.push('norm P0 '+fmtFrac(e.p0));
+    lines.push(bits.map(function(bit){ return esc(String(bit)); }).join(' · '));
+  });
+  return lines.join('<br>');
+}
+function showRelNodeCard(iid, graph){
+  var box=document.getElementById('rel-graph-detail');
+  if(!box) return;
+  if(!iid){
+    box.hidden=true;
+    box.innerHTML='';
+    return;
+  }
+  box.hidden=false;
+  if(box.removeAttribute) box.removeAttribute('hidden');
+  box.innerHTML=relNodeCard(iid, graph);
+}
+function panelGraphShort(node){
+  var full=panelGraphLabel(node);
+  var cut=full.indexOf(' · ');
+  if(cut>=0){
+    var name=full.slice(cut+3).trim();
+    if(name) return name;
+  }
+  return (node&&node.id)||full;
+}
+function graphQueryLabel(id){
+  var text=String(id||'');
+  if(text.slice(-6)==='_query'){
+    var short=text.slice(0,-6);
+    var clash=batchQueryIds().some(function(other){
+      if(other===id) return false;
+      var bare=String(other).slice(-6)==='_query'?String(other).slice(0,-6):String(other);
+      return bare===short;
+    });
+    if(!clash && short) return short;
+  }
+  return text;
+}
+function relTextAnchor(ang){
+  var c=Math.cos(ang), s=Math.sin(ang);
+  var h=c>0.4?'left':(c<-0.4?'right':'center');
+  var v=s>0.45?'bottom':(s<-0.45?'top':'middle');
+  if(h==='center'&&v==='middle') return c>=0?'middle right':'middle left';
+  if(v==='middle') return h==='left'?'middle right':'middle left';
+  if(h==='center') return v==='bottom'?'top center':'bottom center';
+  return (v==='bottom'?'top ':'bottom ')+(h==='left'?'right':'left');
+}
+function batchQueryIds(){
+  return (D&&D.queries||[]).map(function(q){return q&&q.id?q.id:q;});
+}
+function isBatchQueryId(iid){
+  return !!(D&&D.batch)&&batchQueryIds().indexOf(iid)>=0;
+}
+function applyBatchQueryGt(){
+  if(!D||!D.batch) return;
+  function paint(loci, pack){
+    if(!loci||!pack) return;
+    var by={};
+    pack.forEach(function(row){ if(row&&row.slug) by[row.slug]=row; });
+    loci.forEach(function(loc){
+      var row=by[loc.slug];
+      if(!row) return;
+      if(row.query_gt_sample!=null) loc.query_gt_sample=row.query_gt_sample;
+      if(row.query_gt_called!=null) loc.query_gt_called=row.query_gt_called;
+      if(row.query_gt_n!=null) loc.query_gt_n=row.query_gt_n;
+      if(row.gt&&loc.snps) loc.snps.gt=row.gt;
+    });
+  }
+  paint(D.selection_loci, D.selection_query_gt);
+  paint(D.gwas_loci, D.gwas_query_gt);
+}
+var batchCardsOpen=null;
+function batchCardsIsOpen(){
+  if(batchCardsOpen!==null) return batchCardsOpen;
+  var saved=null;
+  try{ saved=sessionStorage.getItem('ga-batch-cards'); }catch(err){}
+  if(saved==='0') batchCardsOpen=false;
+  else if(saved==='1') batchCardsOpen=true;
+  else batchCardsOpen=!D||!D.queries||D.queries.length<=8;
+  return batchCardsOpen;
+}
+function batchCardsToggleLabels(){
+  var btn=document.getElementById('batch-cards-toggle');
+  if(!btn) return;
+  var open=btn.getAttribute('aria-expanded')!=='false';
+  setLocalizedAttribute(btn,'aria-label',open?'Hide sample cards':'Show sample cards',open?'收起样本卡':'展开样本卡');
+  setLocalizedAttribute(btn,'title',open?'Hide sample cards':'Show sample cards',open?'收起样本卡':'展开样本卡');
+}
+function applyBatchCardsChrome(){
+  var host=document.getElementById('batch-switcher');
+  var btn=document.getElementById('batch-cards-toggle');
+  var count=document.getElementById('batch-cards-count');
+  var cur=document.getElementById('batch-cards-current');
+  if(!host) return;
+  if(!D||!D.batch){
+    host.className='';
+    return;
+  }
+  var open=batchCardsIsOpen();
+  host.className='is-on'+(open?'':' cards-collapsed');
+  host.hidden=false;
+  if(host.removeAttribute) host.removeAttribute('hidden');
+  if(count) count.textContent=String((D.queries||[]).length);
+  if(cur) cur.textContent=QUERY||'';
+  if(btn) btn.setAttribute('aria-expanded', open?'true':'false');
+  batchCardsToggleLabels();
+}
+function toggleBatchCards(){
+  batchCardsOpen=!batchCardsIsOpen();
+  try{ sessionStorage.setItem('ga-batch-cards', batchCardsOpen?'1':'0'); }catch(err){}
+  applyBatchCardsChrome();
+  fitReportChrome();
+}
+function bindBatchCardsToggle(){
+  var btn=document.getElementById('batch-cards-toggle');
+  if(!btn||btn._gaBatchCardsBound||!btn.addEventListener) return;
+  btn._gaBatchCardsBound=true;
+  btn.addEventListener('click', function(){ toggleBatchCards(); });
+}
+function watchReportChrome(){
+  if(watchReportChrome.done) return;
+  watchReportChrome.done=true;
+  if(typeof ResizeObserver!=='function'||typeof document==='undefined') return;
+  var tb=document.getElementById('top-bar');
+  if(!tb) return;
+  try{
+    var ro=new ResizeObserver(function(){ fitReportChrome(); });
+    ro.observe(tb);
+  }catch(err){}
+}
+function renderBatchSwitcher(){
+  var host=document.getElementById('batch-switcher');
+  var cards=document.getElementById('batch-cards');
+  var sel=document.getElementById('batch-query-select');
+  if(!host) return;
+  if(!D||!D.batch){
+    host.className='';
+    return;
+  }
+  applyBatchCardsChrome();
+  bindBatchCardsToggle();
+  watchReportChrome();
+  var html='';
+  (D.queries||[]).forEach(function(q){
+    var id=q.id||q;
+    var active=id===QUERY?' active':'';
+    var rate=q.calling_rate==null?'—':fmtNum(Number(q.calling_rate),1)+'%';
+    var lib=q.library_type||q.library_class||'—';
+    var near=(q.nearest_id||'—')+' '+(q.nearest_class||'');
+    html+='<button type="button" class="batch-card'+active+'" data-query="'+esc(id)+'">'+
+      '<div class="bid">'+esc(id)+'</div>'+
+      '<div class="bmeta">'+bi('Library','文库')+' '+esc(String(lib))+'</div>'+
+      '<div class="bmeta">'+bi('Panel calling rate','面板分型率')+' '+esc(String(rate))+'</div>'+
+      '<div class="bmeta">'+bi('Nearest 4K','最近 4K')+' '+esc(String(near))+'</div>'+
+      '</button>';
+  });
+  if(cards){
+    cards.innerHTML=html;
+    if(cards.querySelectorAll){
+      cards.querySelectorAll('.batch-card').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          batchUserAct=true;
+          setActiveQuery(btn.getAttribute('data-query')||'');
+        });
+      });
+    }
+    if(cards.querySelector){
+      var activeCard=cards.querySelector('.batch-card.active');
+      if(activeCard&&activeCard.scrollIntoView){
+        try{ activeCard.scrollIntoView({block:'nearest',inline:'nearest'}); }catch(err){}
+      }
+    }
+  }
+  if(sel){
+    var opts='';
+    (D.queries||[]).forEach(function(q){
+      var id=q.id||q;
+      opts+='<option value="'+esc(id)+'"'+(id===QUERY?' selected':'')+'>'+esc(id)+'</option>';
+    });
+    sel.innerHTML=opts;
+    sel.value=QUERY;
+    if(!sel._gaBatchBound){
+      sel._gaBatchBound=true;
+      sel.addEventListener('change', function(ev){
+        if(!batchUserAct) return;
+        if(ev && ev.isTrusted===false) return;
+        setActiveQuery(sel.value||'');
+      });
+    }
+  }
+  mountSectionQueryPicks();
+  fitReportChrome();
+}
+function sectionQueryPickHtml(){
+  var h='<div class="sec-query-pick" role="group">';
+  (D.queries||[]).forEach(function(q){
+    var id=q.id||q;
+    var active=id===QUERY?' active':'';
+    h+='<button type="button" class="sec-q'+active+'" data-query="'+esc(id)+'">'+esc(id)+'</button>';
+  });
+  return h+'</div>';
+}
+function mountSectionQueryPicks(){
+  if(!D||!D.batch||!document.querySelectorAll) return;
+  var markup=sectionQueryPickHtml();
+  var nodes=document.querySelectorAll('#main-content section[id]');
+  for(var i=0;i<nodes.length;i++){
+    var sec=nodes[i];
+    var h2=sec.firstElementChild;
+    while(h2&&String(h2.tagName||'').toLowerCase()!=='h2') h2=h2.nextElementSibling;
+    if(sec.id==='clone') continue;
+    if(!h2||!h2.insertAdjacentHTML) continue;
+    var nxt=h2.nextElementSibling;
+    if(nxt&&nxt.classList&&nxt.classList.contains('sec-query-pick')) nxt.remove();
+    h2.insertAdjacentHTML('afterend', markup);
+    var pick=h2.nextElementSibling;
+    if(!pick||!pick.querySelectorAll) continue;
+    pick.querySelectorAll('.sec-q').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        batchUserAct=true;
+        setActiveQuery(btn.getAttribute('data-query')||'');
+      });
+    });
+  }
+}
+function fitReportChrome(){
+  var tb=document.getElementById('top-bar');
+  var main=document.getElementById('main-content');
+  if(!tb||!main||!main.style) return;
+  var root=document.documentElement;
+  if(typeof isNarrowViewport==='function'&&isNarrowViewport()){
+    main.style.paddingTop='';
+    if(root&&root.style) root.style.scrollPaddingTop='';
+    return;
+  }
+  var h=tb.offsetHeight||0;
+  if(!h) return;
+  main.style.paddingTop=(h+8)+'px';
+  if(root&&root.style) root.style.scrollPaddingTop=(h+8)+'px';
+}
+function fillBatchOverview(){
+  var el=document.getElementById('batch-overview');
+  if(!el) return;
+  if(!D||!D.batch){ el.innerHTML=''; return; }
+  var h='<h3>'+bi('Batch overview','批次总览')+'</h3><div class="table-scroll"><table><tr><th>'+
+    bi('Query','查询样本')+'</th><th>'+bi('Library','文库')+'</th><th>'+
+    bi('Panel call%','面板分型率')+'</th><th>'+bi('Nearest 4K','最近 4K')+'</th><th>'+
+    bi('Class','关系类别')+'</th><th>KING</th></tr>';
+  (D.queries||[]).forEach(function(q){
+    var id=q.id||q;
+    var cls='clickrow'+(id===QUERY?' active':'');
+    h+='<tr class="'+cls+'" data-query="'+esc(id)+'"><td>'+esc(id)+'</td><td>'+
+      esc(q.library_type||q.library_class||'')+'</td><td>'+esc(q.calling_rate==null?'':q.calling_rate)+
+      '</td><td>'+esc(q.nearest_id||'')+'</td><td>'+identityLabel(q.nearest_class||'')+
+      '</td><td>'+esc(q.nearest_king==null?'':q.nearest_king)+'</td></tr>';
+  });
+  h+='</table></div>';
+  el.innerHTML=h;
+  if(el.querySelectorAll){
+    el.querySelectorAll('tr[data-query]').forEach(function(row){
+      row.addEventListener('click', function(){
+        batchUserAct=true;
+        setActiveQuery(row.getAttribute('data-query')||'');
+      });
+    });
+  }
+}
+function refreshActiveQuerySections(){
+  fillHeroStats();
+  fillReportMeta();
+  fillMethodCoverage();
+  fillQueryEvidence();
+  fillConclusions();
+  fillCloneTable();
+  fillIbsKinship();
+  fillSelFstats();
+  fillQc();
+  fillExtra();
+  fillQuerySnapshot();
+  fillAuthorIntake();
+  loadDamage();
+  loadPCA();
+  loadPCA3d();
+  loadBar(currentK);
+  loadTree();
+  loadRelGraph();
+  if(QUERY) highlightSample(QUERY);
+}
+function setActiveQuery(id){
+  if(!batchUserAct) return;
+  if(!D||!D.batch||!D.per_query||!D.per_query[id]) return;
+  if(id===QUERY) return;
+  var slice=D.per_query[id];
+  Object.keys(slice).forEach(function(k){ D[k]=slice[k]; });
+  QUERY=id;
+  D.query=id;
+  applyBatchQueryGt();
+  renderBatchSwitcher();
+  fillBatchOverview();
+  refreshActiveQuerySections();
+}
+var REL_LABEL_OFFSET=0.35;
+function relQueryComponents(ids, qq){
+  var parent={};
+  ids.forEach(function(id){ parent[id]=id; });
+  function find(id){
+    while(parent[id]!==id){
+      parent[id]=parent[parent[id]];
+      id=parent[id];
+    }
+    return id;
+  }
+  (qq||[]).forEach(function(e){
+    if(parent[e.source]==null||parent[e.target]==null) return;
+    var a=find(e.source), b=find(e.target);
+    if(a!==b) parent[b]=a;
+  });
+  var groups={};
+  ids.forEach(function(id){
+    var root=find(id);
+    if(!groups[root]) groups[root]=[];
+    groups[root].push(id);
+  });
+  return Object.keys(groups).sort().map(function(key){ return groups[key].sort(); });
+}
+function relBounds(pos){
+  var xs=[], ys=[];
+  Object.keys(pos||{}).forEach(function(id){
+    xs.push(pos[id].x); ys.push(pos[id].y);
+  });
+  if(!xs.length) return {minX:0, maxX:1, minY:0, maxY:1};
+  return {
+    minX:Math.min.apply(null, xs), maxX:Math.max.apply(null, xs),
+    minY:Math.min.apply(null, ys), maxY:Math.max.apply(null, ys)
+  };
+}
+function placeRelCluster(queries, panels, pos, panelSign){
+  var sign=panelSign===1?1:-1;
+  var list=queries.slice().sort();
+  var nq=list.length;
+  var origin={};
+  if(nq<=1){
+    origin[list[0]]={x:0, y:0, outward:sign};
+  }else if(nq===2){
+    list.forEach(function(id, i){
+      origin[id]={x:(i-0.5)*13, y:0, outward:i===0?-1:1};
+    });
+  }else{
+    var radius=Math.max(10, nq*2.7);
+    list.forEach(function(id, i){
+      var ang=-Math.PI/2+(2*Math.PI*i)/nq;
+      origin[id]={x:Math.cos(ang)*radius, y:Math.sin(ang)*radius, ang:ang, outward:1};
+    });
+  }
+  list.forEach(function(id){
+    var o=origin[id];
+    pos[id]={x:o.x, y:o.y, kind:'query'};
+    var hits=panels[id]||[];
+    var n=hits.length;
+    if(o.ang!=null){
+      var gap=(2*Math.PI)/nq;
+      var half=gap*0.4;
+      hits.forEach(function(pid, i){
+        var t=n<=1?0:((i/(Math.max(n-1,1)))-0.5)*2;
+        var ang=o.ang+t*half;
+        var dist=radius+8.2+(i%2)*1.8;
+        pos[pid]={
+          x:Math.cos(ang)*dist, y:Math.sin(ang)*dist,
+          kind:'panel', query:id
+        };
+      });
+      return;
+    }
+    var psign=o.outward!=null?o.outward:sign;
+    hits.forEach(function(pid, i){
+      var y=((n-1)/2-i)*6.2;
+      if(n%2===1) y+=3.1;
+      var t=n<=1?0.5:i/Math.max(n-1,1);
+      var flare=(t-0.5)*(t-0.5)*4;
+      pos[pid]={
+        x:o.x+psign*(7.6+flare*(n>=6?3.6:1.8)),
+        y:o.y+y,
+        kind:'panel',
+        query:id
+      };
+    });
+  });
+}
+function relSpokeBend(e, pos){
+  var a=pos[e.source], b=pos[e.target];
+  var qNode=a.kind==='query'?a:b;
+  var pNode=a.kind==='query'?b:a;
+  var sibs=[];
+  Object.keys(pos).forEach(function(id){
+    var node=pos[id];
+    if(node.kind==='panel'&&node.query&&pos[node.query]===qNode) sibs.push(node);
+  });
+  sibs.sort(function(u, v){ return u.y-v.y||u.x-v.x; });
+  var idx=0;
+  for(var i=0;i<sibs.length;i++) if(sibs[i]===pNode) idx=i;
+  var mag=0.9+(idx%4)*0.38;
+  return (idx%2===0?1:-1)*mag;
+}
+function relEdgePoints(e, pos){
+  var a=pos[e.source], b=pos[e.target];
+  if(!a||!b) return {x:[], y:[]};
+  var straight={x:[a.x, b.x], y:[a.y, b.y]};
+  var dx=b.x-a.x, dy=b.y-a.y;
+  var len=Math.sqrt(dx*dx+dy*dy)||1;
+  if(len<0.8) return straight;
+  var nx=-dy/len, ny=dx/len;
+  var mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+  var both=a.kind==='query'&&b.kind==='query';
+  var panelBridge=a.kind==='panel'&&b.kind==='panel';
+  var sx=0, sy=0, n=0;
+  if(both){
+    Object.keys(pos).forEach(function(id){
+      if(pos[id].kind==='query'){ sx+=pos[id].x; sy+=pos[id].y; n++; }
+    });
+  }
+  var gx=n?sx/n:mx, gy=n?sy/n:my;
+  var side=(nx*(mx-gx)+ny*(my-gy))>=0?1:-1;
+  var h=0, key=String(e.source)+'|'+String(e.target);
+  for(var i=0;i<key.length;i++) h=(h*33+key.charCodeAt(i))>>>0;
+  var base=(both||panelBridge)?Math.min(4.2, Math.max(2.6, len*0.16)):relSpokeBend(e, pos);
+  var extra=(both||panelBridge)?((h%2===0?1:-1)*Math.min(base*0.45, 0.55+len*0.035)):0;
+  var bend=base+extra;
+  var cx=mx+nx*bend*((both||panelBridge)?side:1), cy=my+ny*bend*((both||panelBridge)?side:1);
+  var xs=[], ys=[], steps=12;
+  for(var i=0;i<=steps;i++){
+    var t=i/steps, u=1-t;
+    xs.push(u*u*a.x+2*u*t*cx+t*t*b.x);
+    ys.push(u*u*a.y+2*u*t*cy+t*t*b.y);
+  }
+  return {x:xs, y:ys};
+}
+function relPanelOwner(graph){
+  var qset={};
+  (graph.nodes||[]).forEach(function(n){ if(n.kind==='query') qset[n.id]=1; });
+  var owner={};
+  (graph.edges||[]).forEach(function(e){
+    var aQ=!!qset[e.source], bQ=!!qset[e.target];
+    if(!(aQ||bQ)||(aQ&&bQ)) return;
+    var q=aQ?e.source:e.target;
+    var panel=aQ?e.target:e.source;
+    if(!panel||qset[panel]) return;
+    var rank=kinClassRank(e.class);
+    if(!owner[panel]||rank<owner[panel].rank) owner[panel]={q:q, rank:rank};
+  });
+  return owner;
+}
+function layoutRelGraph(graph){
+  var nodes=graph.nodes||[];
+  var edges=graph.edges||[];
+  var qset={};
+  nodes.forEach(function(n){ if(n.kind==='query') qset[n.id]=1; });
+  var panels={};
+  var qq=[];
+  var owner=relPanelOwner(graph);
+  edges.forEach(function(e){
+    var aQ=!!qset[e.source], bQ=!!qset[e.target];
+    if(aQ&&bQ) qq.push(e);
+  });
+  Object.keys(owner).forEach(function(panel){
+    var q=owner[panel].q;
+    if(!panels[q]) panels[q]=[];
+    panels[q].push(panel);
+  });
+  var nodeBy={};
+  nodes.forEach(function(n){ if(n&&n.id) nodeBy[n.id]=n; });
+  Object.keys(panels).forEach(function(q){
+    panels[q].sort(function(a, b){
+      var na=String(panelGraphShort(nodeBy[a]||{id:a})).toUpperCase();
+      var nb=String(panelGraphShort(nodeBy[b]||{id:b})).toUpperCase();
+      return na.localeCompare(nb)||String(a).localeCompare(String(b));
+    });
+  });
+  var clusters=[];
+  relQueryComponents(Object.keys(qset), qq).forEach(function(comp){
+    var heavy=comp.filter(function(id){ return (panels[id]||[]).length>=3; });
+    var light=comp.filter(function(id){ return (panels[id]||[]).length<3; });
+    heavy.forEach(function(id){ clusters.push([id]); });
+    if(!light.length) return;
+    relQueryComponents(light, qq).forEach(function(part){
+      if(part.length) clusters.push(part);
+    });
+  });
+  clusters=clusters.filter(function(comp){
+    if(comp.some(function(id){ return (panels[id]||[]).length; })) return true;
+    return qq.some(function(e){
+      return comp.indexOf(e.source)>=0 || comp.indexOf(e.target)>=0;
+    });
+  });
+  clusters.sort(function(a, b){
+    function score(comp){
+      var n=0;
+      comp.forEach(function(id){ n+=(panels[id]||[]).length; });
+      return n*100+comp.length;
+    }
+    var diff=score(b)-score(a);
+    if(diff) return diff;
+    return a.join('\n').localeCompare(b.join('\n'));
+  });
+  function clusterScore(comp){
+    var n=0;
+    comp.forEach(function(id){ n+=(panels[id]||[]).length; });
+    return n*100+comp.length;
+  }
+  var parent=clusters.map(function(_, i){ return i; });
+  function find(i){
+    while(parent[i]!==i){ parent[i]=parent[parent[i]]; i=parent[i]; }
+    return i;
+  }
+  function touches(a, b){
+    if(qq.some(function(e){
+      return (a.indexOf(e.source)>=0 && b.indexOf(e.target)>=0) ||
+        (a.indexOf(e.target)>=0 && b.indexOf(e.source)>=0);
+    })) return true;
+    var pb={};
+    b.forEach(function(id){ (panels[id]||[]).forEach(function(pid){ pb[pid]=1; }); });
+    if(!panelPoOn) return false;
+    return a.some(function(id){
+      return (panels[id]||[]).some(function(pid){
+        return panelPoIds(pid).some(function(other){ return pb[other]; });
+      });
+    });
+  }
+  for(var i=0;i<clusters.length;i++){
+    for(var j=i+1;j<clusters.length;j++){
+      if(!touches(clusters[i], clusters[j])) continue;
+      var ra=find(i), rb=find(j);
+      if(ra!==rb) parent[rb]=ra;
+    }
+  }
+  var grouped={};
+  clusters.forEach(function(comp, i){
+    var root=find(i);
+    if(!grouped[root]) grouped[root]=[];
+    grouped[root].push(comp);
+  });
+  var supers=Object.keys(grouped).map(function(key){
+    return grouped[key].slice().sort(function(a, b){
+      var diff=clusterScore(b)-clusterScore(a);
+      return diff||a.join('\n').localeCompare(b.join('\n'));
+    });
+  }).sort(function(a, b){
+    var diff=clusterScore(b[0])-clusterScore(a[0]);
+    return diff||a[0].join('\n').localeCompare(b[0].join('\n'));
+  });
+  function stamp(local, dx, dy, pos){
+    Object.keys(local).forEach(function(id){
+      pos[id]={
+        x:local[id].x+dx, y:local[id].y+dy,
+        kind:local[id].kind, query:local[id].query
+      };
+    });
+  }
+  var placed={};
+  function take(comp, sign){
+    var local={};
+    placeRelCluster(comp, panels, local, sign);
+    return {local:local, box:relBounds(local)};
+  }
+  if(!supers.length) return placed;
+  var anchor=take(supers[0][0], -1);
+  stamp(anchor.local, -anchor.box.minX, -anchor.box.maxY, placed);
+  var anchorBox=relBounds(placed);
+  var pieces=[];
+  supers.forEach(function(members, si){
+    members.forEach(function(comp, mi){
+      if(si===0 && mi===0) return;
+      pieces.push(take(comp, 1));
+    });
+  });
+  var rowStartX=anchorBox.maxX+20;
+  var maxRight=anchorBox.minX+172;
+  var x=rowStartX, rowTop=anchorBox.maxY, rowH=0;
+  pieces.forEach(function(item){
+    var w=item.box.maxX-item.box.minX;
+    var h=item.box.maxY-item.box.minY;
+    if(x>rowStartX && x+w>maxRight){
+      rowTop-=rowH+22;
+      x=rowStartX;
+      rowH=0;
+    }
+    stamp(item.local, x-item.box.minX, rowTop-item.box.maxY, placed);
+    x+=w+18;
+    if(h>rowH) rowH=h;
+  });
+  separateRelNodes(placed);
+  return placed;
+}
+function separateRelNodes(pos){
+  var ids=Object.keys(pos||{});
+  var iter, a, b, A, B, dx, dy, dist, need, push, ux, uy;
+  for(iter=0; iter<16; iter++){
+    for(a=0; a<ids.length; a++){
+      for(b=a+1; b<ids.length; b++){
+        A=pos[ids[a]]; B=pos[ids[b]];
+        dx=B.x-A.x; dy=B.y-A.y;
+        dist=Math.sqrt(dx*dx+dy*dy)||0.001;
+        need=(A.kind==='query'||B.kind==='query')?6.4:6.0;
+        if(dist>=need) continue;
+        push=(need-dist)/2;
+        ux=dx/dist; uy=dy/dist;
+        A.x-=ux*push; A.y-=uy*push;
+        B.x+=ux*push; B.y+=uy*push;
+      }
+    }
+  }
+}
+function edgeLabelXY(e, pos){
+  var a=pos[e.source], b=pos[e.target];
+  if(!a||!b) return {x:0, y:0};
+  var panelEdge=a.kind!==b.kind;
+  var t=panelEdge?0.78:0.5;
+  var x=a.x+(b.x-a.x)*t;
+  var y=a.y+(b.y-a.y)*t;
+  return {x:x, y:y+(panelEdge?0.55:0)};
+}
+function showEdgeTag(e, qset, deg, pos){
+  if(e.bridge) return false;
+  if(!relCloseClass(e.class)) return false;
+  if(qset[e.source]&&qset[e.target]) return deg[e.source]===1 && deg[e.target]===1;
+  var q=qset[e.source]?e.source:e.target;
+  var n=0;
+  Object.keys(pos||{}).forEach(function(id){ if(pos[id].query===q) n++; });
+  return n<=3;
+}
+function relLineWidth(cls){
+  if(cls==='Identical'||cls==='Identical_clone'||cls==='IdenticalTwins/SameIndividual') return 3.4;
+  if(cls==='Parent-Offspring'||cls==='First Degree') return 2.8;
+  if(cls==='Full Sib'||cls==='Highly_related') return 2.4;
+  if(cls==='2nd'||cls==='Second Degree') return 1.35;
+  if(cls==='3rd'||cls==='Third Degree') return 1.1;
+  return 1;
+}
+function relCloseClass(cls){
+  return cls==='Identical'||cls==='Parent-Offspring'||cls==='Full Sib'||
+    cls==='Identical_clone'||cls==='Highly_related'||
+    cls==='IdenticalTwins/SameIndividual'||cls==='First Degree';
+}
+function panelTextSide(node, pos){
+  var here=pos[node.id];
+  var qid=here&&here.query;
+  var q=qid&&pos[qid];
+  if(!here||!q) return 'middle left';
+  return here.x<=q.x?'middle left':'middle right';
+}
+function queryTextSide(node, pos){
+  return 'top center';
+}
+function relPanelClass(graph){
+  var qset={};
+  (graph.nodes||[]).forEach(function(n){ if(n.kind==='query') qset[n.id]=1; });
+  var best={};
+  (graph.edges||[]).forEach(function(e){
+    var panel=qset[e.source]?e.target:(qset[e.target]?e.source:'');
+    if(!panel||qset[panel]) return;
+    var rank=kinClassRank(e.class);
+    if(!best[panel]||rank<best[panel].rank) best[panel]={rank:rank, cls:e.class};
+  });
+  return best;
+}
+function buildRelGraphFig(graph){
+  var g=graph||(D&&D.graph)||{nodes:[],edges:[]};
+  var pos=layoutRelGraph(g);
+  var tokens=themeTokens();
+  var traces=[];
+  var seenClass={};
+  var classOrder=['Identical','Parent-Offspring','Full Sib','2nd','3rd','Unrelated'];
+  (g.edges||[]).forEach(function(e){ if(e.class) seenClass[e.class]=1; });
+  classOrder.concat(Object.keys(seenClass)).forEach(function(cls){
+    if(!seenClass[cls]||seenClass[cls]===2) return;
+    seenClass[cls]=2;
+    traces.push({
+      type:'scatter', mode:'lines', name:relLegendName(cls), showlegend:true,
+      x:[null], y:[null],
+      line:{color:REL_EDGE_COLOR[cls]||'#64748b', width:3},
+      hoverinfo:'skip',
+      meta:'edge-legend'
+    });
+  });
+  var qset={};
+  (g.nodes||[]).forEach(function(n){ if(n.kind==='query') qset[n.id]=1; });
+  var deg={};
+  (g.edges||[]).forEach(function(e){
+    if(!qset[e.source]||!qset[e.target]) return;
+    deg[e.source]=(deg[e.source]||0)+1;
+    deg[e.target]=(deg[e.target]||0)+1;
+  });
+  var owned=relPanelOwner(g);
+  var fromQuery={};
+  (g.edges||[]).forEach(function(e){
+    var src=(pos[e.source]&&pos[e.source].kind==='query')?e.source:e.target;
+    if(!fromQuery[src]) fromQuery[src]=[];
+    fromQuery[src].push(e);
+  });
+  Object.keys(fromQuery).forEach(function(src){
+    fromQuery[src].forEach(function(e){
+      if(!pos[e.source]||!pos[e.target]) return;
+      if(e.bridge && !e.span) return;
+      var panelId='';
+      if(qset[e.source]!==qset[e.target]) panelId=qset[e.source]?e.target:e.source;
+      if(panelId && owned[panelId] && owned[panelId].q!==(qset[e.source]?e.source:e.target)) return;
+      var color=REL_EDGE_COLOR[e.class]||'#64748b';
+      var pts=relEdgePoints(e, pos);
+      var mid=Math.floor((pts.x.length-1)/2);
+      var at={x:pts.x[mid], y:pts.y[mid]};
+      var labeled=showEdgeTag(e, qset, deg, pos);
+      traces.push({
+        type:'scatter', mode:'lines', name:e.class, showlegend:false,
+        x:pts.x, y:pts.y,
+        line:{color:color, width:e.bridge?1.5:relLineWidth(e.class), dash:e.bridge?'dot':'solid'},
+        opacity:e.bridge?0.75:((e.class==='2nd'||e.class==='3rd')?0.55:0.95),
+        hoverinfo:'skip',
+        cliponaxis:false,
+        meta:'edge'
+      });
+      traces.push({
+        type:'scatter', mode:labeled?'markers+text':'markers', name:'kinship edges', showlegend:false,
+        x:[at.x], y:[at.y],
+        text:labeled?[edgeTag(e)]:[''],
+        textposition:'middle center',
+        textfont:{size:10, color:color},
+        customdata:[[e.source, e.target, e.class, e.king, e.r1, e.n==null?'':e.n]],
+        marker:{
+          size:labeled?28:16,
+          color:tokens['plot-bg'],
+          opacity:labeled?0.94:0,
+          line:{width:0}
+        },
+        hovertemplate:(e.bridge
+          ? (esc(e.source)+' – '+esc(e.target)+'<br>'+t('4K panel parent-offspring','4K 面板亲子')+'<extra></extra>')
+          : (esc(e.source)+' – '+esc(e.target)+'<br>'+esc(e.class||'')+
+          '<br>KING %{customdata[3]}<br>R1 %{customdata[4]}<br>n %{customdata[5]}<extra></extra>')),
+        cliponaxis:false,
+        meta:'edge-hover'
+      });
+    });
+  });
+  var qNodes=[], pNodes=[];
+  (g.nodes||[]).forEach(function(n){
+    if(!pos[n.id]) return;
+    (n.kind==='query'?qNodes:pNodes).push(n);
+  });
+  var panelCls=relPanelClass(g);
+  if(pNodes.length){
+    traces.push({
+      type:'scatter', mode:'markers+text', name:t('Panel hit','面板命中'),
+      x:pNodes.map(function(n){return pos[n.id].x;}),
+      y:pNodes.map(function(n){return pos[n.id].y;}),
+      text:pNodes.map(function(n){return panelGraphShort(n);}),
+      textposition:pNodes.map(function(n){return panelTextSide(n, pos);}),
+      textfont:{size:11, color:tokens.text},
+      customdata:pNodes.map(function(n){return [n.id,'panel'];}),
+      marker:{
+        size:13,
+        color:pNodes.map(function(n){
+          var hit=panelCls[n.id];
+          return (hit&&REL_EDGE_COLOR[hit.cls])||'#64748b';
+        }),
+        line:{width:2, color:tokens['plot-bg']},
+        opacity:1
+      },
+      cliponaxis:false,
+      hovertemplate:pNodes.map(function(n){
+        return relNodeCard(n.id, g)+'<extra>'+t('panel hit','面板命中')+'</extra>';
+      })
+    });
+  }
+  if(qNodes.length){
+    traces.push({
+      type:'scatter', mode:'markers+text', name:t('Query','查询样本'),
+      x:qNodes.map(function(n){return pos[n.id].x;}),
+      y:qNodes.map(function(n){return pos[n.id].y;}),
+      text:qNodes.map(function(n){return graphQueryLabel(n.id);}),
+      textposition:qNodes.map(function(n){return queryTextSide(n, pos);}),
+      textfont:{size:12, color:tokens.text},
+      customdata:qNodes.map(function(n){return [n.id,'query'];}),
+      marker:{
+        size:qNodes.map(function(n){return n.id===QUERY?24:18;}),
+        symbol:'star',
+        color:qNodes.map(function(n){
+          var i=batchQueryIds().indexOf(n.id);
+          return BATCH_QUERY_COLORS[(i<0?0:i)%BATCH_QUERY_COLORS.length];
+        }),
+        line:{
+          width:2,
+          color:qNodes.map(function(n){ return n.id===QUERY?(tokens.accent||'#111'):tokens['plot-bg']; })
+        }
+      },
+      cliponaxis:false,
+      hovertemplate:qNodes.map(function(n){
+        return relNodeCard(n.id, g)+'<extra>'+t('query','查询样本')+'</extra>';
+      })
+    });
+  }
+  if(!qNodes.length && !pNodes.length){
+    return {data:[], layout:{
+      paper_bgcolor:tokens['plot-bg'], plot_bgcolor:tokens['plot-bg'],
+      font:{color:tokens.text, size:13},
+      height:200, margin:{l:24,r:24,t:24,b:24},
+      xaxis:{visible:false, range:[0,1]},
+      yaxis:{visible:false, range:[0,1]},
+      annotations:[{
+        text:t('No relationship in this view','当前筛选下没有亲缘连线'),
+        showarrow:false, xref:'paper', yref:'paper', x:0.5, y:0.5,
+        font:{size:14, color:tokens.muted||tokens.text}
+      }]
+    }};
+  }
+  var box=relBounds(pos);
+  var xmin=box.minX-18, xmax=box.maxX+5.2;
+  var ymin=box.minY-3.2, ymax=box.maxY+3.4;
+  var yspan=Math.max(1, ymax-ymin), xspan=Math.max(1, xmax-xmin);
+  var px=Math.max(11, Math.min(14, 1400/xspan));
+  var height=Math.round(Math.max(560, Math.min(2600, yspan*px+96)));
+  return {data:traces, layout:{
+    paper_bgcolor:tokens['plot-bg'], plot_bgcolor:tokens['plot-bg'],
+    font:{color:tokens.text, size:11},
+    height:height, margin:{l:36,r:48,t:28,b:64},
+    xaxis:{visible:false, zeroline:false, showgrid:false, range:[xmin, xmax]},
+    yaxis:{visible:false, zeroline:false, showgrid:false, range:[ymin, ymax], scaleanchor:'x', scaleratio:1},
+    legend:{orientation:'h', y:-0.08, yanchor:'top', font:{size:11}},
+    hovermode:'closest'
+  }};
+}
+function panelPoIds(id){
+  var r=rowByIid(id);
+  return String((r&&r.po)||'').split(/[|,]/).map(function(s){ return s.trim(); }).filter(Boolean);
+}
+function withPanelPoEdges(graph){
+  if(!panelPoOn || (kinRule && kinRule!=='4k')) return graph;
+  var present={}, qset={}, parent={};
+  (graph.nodes||[]).forEach(function(n){
+    if(!n||!n.id) return;
+    if(n.kind==='panel') present[n.id]=1;
+    if(n.kind==='query'){ qset[n.id]=1; parent[n.id]=n.id; }
+  });
+  function find(x){
+    if(!parent[x]) return x;
+    while(parent[x]!==x){ parent[x]=parent[parent[x]]; x=parent[x]; }
+    return x;
+  }
+  (graph.edges||[]).forEach(function(e){
+    if(!(qset[e.source]&&qset[e.target])) return;
+    var ra=find(e.source), rb=find(e.target);
+    if(ra!==rb) parent[rb]=ra;
+  });
+  var owner=relPanelOwner(graph);
+  var seen={};
+  var edges=(graph.edges||[]).slice();
+  edges.forEach(function(e){
+    seen[[e.source, e.target].sort().join('|')]=1;
+  });
+  Object.keys(present).forEach(function(id){
+    panelPoIds(id).forEach(function(other){
+      if(!present[other]||other===id) return;
+      var key=[id, other].sort().join('|');
+      if(seen[key]) return;
+      seen[key]=1;
+      var qa=owner[id]&&owner[id].q, qb=owner[other]&&owner[other].q;
+      edges.push({
+        source:id, target:other, class:'Parent-Offspring',
+        king:null, r1:null, n:null, ibs0:null, p0:null,
+        bridge:'4k-panel-po',
+        span:!!(qa&&qb&&find(qa)!==find(qb))
+      });
+    });
+  });
+  return {nodes:graph.nodes||[], edges:edges};
+}
+function relGraphForView(){
+  var src=kinViewSources();
+  var graph;
+  if(D&&D.batch&&cloneFilter) graph=filteredRelGraph(src.graph, src.pairs, cloneFilter);
+  else if(!src.screened) graph=src.graph;
+  else {
+    var keep={};
+    (kinRuleDef(kinRule).graphOn||[]).forEach(function(cls){ keep[cls]=1; });
+    var edges=(src.graph.edges||[]).filter(function(e){ return keep[e.class]; });
+    var used={};
+    edges.forEach(function(e){ used[e.source]=1; used[e.target]=1; });
+    var nodes=(src.graph.nodes||[]).filter(function(n){ return n.kind==='query'||used[n.id]; });
+    graph={nodes:nodes, edges:edges};
+  }
+  return withPanelPoEdges(graph);
+}
+function fillRelGraphRest(graph){
+  var el=document.getElementById('rel-graph-rest');
+  if(!el) return;
+  var pos=layoutRelGraph(graph||{nodes:[],edges:[]});
+  var ids=(graph&&graph.nodes||[]).filter(function(n){
+    return n.kind==='query' && !pos[n.id];
+  }).map(function(n){ return graphQueryLabel(n.id); });
+  if(!ids.length){ el.innerHTML=''; return; }
+  el.innerHTML=bi(
+    'No link in this view: '+esc(ids.join(', '))+'.',
+    '当前筛选下没有连线：'+esc(ids.join('、'))+'。'
+  );
+}
+function loadRelGraph(){
+  var wrap=document.getElementById('rel-graph');
+  var el=document.getElementById('plot-graph');
+  if(!D||!D.batch||!D.graph){
+    if(wrap) wrap.hidden=true;
+    return;
+  }
+  if(wrap){
+    wrap.hidden=false;
+    if(wrap.removeAttribute) wrap.removeAttribute('hidden');
+  }
+  var note=document.getElementById('rel-graph-note');
+  var screen=D&&D.kin_screen;
+  var poNote=(panelPoOn&&(!kinRule||kinRule==='4k'))
+    ? '<span class="po-bridge-note"><span class="en"> Dotted lines are 4K parent-offspring links that join modern varieties from separate query groups already on this graph. The names come from the panel passport. Other 4K parent-offspring pairs among varieties already drawn are listed when you touch a point.</span><span class="cn"> 虚线只画能把不同查询组连起来的 4K 亲子，两端都是图上已经出现的现代品种，名单来自面板护照。同一组里的其余 4K 亲子不画线，点一个点可以在卡片里看到。</span></span>'
+    : '';
+  if(note&&screen&&(screen.note_en||screen.note_cn)){
+    note.innerHTML='<span class="en">'+esc(screen.note_en||'')+'</span><span class="cn">'+esc(screen.note_cn||'')+'</span>'+poNote;
+  }else if(note){
+    var html=String(note.innerHTML||'').replace(/<span class="po-bridge-note">[\s\S]*$/, '');
+    note.innerHTML=html+(poNote||'');
+  }
+  if(!el) return;
+  var g=relGraphForView();
+  fillRelGraphRest(g);
+  showRelNodeCard('', g);
+  if(!(g.nodes||[]).some(function(n){return n.kind==='query';})){
+    el.innerHTML=runtimeMessage(
+      'No query samples in this clone filter.',
+      '这次克隆筛选里没有查询样本。'
+    );
+    return;
+  }
+  if(plotlyUnavailable(el, 'Relationship graph')) return;
+  var fig=buildRelGraphFig(g);
+  resetPlot(el);
+  Plotly.newPlot(el, fig.data, withPlotSize(fig.layout, el, fig.layout.height||640), plotlyCfg())
+    .then(function(){
+      el.on('plotly_click', function(ev){
+        if(!batchUserAct) return;
+        var p=ev&&ev.points&&ev.points[0];
+        if(!p||!p.customdata) return;
+        if(p.data&&(p.data.meta==='edge'||p.data.meta==='edge-hover'||p.data.meta==='edge-legend')) return;
+        var cd=p.customdata;
+        var iid=Array.isArray(cd)?cd[0]:cd;
+        var kind=Array.isArray(cd)?cd[1]:'';
+        if(!iid||kind==='edge') return;
+        if(kind==='query') setActiveQuery(iid);
+        else highlightSample(iid);
+        showRelNodeCard(iid, g);
+      });
+    });
+}
+
+function initBatchReport(){
+  bindBatchUserAct();
+  if(!D||!D.batch) return;
+  renderBatchSwitcher();
+  fillBatchOverview();
+  mountCloneControls();
+  loadRelGraph();
+}
+
 function boot(payload){
   D=payload; SROWS=D.srows||[]; SIDX=D.sidx||{}; QUERY=D.query||'';
   initThemeController();
@@ -2529,6 +3686,7 @@ function boot(payload){
   loadTree();
   loadDamage();
   updateBrowser();
+  initBatchReport();
   if(QUERY) highlightSample(QUERY);
   scheduleResponsiveResize();
 }
@@ -2871,7 +4029,8 @@ function loadAuthorState(){
       }
     }
   }catch(e){}
-  if(!st.sample.iid) st.sample.iid=QUERY||'';
+  if(D&&D.batch) st.sample.iid=QUERY||'';
+  else if(!st.sample.iid) st.sample.iid=QUERY||'';
   return st;
 }
 function saveAuthorState(st){
@@ -4001,9 +5160,379 @@ function identityLabel(rel){
     'Unrelated':['Unrelated','无关'],
     'author match':['author match','作者记录匹配']
   };
-  return labels[key]?bi(labels[key][0],labels[key][1]):esc(key||'—');
+  if(labels[key]) return bi(labels[key][0], labels[key][1]);
+  if(typeof REL_LEGEND!=='undefined'&&REL_LEGEND[key]) return bi(REL_LEGEND[key][0], REL_LEGEND[key][1]);
+  return esc(key||'—');
+}
+var CLONE_CLASS_ORDER=['Identical','Parent-Offspring','Full Sib','2nd','3rd','Unrelated'];
+function cloneSelectionPreset(mode, ids, current){
+  ids=ids||[];
+  if(mode==='all') return ids.slice();
+  if(mode==='none') return [];
+  if(current&&ids.indexOf(current)>=0) return [current];
+  return ids.length?[ids[0]]:[];
+}
+function parseCloneFilter(raw){
+  raw=raw||{};
+  function cut(v){
+    if(v==null) return {ok:true, value:null};
+    var s=String(v).trim();
+    if(!s) return {ok:true, value:null};
+    var n=Number(s);
+    if(!isFinite(n)) return {ok:false, value:null};
+    return {ok:true, value:n};
+  }
+  var kingMin=cut(raw.kingMin), kingMax=cut(raw.kingMax), r1Min=cut(raw.r1Min), nMin=cut(raw.nMin);
+  if(!kingMin.ok||!kingMax.ok||!r1Min.ok||!nMin.ok) return {ok:false};
+  if(kingMin.value!=null&&kingMax.value!=null&&kingMin.value>kingMax.value) return {ok:false};
+  var rule=String(raw.rule||kinRule||'4k');
+  if(!KIN_RULES.some(function(item){ return item.id===rule; })) rule='4k';
+  return {ok:true, filter:{
+    queries:(raw.queries||[]).filter(function(id){return !!id;}),
+    classes:(raw.classes||[]).filter(function(c){return !!c;}),
+    kingMin:kingMin.value,
+    kingMax:kingMax.value,
+    r1Min:r1Min.value,
+    nMin:nMin.value,
+    rule:rule
+  }};
+}
+function cloneQuerySet(ids){
+  var set={};
+  (ids||[]).forEach(function(id){ if(id) set[id]=1; });
+  return set;
+}
+function cloneRowPasses(row, filter){
+  if((filter.classes||[]).indexOf(row.rel)<0) return false;
+  function atLeast(value, cut){
+    if(cut==null) return true;
+    var n=Number(value);
+    return isFinite(n)&&n>=cut;
+  }
+  function atMost(value, cut){
+    if(cut==null) return true;
+    var n=Number(value);
+    return isFinite(n)&&n<=cut;
+  }
+  return atLeast(row.king, filter.kingMin)&&atMost(row.king, filter.kingMax)&&
+    atLeast(row.r1, filter.r1Min)&&atLeast(row.n, filter.nMin);
+}
+function collectCloneRows(graph, pairs, filter){
+  var qset=cloneQuerySet(filter&&filter.queries);
+  var kindOf={};
+  ((graph&&graph.nodes)||[]).forEach(function(n){ kindOf[n.id]=n.kind||''; });
+  var rows=[];
+  var seen={};
+  function add(query, partner, rel, king, r1, n, kind, extra){
+    var key=kind==='query'
+      ? (query<partner?query+'|'+partner:partner+'|'+query)
+      : (query+'→'+partner);
+    if(seen[key]) return;
+    var row={query:query, partner:partner, rel:rel, king:king, r1:r1, n:n, kind:kind};
+    if(extra){ row.ibs0=extra.ibs0; row.p0=extra.p0; }
+    if(!cloneRowPasses(row, filter)) return;
+    seen[key]=1;
+    rows.push(row);
+  }
+  function addQueryPair(a, b, rel, king, r1, n, extra){
+    var aIn=!!qset[a], bIn=!!qset[b];
+    if(!aIn&&!bIn) return;
+    var query, partner;
+    if(aIn&&bIn){
+      query=a<b?a:b;
+      partner=query===a?b:a;
+    }else if(aIn){
+      query=a; partner=b;
+    }else{
+      query=b; partner=a;
+    }
+    add(query, partner, rel, king, r1, n, 'query', extra);
+  }
+  ((graph&&graph.edges)||[]).forEach(function(e){
+    var srcQuery=kindOf[e.source]==='query'||!!qset[e.source];
+    var tgtQuery=kindOf[e.target]==='query'||!!qset[e.target];
+    if(srcQuery&&tgtQuery){
+      addQueryPair(e.source, e.target, e.class, e.king, e.r1, e.n, e);
+      return;
+    }
+    if(qset[e.source]&&!tgtQuery) add(e.source, e.target, e.class, e.king, e.r1, e.n, 'panel', e);
+    else if(qset[e.target]&&!srcQuery) add(e.target, e.source, e.class, e.king, e.r1, e.n, 'panel', e);
+  });
+  (pairs||[]).forEach(function(p){
+    addQueryPair(p.sample_a, p.sample_b, p.relationship, p.KING_Robust, p.R1, p.n_comparable);
+  });
+  var qOrder={};
+  (filter.queries||[]).forEach(function(id,i){ qOrder[id]=i; });
+  rows.sort(function(a,b){
+    var qa=qOrder[a.query], qb=qOrder[b.query];
+    if(qa!==qb) return qa-qb;
+    var ca=kinClassRank(a.rel), cb=kinClassRank(b.rel);
+    if(ca!==cb) return ca-cb;
+    return String(a.partner).localeCompare(String(b.partner));
+  });
+  return rows;
+}
+function filteredRelGraph(graph, pairs, filter){
+  var rows=collectCloneRows(graph, pairs, filter);
+  var byId={};
+  ((graph&&graph.nodes)||[]).forEach(function(n){ byId[n.id]=n; });
+  var keep={};
+  (filter.queries||[]).forEach(function(id){
+    keep[id]=byId[id]||{id:id, kind:'query'};
+  });
+  var edges=[];
+  rows.forEach(function(r){
+    if(!keep[r.partner]){
+      keep[r.partner]=byId[r.partner]||{id:r.partner, kind:r.kind==='query'?'query':'panel'};
+    }
+    edges.push({
+      source:r.query, target:r.partner, class:r.rel,
+      king:r.king, r1:r.r1, n:r.n
+    });
+  });
+  return {nodes:Object.keys(keep).map(function(id){return keep[id];}), edges:edges};
+}
+function cloneControlsHtml(){
+  var ids=batchQueryIds();
+  var h='<div class="clone-filter-row"><span class="muted">'+bi('Samples','样本')+'</span>';
+  h+='<button type="button" class="sec-q" id="clone-pick-current">'+bi('Current only','只选当前')+'</button>';
+  h+='<button type="button" class="sec-q" id="clone-pick-all">'+bi('All','全选')+'</button>';
+  h+='<button type="button" class="sec-q" id="clone-pick-none">'+bi('Clear','清空')+'</button></div>';
+  h+='<div id="clone-sample-picks" class="sec-query-pick" role="group">';
+  ids.forEach(function(id){
+    h+='<button type="button" class="sec-q clone-sample active" data-query="'+esc(id)+'" aria-pressed="true">'+esc(id)+'</button>';
+  });
+  h+='</div><div class="clone-filter-row"><span class="muted">'+bi('Rule','判定规则')+'</span>';
+  h+='<select id="kin-rule">';
+  KIN_RULES.forEach(function(rule){
+    h+='<option value="'+esc(rule.id)+'"'+(rule.id===kinRule?' selected':'')+'>'+esc(t(rule.en, rule.cn))+'</option>';
+  });
+  h+='</select></div><p class="muted" id="kin-rule-params">'+kinRuleBlurb(kinRule)+'</p>';
+  h+='<div class="clone-filter-row" id="panel-po-row"><label><input type="checkbox" id="panel-po-toggle">'+
+    '<span>'+bi('4K panel parent-offspring','4K 面板亲子')+'</span></label>'+
+    '<span class="muted">'+bi(
+      'Off by default. Tick to draw dotted lines between modern varieties already on the graph when a 4K parent-offspring pair joins two query groups.',
+      '默认关闭。勾选后，用虚线连接图上已经出现、并且能把两个查询组连起来的 4K 亲子。'
+    )+'</span></div>';
+  h+='<div class="clone-filter-row"><span class="muted">'+bi('Published gate','已发表门槛')+'</span><div id="clone-class-picks">';
+  h+=kinClassPicksHtml(kinRule);
+  h+='</div></div><div class="clone-filter-row">';
+  h+='<button type="button" class="clone-apply" id="clone-apply">'+bi('Update graph and list','更新关系图和列表')+'</button>';
+  h+='</div><p class="muted" id="clone-filter-note">'+bi(
+    'Samples start all selected. Tick a published option. The numbers on it are that rule’s fixed gate for R0, R1, IBS2*, KING, IBS0, or norm P0; they are not typed in. Update redraws the graph below and the clone list. A sample with no pair inside the ticked gates, such as IA-LC_01 under these defaults, adds no line. 4K is always available. Ramos 2019 and READv2 appear only when this report stored IBS0 and P0 for the same pairs.',
+    '样本一开始是全选。勾选已发表的选项。选项上的数字是这套规则写死的 R0、R1、IBS2*、KING、IBS0 或 norm P0 门，不用自己填。点更新后，下面的关系图和克隆列表一起换。某个样本若在勾选的门槛里没有配对，例如默认门槛下的 IA-LC_01，就不会画出线。4K 始终可用。只有这份报告为同一批配对存了 IBS0 和 P0 时，才能换成 Ramos 2019 或 READv2。'
+  )+'</p><p class="muted" id="clone-filter-status"></p>';
+  return h;
+}
+function kinGateText(ruleId, cls){
+  var book={
+    '4k':{
+      'Identical':['R1≥1.2 · IBS2*≥0.99 · KING≥0.3426','R1≥1.2 · IBS2*≥0.99 · KING≥0.3426'],
+      'Parent-Offspring':['0.5<R1<1.2 · 0.21≤KING<0.3426 · R0≤0.096','0.5<R1<1.2 · 0.21≤KING<0.3426 · R0≤0.096'],
+      'Full Sib':['0.177≤KING<0.354','0.177≤KING<0.354'],
+      '2nd':['0.0884≤KING<0.177','0.0884≤KING<0.177'],
+      '3rd':['0.0442≤KING<0.0884','0.0442≤KING<0.0884'],
+      'Unrelated':['outside the gates above','不在上面这些门里']
+    },
+    'ramos2019':{
+      'Identical_clone':['KING≥0.49 · IBS0≤0.001','KING≥0.49 · IBS0≤0.001'],
+      'Parent-Offspring':['0.177<KING<0.354 · IBS0≤0.001','0.177<KING<0.354 · IBS0≤0.001'],
+      'Highly_related':['0.177<KING<0.354 · IBS0>0.001','0.177<KING<0.354 · IBS0>0.001'],
+      'not_in_paper_bins':['KING or IBS0 is outside the three gates above','KING 或 IBS0 不在上面三档']
+    },
+    'readv2':{
+      'IdenticalTwins/SameIndividual':['norm P0<0.625','norm P0<0.625'],
+      'First Degree':['0.625≤norm P0<0.8125','0.625≤norm P0<0.8125'],
+      'Second Degree':['0.8125≤norm P0<0.90625','0.8125≤norm P0<0.90625'],
+      'Third Degree':['0.90625≤norm P0≤0.953125 · expected mismatches≥3000','0.90625≤norm P0≤0.953125 · 期望错配≥3000'],
+      'Unrelated/Consistent with Third Degree':['same band, expected mismatches<3000','同一档，期望错配<3000'],
+      'Unrelated':['norm P0>0.953125','norm P0>0.953125']
+    }
+  };
+  return ((book[ruleId]||{})[cls])||['',''];
+}
+function kinClassPicksHtml(ruleId){
+  var rule=kinRuleDef(ruleId);
+  var h='';
+  (rule.classes||[]).forEach(function(cls){
+    var on=(rule.defaultOn||[]).indexOf(cls)>=0;
+    var pair=REL_LEGEND[cls]||[cls,cls];
+    var gate=kinGateText(ruleId, cls);
+    h+='<label><input type="checkbox" data-class="'+esc(cls)+'"'+(on?' checked':'')+'>'+
+      '<span><span class="kin-opt-name">'+bi(esc(pair[0]), esc(pair[1]))+'</span> '+
+      '<span class="kin-gate">'+bi(esc(gate[0]), esc(gate[1]))+'</span></span></label>';
+  });
+  return h;
+}
+function setCloneSamplePressed(btn, on){
+  if(!btn) return;
+  btn.setAttribute('aria-pressed', on?'true':'false');
+  if(btn.classList&&btn.classList.toggle) btn.classList.toggle('active', !!on);
+}
+function readCloneFilterFromDom(){
+  var queries=[], classes=[];
+  var samples=document.getElementById('clone-sample-picks');
+  if(samples&&samples.querySelectorAll){
+    samples.querySelectorAll('.clone-sample').forEach(function(btn){
+      if(btn.getAttribute('aria-pressed')==='true') queries.push(btn.getAttribute('data-query')||'');
+    });
+  }
+  var boxes=document.getElementById('clone-class-picks');
+  if(boxes&&boxes.querySelectorAll){
+    boxes.querySelectorAll('input[data-class]').forEach(function(inp){
+      if(inp.checked) classes.push(inp.getAttribute('data-class')||'');
+    });
+  }
+  var ruleEl=document.getElementById('kin-rule');
+  return parseCloneFilter({
+    queries:queries, classes:classes,
+    rule:ruleEl?ruleEl.value:kinRule
+  });
+}
+function mountCloneControls(){
+  var host=document.getElementById('clone-controls');
+  if(!host) return;
+  if(!D||!D.batch){
+    host.innerHTML='';
+    host.hidden=true;
+    if(host.setAttribute) host.setAttribute('hidden','');
+    return;
+  }
+  host.hidden=false;
+  if(host.removeAttribute) host.removeAttribute('hidden');
+  if(host.getAttribute('data-mounted')==='1') return;
+  host.innerHTML=cloneControlsHtml();
+  host.setAttribute('data-mounted','1');
+  if(!host.querySelectorAll||!host.querySelector) return;
+  host.querySelectorAll('.clone-sample').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      setCloneSamplePressed(btn, btn.getAttribute('aria-pressed')!=='true');
+    });
+  });
+  function paint(ids){
+    var want={};
+    ids.forEach(function(id){ want[id]=1; });
+    host.querySelectorAll('.clone-sample').forEach(function(btn){
+      setCloneSamplePressed(btn, !!want[btn.getAttribute('data-query')]);
+    });
+  }
+  var current=host.querySelector('#clone-pick-current');
+  var all=host.querySelector('#clone-pick-all');
+  var none=host.querySelector('#clone-pick-none');
+  var apply=host.querySelector('#clone-apply');
+  if(current) current.addEventListener('click', function(){
+    paint(cloneSelectionPreset('current', batchQueryIds(), QUERY));
+  });
+  if(all) all.addEventListener('click', function(){
+    paint(cloneSelectionPreset('all', batchQueryIds(), QUERY));
+  });
+  if(none) none.addEventListener('click', function(){
+    paint(cloneSelectionPreset('none', batchQueryIds(), QUERY));
+  });
+  if(apply) apply.addEventListener('click', function(){ applyCloneFilter(); });
+  var poBox=host.querySelector('#panel-po-toggle');
+  if(poBox) poBox.addEventListener('change', function(){
+    panelPoOn=!!poBox.checked;
+    loadRelGraph();
+  });
+  function syncPanelPoRow(){
+    var row=host.querySelector('#panel-po-row');
+    if(!row) return;
+    var show=!kinRule||kinRule==='4k';
+    row.hidden=!show;
+    if(!show&&row.setAttribute) row.setAttribute('hidden','');
+    else if(row.removeAttribute) row.removeAttribute('hidden');
+  }
+  syncPanelPoRow();
+  var ruleSel=host.querySelector('#kin-rule');
+  if(ruleSel) ruleSel.addEventListener('change', function(){
+    var requested=ruleSel.value||'4k';
+    var params=document.getElementById('kin-rule-params');
+    var status=document.getElementById('clone-filter-status');
+    if(!kinRuleAvailable(requested)){
+      ruleSel.value=kinRule||'4k';
+      if(params) params.innerHTML=kinRuleBlurb(kinRule||'4k');
+      if(status) status.innerHTML=bi(
+        'This report did not store IBS0 and P0, so Ramos 2019 and READv2 cannot be applied. The view stays on 4K.',
+        '这份报告没有存 IBS0 和 P0，不能套 Ramos 2019 或 READv2。画面仍按 4K。'
+      );
+      return;
+    }
+    kinRule=requested;
+    if(params) params.innerHTML=kinRuleBlurb(kinRule);
+    var picks=document.getElementById('clone-class-picks');
+    if(picks) picks.innerHTML=kinClassPicksHtml(kinRule);
+    var poRow=document.getElementById('panel-po-row');
+    if(poRow){
+      var show4k=!kinRule||kinRule==='4k';
+      poRow.hidden=!show4k;
+      if(!show4k&&poRow.setAttribute) poRow.setAttribute('hidden','');
+      else if(poRow.removeAttribute) poRow.removeAttribute('hidden');
+    }
+    applyCloneFilter();
+  });
+}
+function applyCloneFilter(){
+  var parsed=readCloneFilterFromDom();
+  var status=document.getElementById('clone-filter-status');
+  if(parsed.ok&&parsed.filter.rule&&parsed.filter.rule!=='4k'&&!kinRuleAvailable(parsed.filter.rule)){
+    if(status) status.innerHTML=bi(
+      'This report did not store IBS0 and P0, so that rule cannot be applied.',
+      '这份报告没有存 IBS0 和 P0，不能套这套规则。'
+    );
+    return;
+  }
+  if(parsed.ok&&parsed.filter.rule) kinRule=parsed.filter.rule;
+  if(!parsed.ok){
+    if(status) status.innerHTML=bi(
+      'Cutoffs must be numbers, and the KING minimum cannot exceed the maximum.',
+      '阈值要是数字，并且 KING 下限不能大于上限。'
+    );
+    return;
+  }
+  cloneFilter=parsed.filter;
+  fillCloneTable();
+  loadRelGraph();
+}
+function cloneFilterStatusHtml(rows){
+  var qs=(cloneFilter.queries||[]).join(', ')||t('none','无');
+  var cs=(cloneFilter.classes||[]).map(function(cls){return relLegendName(cls);}).join(', ')||t('none','无');
+  var rule=kinRuleDef(cloneFilter.rule||kinRule);
+  return bi(
+    'Showing '+rows.length+' rows · '+rule.en+' · samples '+qs+' · '+cs+'.',
+    '显示 '+rows.length+' 条 · '+rule.cn+' · 样本 '+qs+' · '+cs+'。'
+  );
+}
+function fillCloneTableFiltered(){
+  var src=kinViewSources();
+  var rows=collectCloneRows(src.graph, src.pairs, cloneFilter);
+  var ruleId=(cloneFilter&&cloneFilter.rule)||kinRule;
+  var extraHead=ruleId==='ramos2019'?'IBS0':(ruleId==='readv2'?'norm P0':'R1');
+  var h='<div class="table-scroll"><table><tr><th>'+bi('Query','查询样本')+'</th><th>'+bi('Class','关系类别')+'</th><th>'+bi('Partner','对方')+'</th><th>'+extraHead+'</th><th>KING</th><th>n</th></tr>';
+  if(!(cloneFilter.queries||[]).length){
+    h+='<tr><td colspan="6">'+bi('Select at least one sample, then update.','先选至少一个样本，再点更新。')+'</td></tr>';
+  }else if(!rows.length){
+    h+='<tr><td colspan="6">'+bi('No rows at these filters.','当前筛选没有命中。')+'</td></tr>';
+  }
+  rows.forEach(function(r){
+    var partner=r.kind==='query'?esc(r.partner):sampleCell(r.partner);
+    var attr=r.kind==='query'?'':' class="clickrow" data-iid="'+esc(r.partner)+'"';
+    var n=r.n==null||r.n===''?'—':r.n;
+    var extra=ruleId==='ramos2019'?r.ibs0:(ruleId==='readv2'?r.p0:r.r1);
+    var digits=ruleId==='ramos2019'?5:(ruleId==='readv2'?3:2);
+    h+='<tr'+attr+'><td>'+esc(r.query)+'</td><td>'+identityLabel(r.rel)+'</td><td>'+
+      partner+'</td><td>'+esc(fmtNum(extra, digits))+'</td><td>'+esc(fmtKing(r.king))+'</td><td>'+esc(n)+'</td></tr>';
+  });
+  h+='</table></div>';
+  var el=document.getElementById('clone-table');
+  if(el){ el.innerHTML=h; bindRowClicks(el); }
+  var status=document.getElementById('clone-filter-status');
+  if(status) status.innerHTML=cloneFilterStatusHtml(rows);
 }
 function fillCloneTable(){
+  if(D&&D.batch&&cloneFilter){
+    fillCloneTableFiltered();
+  }else{
   var rows=D.clones||[];
   var h='<div class="table-scroll"><table><tr><th>'+bi('Class','关系类别')+'</th><th>'+bi('Ref','参考样本')+'</th><th>R1</th><th>KING</th></tr>';
   if(!rows.length)h+='<tr><td colspan=4>'+bi('No Identical/PO hits','没有 Identical/PO 命中')+'</td></tr>';
@@ -4013,6 +5542,7 @@ function fillCloneTable(){
   });
   h+='</table></div>';
   var el=document.getElementById('clone-table'); if(el){el.innerHTML=h;bindRowClicks(el);}
+  }
   var sm=D.ibs_summary||{};
   var sh='<div class="table-scroll"><table><tr><th>'+bi('Class','关系类别')+'</th><th>'+bi('Count','数量')+'</th></tr>';
   var keys=['Identical','Parent-Offspring','Full Sib','2nd','3rd','Unrelated'];
@@ -4753,7 +6283,10 @@ function makeClickHandler(el){
       var cd=p.data.customdata;
       if(Array.isArray(cd)&&cd[p.pointIndex]!=null) iid=String(cd[p.pointIndex]);
     }
-    if(iid) highlightSample(iid);
+    if(iid){
+      if(D&&D.batch&&batchUserAct&&isBatchQueryId(iid)) setActiveQuery(iid);
+      else highlightSample(iid);
+    }
   });
 }
 
@@ -4806,9 +6339,13 @@ function _pcaGrpColor(g, i){
 }
 
 function _pcaGroupPoints(){
-  var by={}, query=null, order=[];
+  var by={}, query=null, queries=[], order=[];
   (D.pca_points||[]).forEach(function(p){
-    if(p.query){ query=p; return; }
+    if(p.query){
+      if(D&&D.batch) queries.push(p);
+      else query=p;
+      return;
+    }
     var g=p.grp||'NA';
     if(!by[g]){ by[g]=[]; order.push(g); }
     by[g].push(p);
@@ -4816,7 +6353,7 @@ function _pcaGroupPoints(){
   var BG={'C-Ad':1,'W-Ad':1,'OUT':1,'NA':1,'':1};
   var grps=order.filter(function(g){return BG[g];})
     .concat(order.filter(function(g){return !BG[g];}));
-  return {by:by, grps:grps, query:query, BG:BG};
+  return {by:by, grps:grps, query:query, queries:queries, BG:BG};
 }
 
 function _pcLabel(i){
@@ -4868,7 +6405,21 @@ function buildPca2dFig(xi, yi){
       hovertemplate:'%{text}<extra>'+t('panel group','面板组')+' · '+g+'</extra>'
     });
   });
-  if(ginfo.query){
+  var batchStars=(D&&D.batch&&ginfo.queries&&ginfo.queries.length)?ginfo.queries:[];
+  if(batchStars.length){
+    batchStars.forEach(function(q,qi){
+      var color=BATCH_QUERY_COLORS[qi%BATCH_QUERY_COLORS.length];
+      traces.push({
+        type:'scatter', mode:'markers+text', name:q.iid,
+        x:[q.pcs[xi]], y:[q.pcs[yi]],
+        customdata:[q.iid], text:[q.iid], textposition:'top center',
+        textfont:{size:11, color:tokens.text},
+        marker:{size:14, color:color, symbol:'star', line:{width:1, color:'#111'}},
+        cliponaxis:false,
+        hovertemplate:'%{text}<extra>'+t('query overlay','查询样本叠加')+'</extra>'
+      });
+    });
+  } else if(ginfo.query){
     var q=ginfo.query;
     traces.push({
       type:'scatter', mode:'markers', name:t('Query / ','查询样本 / ')+q.iid,
@@ -4915,7 +6466,19 @@ function buildPca3dFig(){
       hovertemplate:'%{text}<extra>'+t('panel group','面板组')+' · '+g+'</extra>'
     });
   });
-  if(ginfo.query){
+  var batchStars3=(D&&D.batch&&ginfo.queries&&ginfo.queries.length)?ginfo.queries:[];
+  if(batchStars3.length){
+    batchStars3.forEach(function(q,qi){
+      var color=BATCH_QUERY_COLORS[qi%BATCH_QUERY_COLORS.length];
+      traces.push({
+        type:'scatter3d', mode:'markers+text', name:q.iid, showlegend:true,
+        x:[q.pcs[0]], y:[q.pcs[1]], z:[q.pcs[2]],
+        customdata:[q.iid], text:[q.iid],
+        marker:{size:7, color:color, symbol:'diamond', line:{width:1, color:'#111'}},
+        hovertemplate:'%{text}<extra>'+t('query overlay','查询样本叠加')+'</extra>'
+      });
+    });
+  } else if(ginfo.query){
     var q=ginfo.query;
     traces.push({
       type:'scatter3d', mode:'markers', name:t('Query / ','查询样本 / ')+q.iid, showlegend:false,
@@ -4945,7 +6508,7 @@ function buildPca3dFig(){
     title:t('Frozen panel PCA','冻结面板 PCA')+' ('+
       (pcaMethodLabel(D.pca_method)==='—'?'PCA':pcaMethodLabel(D.pca_method))+
       ') · '+t('Query overlay','查询样本叠加')+' · 3D',
-    showlegend:false,
+    showlegend:!!(D&&D.batch),
     scene:{
       bgcolor:tokens['plot-bg'],
       xaxis:{title:_pcLabel(0), range:xr||undefined},
@@ -4981,6 +6544,7 @@ function evenlySpacedRows(rows, maxItems){
 function admixItems(k){
   var queryRow=SROWS.find(function(r){return r.iid===QUERY;});
   var rows=SROWS.filter(function(r){
+    if(D&&D.batch) return !isBatchQueryId(r.iid);
     return D.admix_query_in_panel || r.iid!==QUERY;
   });
   if(compactAdmix){
@@ -4996,7 +6560,7 @@ function admixItems(k){
     rows=[];
     groups.forEach(function(g){
       var chosen=evenlySpacedRows(by[g],40);
-      if(D.admix_query_in_panel && queryRow && (queryRow.grp||'NA')===g &&
+      if(!(D&&D.batch) && D.admix_query_in_panel && queryRow && (queryRow.grp||'NA')===g &&
          !chosen.some(function(r){return r.iid===QUERY;})){
         if(chosen.length) chosen[chosen.length-1]=queryRow;
         else chosen=[queryRow];
@@ -5030,6 +6594,8 @@ function buildAdmixFig(k){
     boundaries[boundaries.length-1].count++;
   });
   var qrow=admixQueryRow(k);
+  var batchQ=!!(D&&D.batch)&&batchQueryIds().length>0;
+  var qids=batchQ?batchQueryIds():[];
   var traces=[];
   for(var j=0;j<k;j++){
     var label=meta.labels&&meta.labels[j]?meta.labels[j]:'A'+(j+1);
@@ -5048,21 +6614,44 @@ function buildAdmixFig(k){
         t('2449 panel','2449 面板')+'</extra>'
     });
   }
-  if(qrow){
-    var qv=qrow.qvals[String(k)];
+  if(batchQ){
+    var qrows=qids.map(function(id){
+      return SROWS.find(function(r){return r.iid===id;})||{iid:id,qvals:{}};
+    });
     for(var qj=0;qj<k;qj++){
       var qlabel=meta.labels&&meta.labels[qj]?meta.labels[qj]:'A'+(qj+1);
       traces.push({
         type:'bar', name:qlabel, showlegend:false,
-        x:[QUERY], y:[qv&&qj<qv.length?qv[qj]:null],
+        x:qids,
+        y:qrows.map(function(r){
+          var qv=r.qvals&&r.qvals[String(k)];
+          return qv&&qj<qv.length?qv[qj]:0;
+        }),
+        xaxis:'x2',
+        marker:{color:(meta.colors&&meta.colors[qj])||'#888',
+          line:{color:'#111',width:0.8}},
+        customdata:qids.slice(),
+        text:qids.map(function(id){return sampleWho(id,'query');}),
+        textposition:'none',
+        hovertemplate:'%{text}<br>'+qlabel+'=%{y:.3f}<extra>'+
+          t('query projection','查询样本投影')+'</extra>'
+      });
+    }
+  } else if(qrow){
+    var qv=qrow.qvals[String(k)];
+    for(var qj2=0;qj2<k;qj2++){
+      var qlabel2=meta.labels&&meta.labels[qj2]?meta.labels[qj2]:'A'+(qj2+1);
+      traces.push({
+        type:'bar', name:qlabel2, showlegend:false,
+        x:[QUERY], y:[qv&&qj2<qv.length?qv[qj2]:null],
         xaxis:'x2',
         width:0.55,
-        marker:{color:(meta.colors&&meta.colors[qj])||'#888',
+        marker:{color:(meta.colors&&meta.colors[qj2])||'#888',
           line:{color:'#111',width:0.8}},
         customdata:[QUERY],
         text:[sampleWho(QUERY,'query')],
         textposition:'none',
-        hovertemplate:'%{text}<br>'+qlabel+'=%{y:.3f}<extra>'+
+        hovertemplate:'%{text}<br>'+qlabel2+'=%{y:.3f}<extra>'+
           t('query projection','查询样本投影')+'</extra>'
       });
     }
@@ -5075,11 +6664,11 @@ function buildAdmixFig(k){
     margin:{l:44,r:10,t:48,b:118},
     title:t('Frozen 2449-panel ADMIXTURE K='+k,
       '冻结 2449 面板 ADMIXTURE K='+k)+
-      (qrow?' · '+t('query projection','查询样本投影'):''),
+      ((batchQ||qrow)?' · '+t('query projection','查询样本投影'):''),
     yaxis:{title:t('Ancestry proportion','祖源比例'),range:[0,1],
       gridcolor:tokens['plot-grid'],zerolinecolor:tokens.border},
     xaxis:{
-      domain:qrow?[0,0.93]:[0,1],
+      domain:(batchQ?[0, Math.max(0.5, 1-(0.08+0.07*qids.length))]:(qrow?[0,0.93]:[0,1])),
       tickmode:'array',
       tickvals:boundaries.map(function(b){return b.start;}),
       ticktext:boundaries.map(function(b){return b.group+' (n='+b.count+')';}),
@@ -5094,7 +6683,17 @@ function buildAdmixFig(k){
       title:{text:t('Frozen 2449-panel components','冻结 2449 面板成分')}},
     hovermode:'closest'
   };
-  if(qrow){
+  if(batchQ){
+    var qShare=Math.min(0.46, 0.08+0.07*qids.length);
+    layout.xaxis.domain=[0, 1-qShare-0.02];
+    layout.xaxis2={
+      domain:[1-qShare, 1],
+      tickmode:'array', tickvals:qids, ticktext:qids.map(sampleTick),
+      tickangle:-40, tickfont:{size:9},
+      anchor:'y',
+      showgrid:false
+    };
+  } else if(qrow){
     layout.xaxis2={
       domain:[0.955,1],
       tickmode:'array', tickvals:[QUERY], ticktext:[sampleTick(QUERY)],
@@ -5292,6 +6891,7 @@ function renderPinnedSummary(iid){
   }
   if(pinDet) pinDet.innerHTML=det;
   if(pinBar&&pinBar.style) pinBar.style.display='block';
+  fitReportChrome();
   return true;
 }
 function highlightSample(iid){
@@ -5347,8 +6947,16 @@ function highlightSample(iid){
   if(elB&&elB._fullLayout && (qHit || bxs.length)){
     var shapes=[];
     if(qHit){
+      var xMid=0;
+      if(D&&D.batch){
+        var tvs=(elB.layout&&elB.layout.xaxis2&&elB.layout.xaxis2.tickvals)||[];
+        var ix=tvs.indexOf(iid);
+        if(ix<0) ix=batchQueryIds().indexOf(iid);
+        if(ix<0) ix=0;
+        xMid=ix;
+      }
       shapes.push({
-        type:'rect', xref:'x2', yref:'y', x0:-0.45, x1:0.45, y0:0, y1:1,
+        type:'rect', xref:'x2', yref:'y', x0:xMid-0.45, x1:xMid+0.45, y0:0, y1:1,
         line:{color:'#ffff00',width:2}, fillcolor:'rgba(255,255,0,0.12)'
       });
     } else {
@@ -5383,6 +6991,7 @@ function highlightSample(iid){
 function clearHighlight(){
   selectedIID=null;
   document.getElementById('pinned-sample').style.display='none';
+  fitReportChrome();
   ['plot-pca','plot-bar','plot-tree'].forEach(function(id){
     var el=document.getElementById(id);
     if(el&&el._fullLayout) relayoutPlot(el,{shapes:[]});
@@ -5520,6 +7129,7 @@ function initResponsiveShell(){
       );
     }
     scheduleResponsiveResize();
+    fitReportChrome();
   });
 }
 function toggleSidebar(){
@@ -5812,6 +7422,7 @@ html,body{{width:100%;max-width:100%;overflow-x:hidden}}
 .sidebar-toggle{{position:fixed;left:208px;top:8px;z-index:60;background:var(--surface);border:1px solid var(--border);color:var(--muted);width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:14px;line-height:20px;text-align:center;transition:left .25s}}
 .sidebar-toggle.shifted{{left:8px}}
 .main{{margin-left:200px;transition:margin-left .25s;padding-top:108px}}
+@media(min-width:761px){{body:has(#batch-switcher.is-on) .main{{padding-top:250px}}body:has(#batch-switcher.is-on){{scroll-padding-top:250px}}}}
 .main.expanded{{margin-left:0}}
 #top-bar{{position:fixed;top:0;left:200px;right:0;z-index:45;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:0 2px 8px var(--shadow);transition:left .25s}}
 #pinned-sample{{display:none;padding:5px 20px;background:var(--warning-soft);border-bottom:1px solid var(--amber);font-size:11px}}
@@ -6011,6 +7622,36 @@ a.dblink:hover{{text-decoration:underline}}
 .methods-breeding ul{{margin:8px 0 8px 18px}}
 .methods-breeding a{{color:var(--blue)}}
 .methods-breeding table{{display:block;overflow-x:auto}}
+#batch-switcher{{display:none;padding:8px 20px 8px 40px;background:var(--surface);border-bottom:1px solid var(--border)}}
+#batch-switcher.is-on{{display:block}}
+.batch-card-bar{{display:flex;align-items:center;gap:10px;margin:0 0 8px;min-width:0}}
+.batch-cards-toggle{{font:inherit;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;white-space:nowrap}}
+.batch-cards-n{{margin-left:6px;color:var(--muted);font-weight:700}}
+.batch-cards-chevron{{margin-left:4px}}
+.batch-cards-chevron::after{{content:'▾'}}
+#batch-switcher.cards-collapsed .batch-cards-chevron::after{{content:'▸'}}
+.batch-cards-current{{font-size:12px;font-weight:700;color:var(--accent);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}}
+.batch-cards{{display:flex;flex-wrap:wrap;gap:8px;max-height:min(168px,28vh);overflow:auto}}
+#batch-switcher.cards-collapsed .batch-card-bar{{margin-bottom:0}}
+#batch-switcher.cards-collapsed #batch-cards{{display:none}}
+#batch-switcher.cards-collapsed .when-open,#batch-switcher:not(.cards-collapsed) .when-closed{{display:none!important}}
+.sec-query-pick{{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}}
+.sec-q{{font:inherit;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer}}
+.sec-q.active{{border-color:var(--accent);color:var(--text);background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent)}}
+.clone-controls{{margin:0 0 12px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface)}}
+.clone-filter-row{{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 8px}}
+.clone-controls label{{font-size:12px;color:var(--text);display:inline-flex;gap:4px;align-items:center}}
+#clone-class-picks{{display:flex;flex-direction:column;align-items:flex-start;gap:6px}}
+#clone-class-picks label{{align-items:flex-start;line-height:1.35}}
+.kin-opt-name{{font-weight:700}}
+.kin-gate{{color:var(--muted);font-weight:400}}
+.clone-apply{{font:inherit;font-size:12px;font-weight:700;padding:4px 12px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:var(--on-accent);cursor:pointer}}
+.batch-card{{border:1px solid var(--border);background:var(--surface);border-radius:8px;padding:8px 10px;min-width:160px;cursor:pointer;text-align:left;color:var(--text);font:inherit}}
+.batch-card.active{{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}}
+.batch-card .bid{{font-weight:700}}
+.batch-card .bmeta{{color:var(--muted);font-size:11px}}
+#batch-query-select{{display:none;margin-top:8px;max-width:420px;background:var(--input-bg);color:var(--input-text);border:1px solid var(--border);border-radius:6px;padding:6px 8px}}
+#batch-overview tr.active td{{background:var(--accent-soft)}}
 @media(max-width:760px){{
   html,body{{width:100%;max-width:100%;overflow-x:hidden}}
   .sidebar{{transform:translateX(-200px);pointer-events:none}}
@@ -6034,6 +7675,9 @@ a.dblink:hover{{text-decoration:underline}}
   #plot-lz svg.lz-locuszoom,#plot-sel-lz svg.lz-locuszoom{{width:100%;min-width:0;max-width:100%}}
   .table-scroll>table{{width:max-content;min-width:100%;max-width:none}}
   .two-col,.three-col{{grid-template-columns:minmax(0,1fr);min-width:0;max-width:100%}}
+  .batch-card-bar{{display:none}}
+  #batch-switcher.is-on #batch-cards{{display:none}}
+  #batch-switcher.is-on #batch-query-select{{display:block;width:100%;max-width:100%}}
 }}
 footer{{text-align:center;padding:16px;color:var(--muted);font-size:11px}}
 </style>
@@ -6054,6 +7698,19 @@ footer{{text-align:center;padding:16px;color:var(--muted);font-size:11px}}
 
 <div class="main" id="main-content">
 <div id="top-bar">
+<div id="batch-switcher">
+  <div class="batch-card-bar">
+    <button type="button" id="batch-cards-toggle" class="batch-cards-toggle" aria-expanded="true" aria-controls="batch-cards" aria-label="Hide sample cards" title="Hide sample cards">
+      <span class="when-open"><span class="en">Hide samples</span><span class="cn">收起样本</span></span>
+      <span class="when-closed"><span class="en">Show samples</span><span class="cn">展开样本</span></span>
+      <span id="batch-cards-count" class="batch-cards-n"></span>
+      <span class="batch-cards-chevron" aria-hidden="true"></span>
+    </button>
+    <span id="batch-cards-current" class="batch-cards-current"></span>
+  </div>
+  <div id="batch-cards" class="batch-cards"></div>
+  <select id="batch-query-select" aria-label="Active query" autocomplete="off"></select>
+</div>
   <div id="pinned-sample">
     🔍 <span id="pin-iid" style="font-weight:700;color:var(--amber)">—</span>
     <span id="pin-acc" style="color:var(--muted)"></span>
@@ -6117,6 +7774,7 @@ footer{{text-align:center;padding:16px;color:var(--muted);font-size:11px}}
 <div class="info-box"><div class="en"><strong>Interaction</strong>: click a point/bar/tip to pin the sample.
 Black ★/◆ identifies the query; yellow ◆ identifies the pinned sample.</div>
 <div class="cn"><strong>交互</strong>：点击点/柱/叶即可钉住样本。黑色★/◆是查询样本；黄色◆是钉住的对照。</div></div>
+<div id="batch-overview"></div>
 <ul id="concl-list" class="muted"></ul>
 <p class="muted">{merged_vcf_note}</p>
 </section>
@@ -6179,8 +7837,18 @@ Ancient DNA: both termini high, falling inward. The bar plot is the fragment-len
 <section id="identity-placement"><h2><span class="en">Identity &amp; placement</span><span class="cn">身份与定位</span> <span class="scope-label"><span class="en">Query vs 2449 panel</span><span class="cn">查询样本 vs 2449 面板</span></span></h2>
 <div class="sec-guide"><div class="en"><strong>How to read.</strong> Identity screens compare this query with the 4K reference set; clone/PO, IBS, KING, and nearest-reference results are query-versus-panel evidence.</div><div class="cn">怎么看：身份筛查把本查询与 4K 参考集比较；clone/亲子、IBS、KING 和最近参考样本都属于查询与 panel 的比较证据。</div></div>
 
+<div id="clone-controls" hidden></div>
+<div id="rel-graph" hidden>
+<h3><span class="en">Relationship graph</span><span class="cn">亲缘关系图</span></h3>
+<p class="muted"><span class="en">Queries sit on the inner ring. Panel samples at Identical, Parent-Offspring, Full Sib, or 2nd sit outside the query they match. Edge colour is the 4K class; the label is KING. Hover or click a point for the passport and the kinship numbers. Click a query to switch it. Click a panel sample to pin it.</span><span class="cn">查询样本在内圈。Identical、亲子、全同胞或二级亲缘的面板样本排在对应查询外侧。边的颜色是 4K 类别，标注是 KING。悬停或点一个点，会显示品种信息和这条亲缘的数字。点查询样本可切换；点面板样本可钉住。</span></p>
+<div class="plot-box" id="plot-graph"></div>
+<div class="info-box" id="rel-graph-detail" hidden></div>
+<p class="muted" id="rel-graph-rest"></p>
+<p class="muted" id="rel-graph-note"><span class="en">Before you use the parameters above, this graph shows every query at Identical, Parent-Offspring, Full Sib, or 2nd. After update, it uses the options you ticked. Isolated close pairs are labeled. A dense cluster and 2nd- or 3rd-degree links stay as color; the numbers are on hover and in the clone list.</span><span class="cn">在用上方的参数点更新之前，这张图画每个查询样本的完全相同、亲子、全同胞和二级亲缘。点更新之后，它用你勾选的那些选项。单独的一对近亲会标上数字。连得密的一簇，以及二级、三级亲缘，只保留颜色；数字在悬停和下面的克隆列表里。</span></p>
+</div>
+
 <section id="clone"><h2><span class="en">Clone + PO list</span><span class="cn">克隆与亲子列表</span></h2>
-<div class="sec-guide"><div class="en"><strong>How to use.</strong> Italy 4K Identical + Parent-Offspring hits. Click a row to pin that ref on PCA / ADMIXTURE / NJ.</div><div class="cn">怎么用：4K 筛到的 Identical / 亲子。点一行即可在 PCA、ADMIXTURE、NJ 上钉住该对照。</div></div>
+<div class="sec-guide"><div class="en"><strong>How to use.</strong> The kinship rule and relationship options sit above the graph. Update refreshes this list together with that graph. Other sections stay on the active query. Click a panel row to pin that ref.</div><div class="cn">怎么用：亲缘规则和关系选项在关系图上方。点更新后，本列表和那张图一起换。其他板块仍跟着当前查询样本。点面板那一行即可钉住对照。</div></div>
 <div class="info-box"><div class="en"><strong>Italy 4K screen</strong>: Identical + Parent-Offspring. Click a row to pin.</div>
 <div class="cn"><strong>意大利 4K 筛查</strong>：完全相同 + 亲子。点一行即可钉住。</div></div>
 <div id="clone-table"></div>
@@ -6477,9 +8145,15 @@ PC1–PC3 are displayed when available; reported percentages use explained-varia
 <div class="cn"><strong>PCA 方法</strong>：<span class="method-card-slot">加载中…</span>。
 有 PC1–PC3 时显示；报告百分比只用解释方差分数。</div></div>
 <div class="info-box"><div class="en"><strong>Identity (4K)</strong>: Identical R1≥1.2 + IBS2*%≥0.99 + KING≥0.3426;
-PO: 0.5&lt;R1&lt;1.2 + 0.21≤KING&lt;0.3426 + R0≤0.096. Self-in-panel reported as QC then nearest non-self.</div>
+PO: 0.5&lt;R1&lt;1.2 + 0.21≤KING&lt;0.3426 + R0≤0.096. Full sib 0.177≤KING&lt;0.354; 2nd 0.0884≤KING&lt;0.177; 3rd 0.0442≤KING&lt;0.0884. KING estimator: Manichaikul et al. 2010, doi:10.1093/bioinformatics/btq559. Self-in-panel reported as QC then nearest non-self.</div>
 <div class="cn"><strong>身份（4K）</strong>：完全相同 R1≥1.2 + IBS2*%≥0.99 + KING≥0.3426；
-亲子：0.5&lt;R1&lt;1.2 + 0.21≤KING&lt;0.3426 + R0≤0.096。面板内自身先作质控，再报告最近非自身。</div></div>
+亲子：0.5&lt;R1&lt;1.2 + 0.21≤KING&lt;0.3426 + R0≤0.096。全同胞 0.177≤KING&lt;0.354；二级 0.0884≤KING&lt;0.177；三级 0.0442≤KING&lt;0.0884。KING 估计见 Manichaikul 等 2010，doi:10.1093/bioinformatics/btq559。面板内自身先作质控，再报告最近非自身。</div></div>
+<div class="info-box"><div class="en"><strong>Other kinship rules</strong> (same pairs, different gates; the clone section can switch them when IBS0 and P0 were stored).
+Ramos-Madrigal et al. 2019, doi:10.1038/s41477-019-0437-5: identical clone KING≥0.49 and IBS0≤0.001; parent–offspring 0.177&lt;KING&lt;0.354 and IBS0≤0.001; the same KING window with IBS0&gt;0.001 is labeled highly related.
+READv2, Alaçamlı et al. 2024, doi:10.1186/s13059-024-03350-3: normalized P0 cutoffs 0.625 / 0.8125 / 0.90625 / 0.953125 (READ2.py v2.01). First degree is not split further on this SNP panel.</div>
+<div class="cn"><strong>其他亲缘规则</strong>（同一批配对，不同的门；克隆板块在存有 IBS0 和 P0 时可以切换）。
+Ramos-Madrigal 等 2019，doi:10.1038/s41477-019-0437-5：克隆 KING≥0.49 且 IBS0≤0.001；亲子 0.177&lt;KING&lt;0.354 且 IBS0≤0.001；同一 KING 窗口里 IBS0&gt;0.001 标为高度相关。
+READv2，Alaçamlı 等 2024，doi:10.1186/s13059-024-03350-3：标准化 P0 阈值 0.625 / 0.8125 / 0.90625 / 0.953125（READ2.py v2.01）。在这套 SNP 上不再把一级亲缘拆开。</div></div>
 <div class="info-box" id="admix-methods"><div class="en"><strong>ADMIXTURE</strong>: Loading…</div>
 <div class="cn"><strong>ADMIXTURE</strong>：加载中…</div></div>
 <div class="info-box"><div class="en"><strong>Source</strong>:</div>

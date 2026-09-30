@@ -156,28 +156,75 @@ def all_tips_for_tree(
     return list(ref_ids) + [query_id], np.vstack([np.asarray(ref_mat, dtype=float), q.reshape(1, -1)])
 
 
+def _query_batch(
+    query: np.ndarray,
+    query_id: str | list[str],
+) -> tuple[list[str], list[np.ndarray]]:
+    """One query vector, or a row per id when ``query_id`` is a list."""
+    if isinstance(query_id, str):
+        return [query_id], [np.asarray(query, dtype=float).reshape(-1)]
+    ids = [str(x) for x in query_id]
+    arr = np.asarray(query, dtype=float)
+    if arr.ndim == 1:
+        arr = arr.reshape(1, -1)
+    if arr.shape[0] != len(ids):
+        raise ValueError("query rows must match query ids")
+    return ids, [arr[i].reshape(-1) for i in range(len(ids))]
+
+
 def assemble_tree_distance(
     ref_ids: list[str],
     ref_mat: np.ndarray,
     query: np.ndarray,
-    query_id: str,
+    query_id: str | list[str],
     panel_d: np.ndarray,
 ) -> tuple[list[str], np.ndarray, np.ndarray]:
-    """ids, genotype matrix, and full IBS distance including the query."""
-    ids, tree_mat = all_tips_for_tree(ref_ids, ref_mat, query, query_id)
+    """ids, genotype matrix, and full IBS distance including one or more queries.
+
+    Query–query distances are computed from the query dosages. An in-panel query
+    replaces that panel row and is not appended.
+    """
+    qids, vecs = _query_batch(query, query_id)
     n = len(ref_ids)
-    d_q = ibs_distance_to_rows(query, ref_mat)
-    if query_id in ref_ids:
-        D = np.array(panel_d, copy=True, dtype=float)
-        qi = ref_ids.index(query_id)
-        D[qi, :] = d_q
-        D[:, qi] = d_q
-        D[qi, qi] = 0.0
-        return ids, tree_mat, D
-    D = np.zeros((n + 1, n + 1), dtype=float)
-    D[:n, :n] = panel_d
-    D[n, :n] = d_q
-    D[:n, n] = d_q
+    ref_index = {rid: i for i, rid in enumerate(ref_ids)}
+    in_panel: list[tuple[int, np.ndarray]] = []
+    extra: list[tuple[str, np.ndarray]] = []
+    seen_extra: set[str] = set()
+    seen_panel: set[int] = set()
+    for qid, vec in zip(qids, vecs):
+        if qid in ref_index:
+            qi = ref_index[qid]
+            if qi not in seen_panel:
+                seen_panel.add(qi)
+                in_panel.append((qi, vec))
+        elif qid not in seen_extra:
+            seen_extra.add(qid)
+            extra.append((qid, vec))
+    ids = list(ref_ids) + [qid for qid, _vec in extra]
+    tree_mat = np.array(ref_mat, copy=True, dtype=float)
+    for qi, vec in in_panel:
+        tree_mat[qi] = vec
+    if extra:
+        tree_mat = np.vstack([tree_mat, *[vec.reshape(1, -1) for _qid, vec in extra]])
+    m = len(ids)
+    D = np.zeros((m, m), dtype=float)
+    D[:n, :n] = np.asarray(panel_d, dtype=float)
+    query_at: dict[int, np.ndarray] = {qi: vec for qi, vec in in_panel}
+    for i, (_qid, vec) in enumerate(extra):
+        query_at[n + i] = vec
+    for qi, vec in query_at.items():
+        d_panel = ibs_distance_to_rows(vec, ref_mat)
+        D[qi, :n] = d_panel
+        D[:n, qi] = d_panel
+    q_idxs = list(query_at)
+    for a, ia in enumerate(q_idxs):
+        for ib in q_idxs[a:]:
+            if ia == ib:
+                D[ia, ib] = 0.0
+                continue
+            dist = float(ibs_distance_to_rows(query_at[ia], query_at[ib].reshape(1, -1))[0])
+            D[ia, ib] = dist
+            D[ib, ia] = dist
     return ids, tree_mat, D
 
 

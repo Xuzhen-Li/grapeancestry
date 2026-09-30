@@ -4,7 +4,7 @@
 
 # GrapeAncestry
 
-**GrapeAncestry v1.0.0** places a new grapevine query on a frozen **2449 × 167K** panel built on **VS-1**, then writes a sample-first V2 HTML report.
+**GrapeAncestry v1.1.0** places a new grapevine query on a frozen **2449 × 167K** panel built on **VS-1**, then writes a sample-first V2 HTML report. A batch of queries can share one report.
 
 Not a whole-genome resequencing suite. **MIT = code only** (panel genotypes/phenotypes are not MIT — [`DATA_NOTICE.md`](DATA_NOTICE.md)). Author: **李旭真 / Li Xuzhen** · [ORCID 0000-0003-3670-6657](https://orcid.org/0000-0003-3670-6657).
 
@@ -17,6 +17,7 @@ Not a whole-genome resequencing suite. **MIT = code only** (panel genotypes/phen
 - Places the sample on a frozen 2449-sample × 167K-site VS-1 panel
 - Screens clones and parent–offspring, and reports IBS kinship against the panel
 - Projects the sample onto frozen PCA axes and ADMIXTURE K=2–8, and draws an NJ tree
+- In a batch report, places the queries together: kinship graph, and population placement against the panel groups
 - Summarises aDNA damage for ancient samples
 - Reports an OIV 225 berry-colour genomic score (score ≠ phenotype)
 - Writes one self-contained HTML report per sample; the kit runs locally in Docker
@@ -34,7 +35,7 @@ Solid/dashed rules: [`docs/FLOWCHART.md`](docs/FLOWCHART.md). VS-1: Dong et al. 
 | Path | What you do | Outcome |
 |------|-------------|---------|
 | **Docker kit** | Download `grapeancestry-v1.0.0-amd64.tar` from Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)); put next to `./start.sh`; run it | Product **`*.sample-first-v2.report.html`** — UI **http://127.0.0.1:8501** · reports **:8502** |
-| **Demo** | Download or clone the repo, then `cd demo && python3 -m http.server 8000` and open http://localhost:8000/results/Ages.sample-first-v2.report.html (GitHub does not render this HTML). | **View-only** showcase |
+| **Demo** | Download or clone the repo, then `cd demo && python3 -m http.server 8000` and open http://localhost:8000/results/ramos2019_np.batch.report.html (GitHub does not render this HTML). | **View-only.** 28 archaeological seeds ([Ramos-Madrigal et al. 2019](https://doi.org/10.1038/s41477-019-0437-5), *Nat. Plants*) |
 | **DIY** | Stage your own VS-1 + frozen 2449×167K assets (not in git) · CLI: `pip install -e .` (see docs/USER_GUIDE.md §5) | Follow [`steps/`](steps/) `00a`–`13b` |
 
 ### Docker kit, step by step
@@ -54,7 +55,7 @@ v1 deliverable is **`*.sample-first-v2.report.html` only** (optional Cloud `chip
 
 *First run — setup waterfall: local password, language, and threads (locks UI access only; does not encrypt data).*
 
-Screenshots below are from the Ages demo report. The Docker kit also ships a second demo, HUN89_query — panel id `HUN89` ≠ report stem `HUN89_query`. Walkthrough: [`docs/GUIDELINE.md`](docs/GUIDELINE.md). Cite Ages/V5: Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z)).
+The file under `demo/results/` is the 28-seed batch report. Stills below are from the Ages report. The Docker kit also ships HUN89_query — panel id `HUN89` ≠ report stem `HUN89_query`. Walkthrough: [`docs/GUIDELINE.md`](docs/GUIDELINE.md). Cite Ages/V5: Noraz et al. 2026 *Nat Commun* ([doi:10.1038/s41467-026-70166-z](https://doi.org/10.1038/s41467-026-70166-z)). Cite the 28 seeds: Ramos-Madrigal et al. 2019 *Nat. Plants* ([doi:10.1038/s41477-019-0437-5](https://doi.org/10.1038/s41477-019-0437-5)).
 
 ![Sample validity](docs/guideline_shots/panels/01_sample_validity_01.png)
 
@@ -97,7 +98,7 @@ Screenshots below are from the Ages demo report. The Docker kit also ships a sec
 | Doc | Role |
 |-----|------|
 | [`DATA_NOTICE.md`](DATA_NOTICE.md) | What is / is not in git; Docker tar policy |
-| [`demo/`](demo/) | Ages sample-first HTML (view-only) |
+| [`demo/`](demo/) | 28-seed batch HTML (view-only) |
 | [`steps/`](steps/) | DIY `00a`–`13b` |
 | [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) | Start kit + browse; BAM/intake |
 | [`docs/GUIDELINE.md`](docs/GUIDELINE.md) | How to read the report |

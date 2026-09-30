@@ -33,7 +33,7 @@ grapevine **167K** public walkthrough (docs + Ages demo). Cross-panel *scaffold 
 |------|------------|----------------|
 | **`config/`** | YAML for local/HPC demos (`samples_ages.yaml`, …) | No cloud secrets |
 | **`data/`** | **Placeholders + READMEs** for where to stage assets | **No** FASTQ, VS-1 fasta, or 2449×167K dosage in git |
-| **`demo/`** | Ages sample-first HTML (view-only) + Plotly/D3/LocusZoom `assets/` | Not a full panel matrix; not FASTQ |
+| **`demo/`** | 28-seed batch HTML (view-only) + Plotly/D3/LocusZoom `assets/` | Not a full panel matrix; not FASTQ |
 | **`steps/`** | DIY step curriculum `00a`–`13b` (+ optional `14*`) | Not the runnable engines |
 | **`docs/`** | Human docs: GUIDELINE, flowchart, methods, FAQ, SCRIPTS | Not the runnable engines; DIY steps live in root `steps/` |
 | **`input/`** | Host mount from `start.sh`; FASTQ / BAM / VCF land here | Empty in git; not panel dosage |

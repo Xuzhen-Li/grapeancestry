@@ -1020,6 +1020,19 @@ def _page_upload() -> None:
         _show_intake_reports(st.session_state.intake_reports)
     if st.button(t("Rescan ./input", "重新扫描 ./input")):
         st.rerun()
+    mode = st.radio(
+        t("Analysis mode", "分析模式"),
+        options=["one", "several"],
+        format_func=lambda item: {
+            "one": t("One sample", "一个样本"),
+            "several": t("Several samples", "多个样本"),
+        }[item],
+        horizontal=True,
+        key="analysis_mode",
+    )
+    if mode == "several":
+        _render_several_samples()
+        return
     kind = st.radio(
         t("Input type", "输入类型"),
         options=["FASTQ", "BAM", "VCF"],
@@ -1110,6 +1123,113 @@ def _page_upload() -> None:
         st.rerun()
 
 
+def _default_batch_kind(filename: str) -> str:
+    from grapeancestry.input_intake import guess_kind
+
+    kind = guess_kind(filename)
+    if kind == "bam":
+        return "bam"
+    if kind == "vcf":
+        return "vcf"
+    stem = Path(filename).name.lower()
+    if stem.endswith("_1.fq.gz") or stem.endswith("_2.fq.gz") or "_1.fq" in stem or "_2.fq" in stem:
+        return "fastq-pe"
+    if "_1." in stem or "_2." in stem:
+        return "fastq-pe"
+    return "fastq-se"
+
+
+def _render_several_samples() -> None:
+    from grapeancestry.input_intake import inspect_input
+    from grapeancestry.web_run import BATCH_KINDS, default_sample_id
+
+    st.subheader(t("Several samples", "多个样本"))
+    st.caption(
+        t(
+            "One row per file in ./input. Paired FASTQ needs an R2 file. BAM must already be VS-1.",
+            "./input 里每个文件一行。双端 FASTQ 要选 R2。BAM 必须已经是 VS-1。",
+        )
+    )
+    paths = sorted(path for path in INPUT_DIR.iterdir() if path.is_file()) if INPUT_DIR.is_dir() else []
+    if not paths:
+        st.info(t("No files in ./input yet.", "./input 里还没有文件。"))
+        return
+    names = [path.name for path in paths]
+    rows = [
+        {
+            "include": True,
+            "sample_id": default_sample_id(path.name),
+            "kind": _default_batch_kind(path.name),
+            "file": path.name,
+            "r2": "",
+        }
+        for path in paths
+    ]
+    edited = st.data_editor(
+        rows,
+        column_config={
+            "include": st.column_config.CheckboxColumn(t("Include", "纳入")),
+            "sample_id": st.column_config.TextColumn(t("Sample ID", "样本 ID")),
+            "kind": st.column_config.SelectboxColumn(t("Kind", "类型"), options=list(BATCH_KINDS)),
+            "file": st.column_config.TextColumn(t("File", "文件"), disabled=True),
+            "r2": st.column_config.SelectboxColumn(t("R2 file", "R2 文件"), options=[""] + names),
+        },
+        hide_index=True,
+        key="batch_editor",
+        num_rows="fixed",
+    )
+    batch_name = st.text_input(t("Batch name", "批次名称"), value="batch", key="batch_name")
+    if not st.button(t("Start batch", "开始批次"), type="primary"):
+        return
+    chosen = []
+    if hasattr(edited, "to_dict"):
+        records = edited.to_dict("records")
+    else:
+        records = list(edited)
+    for row in records:
+        if not row.get("include"):
+            continue
+        chosen.append(row)
+    if len(chosen) < 2:
+        st.error(t("Include at least two samples.", "至少纳入两个样本。"))
+        return
+    ids = [str(row.get("sample_id") or "").strip() for row in chosen]
+    if any(not item for item in ids) or len(set(ids)) != len(ids):
+        st.error(t("Sample IDs must be unique and non-empty.", "样本 ID 不能空，也不能重复。"))
+        return
+    job_rows = []
+    for row, sample in zip(chosen, ids):
+        kind = str(row.get("kind") or "")
+        filename = str(row.get("file") or "")
+        path = INPUT_DIR / filename
+        if kind == "fastq-pe" and not str(row.get("r2") or "").strip():
+            st.error(t(f"{sample} needs an R2 file.", f"{sample} 需要 R2 文件。"))
+            return
+        if kind == "bam":
+            report = inspect_input(path, root=ROOT)
+            if not report.ok:
+                st.error("; ".join(report.messages) or t("BAM failed the VS-1 check.", "BAM 未通过 VS-1 检查。"))
+                return
+        files: dict[str, str] = {}
+        if kind in {"fastq-pe", "fastq-se", "adna"}:
+            files["r1"] = str(path)
+            if kind == "fastq-pe":
+                files["r2"] = str(INPUT_DIR / str(row.get("r2")))
+        elif kind == "bam":
+            files["bam"] = str(path)
+        elif kind == "vcf":
+            files["vcf"] = str(path)
+        else:
+            st.error(t(f"Unknown kind for {sample}.", f"{sample} 的类型无法识别。"))
+            return
+        job_rows.append({"sample": sample, "kind": kind, "files": files, "paired": kind == "bam"})
+    name = str(batch_name or "").strip() or "batch"
+    st.session_state.job = {"batch": True, "name": name, "rows": job_rows, "options": {}}
+    st.session_state.log_text = ""
+    st.session_state.stage = "running"
+    st.rerun()
+
+
 def _page_progress() -> None:
     import importlib
 
@@ -1122,6 +1242,9 @@ def _page_progress() -> None:
     report_id_for = web_run.report_id_for
 
     job = st.session_state.get("job") or {}
+    if job.get("batch"):
+        _page_progress_batch(job)
+        return
     opts = PipelineOptions.from_dict(job.get("options"))
     opts.paired = bool(job.get("paired"))
     st.title(t("3. Analysis running", "3. 分析进行中"))
@@ -1170,6 +1293,60 @@ def _page_progress() -> None:
         "report_id": rid,
         "html": str(html),
         "sidecar": str(html.with_name(html.name.replace(".html", ".data.json"))),
+    }
+    st.session_state.stage = "done"
+    st.rerun()
+
+
+def _page_progress_batch(job: dict) -> None:
+    import importlib
+
+    import grapeancestry.web_run as web_run
+
+    web_run = importlib.reload(web_run)
+    iter_batch_pipeline = web_run.iter_batch_pipeline
+    PipelineOptions = web_run.PipelineOptions
+
+    rows = list(job.get("rows") or [])
+    name = str(job.get("name") or "batch")
+    opts = PipelineOptions.from_dict(job.get("options"))
+    st.title(t("3. Analysis running", "3. 分析进行中"))
+    status = st.empty()
+    status.info(t(f"Batch {name} · 0/{len(rows)}", f"批次 {name} · 0/{len(rows)}"))
+    log_box = st.empty()
+    chunks: list[str] = []
+    code = 1
+    for line, rc in iter_batch_pipeline(ROOT, rows, name, options=opts):
+        if line is not None:
+            chunks.append(line)
+            if line.startswith("[batch] "):
+                status.info(line.strip())
+            log_box.text_area(t("Log", "日志"), "".join(chunks)[-12000:], height=360)
+        if rc is not None:
+            code = rc
+    st.session_state.log_text = "".join(chunks)
+    if code != 0:
+        status.error(t("Run failed. See the log. Fix the input and start a new analysis.", "失败，见日志。改输入后重新分析。"))
+        if st.button(t("Back to file list", "回到选文件")):
+            st.session_state.stage = "upload"
+            st.rerun()
+        return
+    html = ROOT / "results" / f"{name}.batch.report.html"
+    if not html.is_file():
+        published = ROOT / "output" / "results" / html.name
+        if published.is_file():
+            html = published
+    if not html.is_file():
+        status.error(t("Finished without a batch HTML.", "结束但没有批次 HTML。"))
+        if st.button(t("Back to file list", "回到选文件")):
+            st.session_state.stage = "upload"
+            st.rerun()
+        return
+    st.session_state.done = {
+        "report_id": name,
+        "html": str(html),
+        "sidecar": str(html.with_name(html.name.replace(".html", ".data.json"))),
+        "batch": True,
     }
     st.session_state.stage = "done"
     st.rerun()

@@ -1,24 +1,22 @@
-# Interactive demo report (Ages)
+# Demo — 28 archaeological seeds
 
-Self-contained **sample-first V2** HTML for the public aDNA demo **`Ages`** (archaeological **V5**; cite Noraz et al. 2026 / Orlando — see root README Demo).
+View-only batch report for the 28 waterlogged grape seeds in Ramos-Madrigal et al. 2019, *Nature Plants*.
 
 ## Files
 
 | Path | Role |
 |------|------|
-| `results/Ages.sample-first-v2.report.html` | Interactive report (~38 MB; payload embedded) |
+| `results/ramos2019_np.batch.report.html` | Interactive batch report (payload embedded) |
 | `assets/` | Plotly / D3 / LocusZoom (required next to `results/` as `../assets`) |
 
 ## Open locally
 
-GitHub does **not** run this HTML in the blob viewer. Clone or download, then:
+GitHub does not run this HTML in the blob viewer. Clone or download, then:
 
 ```bash
 cd demo
 python3 -m http.server 8000
-# open http://localhost:8000/results/Ages.sample-first-v2.report.html
+# open http://localhost:8000/results/ramos2019_np.batch.report.html
 ```
 
-Or open the HTML file from a local file tree that keeps `results/` beside `assets/`.
-
-**Cite source data:** Noraz et al. (2026) *Nat Commun* https://doi.org/10.1038/s41467-026-70166-z
+**Cite:** Ramos-Madrigal et al. (2019) *Nat. Plants* https://doi.org/10.1038/s41477-019-0437-5

@@ -1,4 +1,4 @@
-# User guide — GrapeAncestry v1.0.0
+# User guide — GrapeAncestry v1.1.0
 
 **Audience:** people who will run the private Docker product, or browse the public docs + Ages HTML.  
 **Language:** English.
@@ -80,14 +80,14 @@ ENA **ERR16654874** / **PRJEB94459**. This BAM is **12Xv2, not VS-1**. Do **not*
 
 ---
 
-## 3. Browse Ages HTML **(docs)**
+## 3. Browse the demo **(docs)**
 
 No Docker required:
 
 ```bash
 cd demo
 python3 -m http.server 8000
-# http://127.0.0.1:8000/results/Ages.sample-first-v2.report.html
+# http://127.0.0.1:8000/results/ramos2019_np.batch.report.html
 ```
 
 View-only. Does not create a product report. Keep `demo/assets/` beside `demo/results/`.

@@ -68,7 +68,8 @@ def _post_analyze(
     source_sample: str | None = None,
     admix_mode: str = "auto",
     admix_all_k: bool = True,
-) -> None:
+    render_html: bool = True,
+):
     """Full multi-domain report (Italy-style figures + tables)."""
     from grapeancestry.adna.damage_lite import (
         lite_damage_profile,
@@ -157,20 +158,34 @@ def _post_analyze(
         ]
         fh.write(f"{sample}\t" + "\t".join(vals) + f"\t{bundle.pca_method}\n")
 
-    html_path = v2_report_path(root / "results", sample)
-    render_interactive_dashboard(bundle, html_path, root)
-    published = publish_v2_report(root, html_path)
-    click.echo(f"report → {html_path}")
-    if published.resolve() != html_path.resolve():
-        click.echo(f"report copy → {published}")
+    if render_html:
+        html_path = v2_report_path(root / "results", sample)
+        render_interactive_dashboard(bundle, html_path, root)
+        published = publish_v2_report(root, html_path)
+        click.echo(f"report → {html_path}")
+        if published.resolve() != html_path.resolve():
+            click.echo(f"report copy → {published}")
+    else:
+        click.echo(f"analyzed {sample}")
+    return bundle
 
 
-def _sample_ids_from_yaml(samples_file: Path) -> list[str]:
+def _samples_from_yaml(samples_file: Path) -> tuple[list[str], dict[str, str]]:
     import yaml
 
     data = yaml.safe_load(samples_file.read_text()) or {}
     samples = data.get("samples") or {}
-    return list(samples.keys())
+    ids = list(samples.keys())
+    types: dict[str, str] = {}
+    for sid, rec in samples.items():
+        if isinstance(rec, dict) and rec.get("type"):
+            types[str(sid)] = str(rec.get("type")).strip()
+    return ids, types
+
+
+def _sample_ids_from_yaml(samples_file: Path) -> list[str]:
+    ids, _types = _samples_from_yaml(samples_file)
+    return ids
 
 
 @main.command()
@@ -218,6 +233,7 @@ def _sample_ids_from_yaml(samples_file: Path) -> list[str]:
     default=False,
     help="Pass snakemake -F (rerun every rule even if outputs exist)",
 )
+@click.option("--no-html", is_flag=True, default=False, help="Skip the per-sample HTML report")
 def run(
     config_path: str,
     samples_file: str,
@@ -231,6 +247,7 @@ def run(
     admix_mode: str,
     admix_all_k: bool,
     forceall: bool,
+    no_html: bool,
 ) -> None:
     """End-to-end: fastq → panel VCF (+ default analyses)."""
     import subprocess
@@ -312,6 +329,7 @@ def run(
                 source_sample=source_sample,
                 admix_mode=admix_mode,
                 admix_all_k=admix_all_k,
+                render_html=not no_html,
             )
 
 
@@ -783,6 +801,7 @@ def cross_recommend(
     default="Grp",
     show_default=True,
 )
+@click.option("--no-html", is_flag=True, default=False, help="Skip the per-sample HTML report")
 def analyze(
     sample: str,
     vcf_path: str | None,
@@ -792,6 +811,7 @@ def analyze(
     admix_mode: str,
     admix_all_k: bool,
     pca_color: str,
+    no_html: bool,
 ) -> None:
     """QC + IBS + PCA + V2 HTML from results/{sample}.vcf.gz or --vcf."""
     from grapeancestry.adna.panel167k_nogwas import panel167k_assets_complete
@@ -840,7 +860,157 @@ def analyze(
         source_sample=source_sample,
         admix_mode=admix_mode,
         admix_all_k=admix_all_k,
+        render_html=not no_html,
     )
+
+
+def _report_sample_for_analyze(
+    root: Path,
+    sample: str,
+    *,
+    as_query: bool,
+    force_query_vcf: bool,
+    source_sample: str | None,
+) -> tuple[str, str | None]:
+    """Match ``analyze``: optional stranger VCF rename to ``{id}_query``."""
+    from grapeancestry.core.merge_ref import write_query_vcf
+
+    src = root / "results" / f"{sample}.vcf.gz"
+    if as_query:
+        original_id = sample
+        if sample.endswith("_query"):
+            if not src.exists():
+                raise click.UsageError(f"missing {src}")
+            return sample, source_sample or original_id
+        if not src.exists():
+            raise click.UsageError(f"missing {src}")
+        qid = f"{sample}_query"
+        qvcf = root / "results" / f"{qid}.vcf.gz"
+        if qvcf.exists() and not force_query_vcf:
+            click.echo(f"stranger VCF exists → {qvcf}")
+            return qid, source_sample or original_id
+        wrote = write_query_vcf(src, qvcf, new_id=qid)
+        click.echo(f"stranger VCF → {qvcf} sample={wrote}")
+        return qid, source_sample or original_id
+    if not src.exists():
+        raise click.UsageError(f"missing {src}")
+    return sample, source_sample
+
+
+@main.command("analyze-batch")
+@click.option("--sample", "sample_ids", multiple=True, help="Sample id (repeatable)")
+@click.option(
+    "--samples-file",
+    type=click.Path(exists=True),
+    default=None,
+    help="YAML samples: map. type: is the library type and overrides --library-type.",
+)
+@click.option("--name", required=True, help="Output stem: results/{name}.batch.report.html")
+@click.option("--as-query/--in-panel", default=False)
+@click.option("--force-query-vcf", is_flag=True, default=False)
+@click.option(
+    "--admix-mode",
+    type=click.Choice(["auto", "lookup", "nnls", "official"]),
+    default="auto",
+    show_default=True,
+)
+@click.option("--admix-all-k/--admix-k8-only", default=True, show_default=True)
+@click.option(
+    "--pca-color",
+    type=click.Choice(["Grp", "CON", "GEO", "Uti"]),
+    default="Grp",
+    show_default=True,
+)
+@click.option(
+    "--library-type",
+    type=click.Choice(["adna", "pe", "se", "bam", "vcf"]),
+    default=None,
+)
+def analyze_batch(
+    sample_ids: tuple[str, ...],
+    samples_file: str | None,
+    name: str,
+    as_query: bool,
+    force_query_vcf: bool,
+    admix_mode: str,
+    admix_all_k: bool,
+    pca_color: str,
+    library_type: str | None,
+) -> None:
+    """One interactive HTML for N queries. Does not write per-sample HTML."""
+    from grapeancestry.adna.panel167k_nogwas import panel167k_assets_complete
+    from grapeancestry.release_io import publish_v2_report
+    from grapeancestry.report.batch_payload import (
+        build_batch_payload,
+        resolve_batch_library_type,
+        stamp_library_type,
+        write_pairwise_tsv,
+    )
+    from grapeancestry.report.interactive_dashboard import write_dashboard_html
+    from grapeancestry.report.interactive_data import payload_to_json
+
+    root = ROOT
+    (root / "results").mkdir(parents=True, exist_ok=True)
+    ids: list[str] = []
+    file_types: dict[str, str] = {}
+    if samples_file:
+        samp = Path(samples_file)
+        if not samp.is_absolute():
+            samp = root / samp
+        file_ids, file_types = _samples_from_yaml(samp)
+        ids.extend(file_ids)
+    for sample in sample_ids:
+        if sample not in ids:
+            ids.append(sample)
+    if not ids:
+        raise click.UsageError("pass --sample and/or --samples-file")
+    if as_query and admix_mode == "auto" and not panel167k_assets_complete(
+        root / "data" / "panel" / "admixture"
+    ):
+        admix_mode = "official"
+        click.echo(
+            "[note] panel167k_nogwas P not ingested; stranger sample uses "
+            "chip-P projection (official -P, NNLS fallback), not Science lookup"
+        )
+    bundles = []
+    report_ids: list[str] = []
+    for sample in ids:
+        report_sample, source_sample = _report_sample_for_analyze(
+            root,
+            sample,
+            as_query=as_query,
+            force_query_vcf=force_query_vcf,
+            source_sample=None,
+        )
+        bundle = _post_analyze(
+            report_sample,
+            root,
+            pca_color=pca_color,
+            source_sample=source_sample,
+            admix_mode=admix_mode,
+            admix_all_k=admix_all_k,
+            render_html=False,
+        )
+        stamp_library_type(
+            bundle,
+            resolve_batch_library_type(
+                sample,
+                report_sample,
+                cli_type=library_type,
+                file_types=file_types,
+            ),
+        )
+        bundles.append(bundle)
+        report_ids.append(report_sample)
+    payload = build_batch_payload(root, report_ids, bundles=bundles)
+    pair_path = write_pairwise_tsv(root / "results" / f"{name}.pairwise.tsv", payload["pairs"])
+    html_path = root / "results" / f"{name}.batch.report.html"
+    write_dashboard_html(name, payload_to_json(payload), html_path, root)
+    published = publish_v2_report(root, html_path)
+    click.echo(f"pairwise → {pair_path}")
+    click.echo(f"batch report → {html_path}")
+    if published.resolve() != html_path.resolve():
+        click.echo(f"batch report copy → {published}")
 
 
 @main.command("admix-project")

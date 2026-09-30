@@ -1249,7 +1249,7 @@ def project_sample_q_admixture(
 ) -> dict[str, float] | None:
     """Official projection: write BED, align P to BIM, ``admixture -P``.
 
-    Manual §2.14 (v1.3). Requires plink + admixture on PATH.
+    Manual §2.14 (v1.3). Requires plink + admixture on PATH / suite ``bin/``.
     ``plink --make-bed`` genomic-sorts SNPs; P.in is rewritten to that order.
     """
     import shutil

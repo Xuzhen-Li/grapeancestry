@@ -33,7 +33,7 @@ grapeancestry analyze --sample HUN89 --as-query --source-sample HUN89
 | Optional `*.report.data.json` | Downloads sidecar |
 | Provenance table | IDs, paths, sizes |
 
-Public demo path: `demo/results/Ages.sample-first-v2.report.html`
+Public demo path: `demo/results/ramos2019_np.batch.report.html`
 
 ## Plots
 

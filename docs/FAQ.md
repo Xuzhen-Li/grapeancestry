@@ -1,4 +1,4 @@
-# FAQ — GrapeAncestry v1.0.0
+# FAQ — GrapeAncestry v1.1.0
 
 Commands and claims limited to this repo + Dong et al. 2023 *Science* (VS-1) + Noraz et al. 2026 *Nat Commun* (Ages/V5).
 

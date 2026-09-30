@@ -225,6 +225,7 @@ def pipeline_command(
     as_query: bool = True,
     threads: int = 4,
     options: PipelineOptions | None = None,
+    no_html: bool = False,
 ) -> list[str]:
     opt = options or PipelineOptions(paired=paired, as_query=as_query, threads=threads)
     flags = _analyze_flags(opt, with_source=(kind == "vcf"))
@@ -264,6 +265,8 @@ def pipeline_command(
     cmd.extend(flags)
     if opt.snakemake_force:
         cmd.append("--forceall")
+    if no_html:
+        cmd.append("--no-html")
     return cmd
 
 
@@ -278,6 +281,7 @@ def iter_pipeline(
     threads: int = 4,
     extra_env: dict[str, str] | None = None,
     options: PipelineOptions | None = None,
+    no_html: bool = False,
 ) -> Iterator[tuple[str | None, int | None]]:
     """Yield (log_line, None) then (None, returncode)."""
     cmd = pipeline_command(
@@ -289,6 +293,7 @@ def iter_pipeline(
         as_query=as_query,
         threads=threads,
         options=options,
+        no_html=no_html,
     )
     env = os.environ.copy()
     if extra_env:
@@ -343,3 +348,167 @@ def run_pipeline(
         stdout="".join(chunks),
         stderr="",
     )
+
+
+BATCH_KINDS = ("fastq-pe", "fastq-se", "adna", "bam", "vcf")
+_SAMPLE_ID_EXTS = (
+    ".vcf.gz",
+    ".fastq.gz",
+    ".fq.gz",
+    ".vcf",
+    ".bam",
+    ".fastq",
+    ".fq",
+)
+
+
+def pipeline_kind(kind: str) -> str:
+    mapped = {
+        "fastq-pe": "pe",
+        "fastq-se": "se",
+        "pe": "pe",
+        "se": "se",
+        "adna": "adna",
+        "bam": "bam",
+        "vcf": "vcf",
+    }
+    if kind not in mapped:
+        raise ValueError(f"kind must be one of {BATCH_KINDS}")
+    return mapped[kind]
+
+
+def library_type_for(kind: str) -> str:
+    pipe = pipeline_kind(kind)
+    return {"pe": "pe", "se": "se", "adna": "adna", "bam": "bam", "vcf": "vcf"}[pipe]
+
+
+def default_sample_id(filename: str) -> str:
+    name = Path(filename).name
+    lower = name.lower()
+    for ext in _SAMPLE_ID_EXTS:
+        if lower.endswith(ext):
+            name = name[: -len(ext)]
+            lower = name.lower()
+            break
+    for suffix in (".final", ".markdup"):
+        if lower.endswith(suffix):
+            name = name[: -len(suffix)]
+            lower = name.lower()
+    if lower.endswith("_1") or lower.endswith("_2"):
+        name = name[:-2]
+    return name
+
+
+def write_batch_samples_yaml(dest: Path, rows: list[dict]) -> Path:
+    samples: dict[str, dict] = {}
+    for row in rows:
+        kind = str(row["kind"])
+        rec: dict = {"type": str(row.get("library_type") or library_type_for(kind))}
+        rec.update(dict(row.get("files") or {}))
+        if pipeline_kind(kind) == "bam":
+            rec["paired"] = bool(row.get("paired"))
+        samples[str(row["sample"])] = rec
+    dest.write_text(yaml.safe_dump({"samples": samples}, sort_keys=False))
+    return dest
+
+
+def batch_report_ids(rows: list[dict], *, as_query: bool = True) -> list[str]:
+    return [report_id_for(str(row["sample"]), pipeline_kind(str(row["kind"])), as_query) for row in rows]
+
+
+def batch_pipeline_commands(
+    root: Path,
+    rows: list[dict],
+    name: str,
+    *,
+    options: PipelineOptions | None = None,
+) -> list[list[str]]:
+    opt = options or PipelineOptions(as_query=True)
+    commands: list[list[str]] = []
+    for row in rows:
+        commands.append(
+            pipeline_command(
+                root,
+                str(row["sample"]),
+                pipeline_kind(str(row["kind"])),
+                dict(row.get("files") or {}),
+                paired=bool(row.get("paired")),
+                options=opt,
+                no_html=True,
+            )
+        )
+    yaml_path = Path(tempfile.mkstemp(suffix=".yaml", prefix="ga-batch-")[1])
+    write_batch_samples_yaml(yaml_path, rows)
+    final = [
+        sys.executable,
+        "-m",
+        "grapeancestry.cli",
+        "analyze-batch",
+        "--name",
+        name,
+        "--samples-file",
+        str(yaml_path),
+        "--as-query" if opt.as_query else "--in-panel",
+        "--pca-color",
+        opt.pca_color,
+        "--admix-mode",
+        opt.admix_mode,
+        "--admix-all-k" if opt.admix_all_k else "--admix-k8-only",
+    ]
+    if opt.force_query_vcf:
+        final.append("--force-query-vcf")
+    for row in rows:
+        final.extend(["--sample", str(row["sample"])])
+    commands.append(final)
+    return commands
+
+
+def iter_batch_pipeline(
+    root: Path,
+    rows: list[dict],
+    name: str,
+    *,
+    options: PipelineOptions | None = None,
+    extra_env: dict[str, str] | None = None,
+) -> Iterator[tuple[str | None, int | None]]:
+    """Yield log lines, then (None, returncode). Status lines start with ``[batch]``."""
+    commands = batch_pipeline_commands(root, rows, name, options=options)
+    per_sample = commands[:-1]
+    n = len(rows)
+    for index, (row, cmd) in enumerate(zip(rows, per_sample), 1):
+        yield f"[batch] {index}/{n} {row['sample']}\n", None
+        code = 0
+        for line, rc in iter_pipeline(
+            root,
+            str(row["sample"]),
+            pipeline_kind(str(row["kind"])),
+            dict(row.get("files") or {}),
+            paired=bool(row.get("paired")),
+            options=options,
+            extra_env=extra_env,
+            no_html=True,
+        ):
+            if line is not None:
+                yield line, None
+            if rc is not None:
+                code = rc
+        if code != 0:
+            yield None, code
+            return
+    yield f"[batch] {n}/{n} {name}\n", None
+    env = os.environ.copy()
+    if extra_env:
+        env.update(extra_env)
+    proc = subprocess.Popen(
+        commands[-1],
+        cwd=root,
+        env=env,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        bufsize=1,
+    )
+    assert proc.stdout is not None
+    for line in proc.stdout:
+        yield line, None
+    yield None, int(proc.wait())
