@@ -92,19 +92,11 @@ def _load_info(info_path: Path) -> dict[str, dict[str, str]]:
     return meta
 
 
-_ITALY_3057 = Path(
-    "/Users/lixuzhen/Desktop/script/00_italy_2center"
-    "/Final_ana_3057_adna/final_3057_sample.info"
-)
-
-
 def _load_dong_passport(root: Path) -> dict[str, dict[str, str]]:
-    """2449-keyed names from Italy final_3057_sample.info (not 663 Library ID)."""
+    """2449-keyed names from data/panel/dong_passport.tsv."""
     local = root / "data" / "panel" / "dong_passport.tsv"
     if local.exists():
         return _load_info(local)
-    if _ITALY_3057.exists():
-        return _load_info(_ITALY_3057)
     return {}
 
 
