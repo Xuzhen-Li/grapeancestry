@@ -47,7 +47,7 @@ v1.1 新功能。蓝色节点为输入样本，红色节点为面板品种。连
 
 | 路径 | 操作 | 结果 |
 |------|-------------|---------|
-| Docker 套件 | 从 Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)) 下载 `grapeancestry-v1.1.0-amd64.tar`，放在 `./start.sh` 同级目录，并运行 | 产出 `*.sample-first-v2.report.html`，UI http://127.0.0.1:8501，报告端口 8502 |
+| Docker 套件 | 从 Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)) 下载 `grapeancestry-v1.1.0-amd64.tar`，放在 `./start.sh` 同级目录，并运行 | 产出 `*.sample-first-v2.report.html`，UI <http://127.0.0.1:8501>，报告端口 8502 |
 | 演示 | [打开 28 颗种子报告](https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.batch.report.html)。 | 仅供浏览。Ramos-Madrigal et al. 2019, *Nat. Plants* ([doi:10.1038/s41477-019-0437-5](https://doi.org/10.1038/s41477-019-0437-5)) |
 | 手动构建 | 准备你自己的 VS-1 和固定的 2449×167K 资源（不在 git 中）。CLI: `pip install -e .`（见 docs/USER_GUIDE.md §5） | 遵循 [`steps/`](steps/) `00a`–`13b` |
 
@@ -56,7 +56,7 @@ v1.1 新功能。蓝色节点为输入样本，红色节点为面板品种。连
 1. 安装 [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) 或 [Docker Desktop for Mac](https://docs.docker.com/desktop/setup/install/mac-install/)。在 Apple Silicon Mac 上，需在 Docker Desktop 设置中开启 x86_64/amd64 模拟。
 2. 下载本仓库（绿色 Code 按钮，然后 Download ZIP）并下载镜像包 `grapeancestry-v1.1.0-amd64.tar`（约 1.7 GB）。将镜像包放入解压后的文件夹中。
 3. Mac: 双击 `start.command`。Windows: 双击 `start.bat`。Linux / 终端: `./start.sh`
-4. 浏览器将打开 http://127.0.0.1:8501。首次访问需设置本地密码，随后选择文件，开始分析，并打开报告（端口 8502）。报告副本保存在 `output/results/` 中。
+4. 浏览器将打开 <http://127.0.0.1:8501>。首次访问需设置本地密码，随后选择文件，开始分析，并打开报告（端口 8502）。报告副本保存在 `output/results/` 中。
 
 Docker 简易命令：`./start.sh`（macOS 用 `start.command`，Windows 用 `start.bat`）会创建 `input/`、`output/` 和 `settings/` 文件夹。如果缺失则加载 `grapeancestry:1.1.0` 并启动 UI。仅包含文档但没有 tar 包的仓库无法完成分析步骤。请勿对该大型镜像执行 `docker push`。详情见 [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md)。
 
