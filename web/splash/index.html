@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GrapeAncestry</title>
+<style>
+:root{
+  --ink:#2a1418;
+  --paper:#f4efe6;
+  --wine:#8f1d3a;
+  --wine-deep:#12090d;
+  --gold:#c4a574;
+  --mist:#f4efe6d9;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--wine-deep);color:var(--paper);overflow:hidden;
+  font-family:"Iowan Old Style","Palatino Linotype",Palatino,"Songti SC","STSong",Georgia,serif}
+body.embed{background:transparent}
+
+.falls{position:fixed;inset:-6vh -1.4vw;display:flex;gap:.85vw;padding:0 .8vw;
+  transform:rotate(-0.8deg) scale(1.06);opacity:.92;filter:saturate(1.35) contrast(1.08);
+  pointer-events:none;z-index:0}
+.col{flex:1;display:flex;flex-direction:column;gap:.85vw;will-change:transform}
+.col img{width:100%;border-radius:8px;border:1px solid #ffffff22;
+  box-shadow:0 12px 28px #00000066;background:#1b1114;display:block}
+.col-a{animation:rise 84s linear infinite}
+.col-b{animation:fall 102s linear infinite;margin-top:-14vh}
+.col-c{animation:rise 70s linear infinite;animation-delay:-22s}
+.col-d{animation:fall 90s linear infinite;animation-delay:-12s;margin-top:-8vh}
+
+@keyframes rise{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+@keyframes fall{from{transform:translateY(-50%)}to{transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){
+  .col-a,.col-b,.col-c,.col-d{animation:none}
+}
+
+.veil{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    linear-gradient(180deg,#12090de8 0%,#12090d40 14%,#12090d14 42%,#12090d40 86%,#12090de8 100%),
+    radial-gradient(ellipse 46% 38% at 50% 46%,#12090d99 0%,#12090d00 72%)}
+
+.wordmark{display:flex;align-items:center;gap:14px;letter-spacing:.06em}
+.wordmark svg{flex:0 0 auto}
+.wordmark .name{font-size:clamp(18px,2.1vw,28px);font-weight:600}
+.wordmark .ver{font-size:10px;letter-spacing:.28em;color:var(--gold);margin-top:4px}
+
+.topbar,.bottombar{position:fixed;left:0;right:0;z-index:3;display:flex;
+  justify-content:center;padding:28px 24px}
+.topbar{top:0}
+.bottombar{bottom:0;flex-direction:column;align-items:center;gap:10px;padding-bottom:26px}
+
+.center{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;padding:120px 20px}
+.plate{width:min(640px,92vw);text-align:center;padding:36px 32px 32px;
+  background:#1a0e12cc;border:1px solid #c4a57455;border-radius:4px;
+  box-shadow:0 30px 80px #00000080;backdrop-filter:blur(14px)}
+body.embed .center{display:none}
+.plate h1{font-size:clamp(34px,6vw,58px);letter-spacing:.04em;font-weight:600}
+.plate .rule{width:72px;height:1px;background:var(--gold);margin:16px auto}
+.plate .tag{font-size:15px;line-height:1.55;color:#f4efe6d4}
+.plate .tag-zh{margin-top:4px;font-size:14px;color:#c4a574}
+.enter{display:inline-block;margin-top:22px;padding:10px 22px;border:1px solid var(--gold);
+  color:var(--paper);text-decoration:none;letter-spacing:.16em;font-size:12px;text-transform:uppercase}
+.enter:hover{background:#c4a57422}
+
+.credits{max-width:820px;text-align:center;font-size:11px;line-height:1.55;color:#f4efe6b8}
+.credits strong{color:var(--paper);font-weight:600}
+.credits a{color:var(--gold);text-decoration:none}
+.credits .affil{margin-top:4px}
+.credits .cite{margin-top:6px;font-style:italic;color:#c4a574c8}
+</style>
+</head>
+<body>
+<div class="falls" aria-hidden="true">
+  <div class="col col-a" id="col-a"></div>
+  <div class="col col-b" id="col-b"></div>
+  <div class="col col-c" id="col-c"></div>
+  <div class="col col-d" id="col-d"></div>
+</div>
+<div class="veil"></div>
+
+<header class="topbar">
+  <div class="wordmark">
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      <circle cx="13" cy="20" r="6.2" fill="#8f1d3a"/>
+      <circle cx="23" cy="20" r="6.2" fill="#6d1730"/>
+      <circle cx="18" cy="12.2" r="6" fill="#b4234b"/>
+      <path d="M18 6.2 C16.2 3.4 12.8 2.6 10.8 4.6 C12.8 5 15.2 6.6 16.4 9.2" stroke="#c4a574" stroke-width="1.2" fill="none"/>
+    </svg>
+    <div>
+      <div class="name">GrapeAncestry</div>
+      <div class="ver">v1.2.0</div>
+    </div>
+  </div>
+</header>
+
+<main class="center">
+  <div class="plate">
+    <h1>GrapeAncestry</h1>
+    <div class="rule"></div>
+    <p class="tag">167,433-site capture and 8,044-site GrapeReseq ancestry reports</p>
+    <p class="tag-zh">167,433 位点捕获芯片与 8,044 位点 GrapeReseq 祖源报告</p>
+    <a class="enter" href="http://127.0.0.1:8501/">Enter workspace</a>
+  </div>
+</main>
+
+<footer class="bottombar">
+  <div class="wordmark">
+    <svg width="28" height="28" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      <circle cx="13" cy="20" r="6.2" fill="#8f1d3a"/>
+      <circle cx="23" cy="20" r="6.2" fill="#6d1730"/>
+      <circle cx="18" cy="12.2" r="6" fill="#b4234b"/>
+      <path d="M18 6.2 C16.2 3.4 12.8 2.6 10.8 4.6 C12.8 5 15.2 6.6 16.4 9.2" stroke="#c4a574" stroke-width="1.2" fill="none"/>
+    </svg>
+    <div>
+      <div class="name">GrapeAncestry</div>
+      <div class="ver">© 2026 GrapeAncestry Suite contributors</div>
+    </div>
+  </div>
+  <div class="credits">
+    <strong>Xuzhen Li · 李旭真</strong>
+    <div class="affil">State Key Laboratory for Conservation and Utilization of Bio-Resources in Yunnan, Yunnan Agricultural University, Kunming 650201, China</div>
+    <div class="affil">Yunnan Research Institute for Local Plateau Agriculture and Industry, Kunming 650201, China</div>
+    <div class="cite">Affiliation as published in Dong et al. <em>Science</em> (2023). Panel: <a href="https://doi.org/10.1126/science.add8655">doi:10.1126/science.add8655</a></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var q=new URLSearchParams(location.search);
+  if(q.get('embed')==='1') document.body.classList.add('embed');
+  var cols=[
+    ['color-ages-bar-k2.jpg','color-ages-pca3d.jpg','color-ages-manh.jpg','color-ages-q8.jpg','color-ages-tree.jpg','color-ages-bar-k5.jpg'],
+    ['color-ages-bar-k4.jpg','color-ages-pca3d-dark.jpg','color-ages-heat.jpg','color-ages-q8-dark.jpg','color-ages-lz.jpg','color-ages-bar-k7.jpg'],
+    ['color-ages-bar-k6.jpg','color-ages-pca13.jpg','color-ages-f4.jpg','color-ages-bar-k8-compact.jpg','color-ages-sel-lz.jpg','color-ages-f3out.jpg'],
+    ['color-ages-bar-k8.jpg','color-ages-pca23.jpg','color-ages-scatter.jpg','color-ages-bar-k8-dark.jpg','color-ages-manh-dark.jpg','color-ages-tree-dark.jpg']
+  ];
+  ['col-a','col-b','col-c','col-d'].forEach(function(id,i){
+    var box=document.getElementById(id);
+    var files=cols[i].concat(cols[i]);
+    files.forEach(function(f){
+      var img=document.createElement('img');
+      img.src='shots/'+f;
+      img.alt='';
+      img.loading='lazy';
+      box.appendChild(img);
+    });
+  });
+})();
+</script>
+</body>
+</html>

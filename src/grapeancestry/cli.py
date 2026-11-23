@@ -170,6 +170,173 @@ def _post_analyze(
     return bundle
 
 
+def _report_names(target: str, *, is_batch: bool) -> dict[str, tuple[str, str | None]]:
+    from grapeancestry.web_run import report_filenames
+
+    return report_filenames(target, is_batch=is_batch)
+
+
+def _nav_by_kind(target: str, *, is_batch: bool) -> dict[str, str]:
+    from grapeancestry.report.compare import build_top_nav_html
+
+    names = _report_names(target, is_batch=is_batch)
+    labels = {
+        "167k": ("GrapeAncestry (167K)", "GrapeAncestry（167K）"),
+        "8k": ("GrapeReseq (8K)", "GrapeReseq（8K）"),
+        "compare": ("167K vs 8K", "167K 与 8K 对照"),
+    }
+    links = [
+        {"kind": kind, "href": names[kind][0], "label_en": labels[kind][0], "label_zh": labels[kind][1]}
+        for kind in ("167k", "8k", "compare")
+    ]
+    return {kind: build_top_nav_html(links, kind) for kind in ("167k", "8k", "compare")}
+
+
+def _stamp_nav(html_path: Path, nav_html: str) -> None:
+    from grapeancestry.report.compare import inject_after_body
+
+    inject_after_body(html_path, nav_html, "ga-report-nav")
+
+
+def _damage_for(root: Path, sample: str, source_sample: str | None) -> Path | None:
+    paths = analysis_paths(root, sample, source_sample=source_sample)
+    if paths.source_damage_tsv.is_file():
+        return paths.source_damage_tsv
+    own = root / "results" / f"{sample}.damage.tsv"
+    if own.is_file():
+        return own
+    return None
+
+
+def _dispatch_panel_mode(
+    sample: str,
+    root: Path,
+    *,
+    panel_mode: str,
+    render_html: bool,
+    pca_color: str,
+    source_sample: str | None,
+    admix_mode: str,
+    admix_all_k: bool,
+) -> None:
+    """167K keeps the existing report. 8K and both add the new pages."""
+    if panel_mode == "167k":
+        _post_analyze(
+            sample,
+            root,
+            pca_color=pca_color,
+            source_sample=source_sample,
+            admix_mode=admix_mode,
+            admix_all_k=admix_all_k,
+            render_html=render_html,
+        )
+        return
+    from grapeancestry.adna.panel8k import run_8k_single
+    from grapeancestry.release_io import publish_v2_report
+    from grapeancestry.report.compare import build_comparison_report
+
+    names = _report_names(sample, is_batch=False)
+    nav = _nav_by_kind(sample, is_batch=False) if panel_mode == "both" and render_html else {}
+    if panel_mode == "both":
+        _post_analyze(
+            sample,
+            root,
+            pca_color=pca_color,
+            source_sample=source_sample,
+            admix_mode=admix_mode,
+            admix_all_k=admix_all_k,
+            render_html=render_html,
+        )
+        if render_html and nav:
+            html_167 = root / "results" / names["167k"][0]
+            _stamp_nav(html_167, nav["167k"])
+            if html_167.is_file():
+                publish_v2_report(root, html_167)
+    vcf = root / "results" / f"{sample}.vcf.gz"
+    if not vcf.is_file():
+        click.echo(f"[warn] skip 8K {sample}: no VCF")
+        return
+    paths = analysis_paths(root, sample, source_sample=source_sample)
+    payload_8k = run_8k_single(
+        root,
+        sample,
+        vcf,
+        bam=paths.bam if paths.bam.is_file() else None,
+        damage_tsv=_damage_for(root, sample, source_sample),
+        pca_color=pca_color,
+        admix_mode=admix_mode,
+        nav_html=nav.get("8k", ""),
+        render_html=render_html,
+        source_sample=source_sample,
+        admix_all_k=admix_all_k,
+    )
+    if not render_html:
+        click.echo(f"analyzed {sample} (8K)")
+        return
+    html_8k = root / "results" / names["8k"][0]
+    click.echo(f"8K report → {html_8k}")
+    if panel_mode != "both":
+        return
+    side_name = names["167k"][1]
+    side = root / "results" / side_name if side_name else None
+    if side is None or not side.is_file() or not isinstance(payload_8k, dict):
+        click.echo("[warn] skip comparison: missing report payload")
+        return
+    import json
+
+    out = root / "results" / names["compare"][0]
+    build_comparison_report(
+        json.loads(side.read_text(encoding="utf-8")),
+        payload_8k,
+        out,
+        root=root,
+        title_target=sample,
+        nav_html=nav.get("compare", ""),
+    )
+    publish_v2_report(root, out)
+    click.echo(f"comparison → {out}")
+
+
+def _run_8k_batch_cli(
+    root: Path,
+    name: str,
+    plans: list[dict],
+    *,
+    pca_color: str,
+    admix_mode: str,
+    admix_all_k: bool,
+    nav_html: str = "",
+) -> dict:
+    from grapeancestry.adna.panel8k import run_8k_batch
+
+    specs = []
+    for plan in plans:
+        sample = plan["sample"]
+        vcf = root / "results" / f"{sample}.vcf.gz"
+        if not vcf.is_file():
+            click.echo(f"[warn] skip 8K {sample}: no VCF")
+            continue
+        paths = analysis_paths(root, sample, source_sample=plan.get("source_sample"))
+        specs.append(
+            {
+                "sample": sample,
+                "vcf": vcf,
+                "bam": paths.bam if paths.bam.is_file() else None,
+                "damage_tsv": _damage_for(root, sample, plan.get("source_sample")),
+                "source_sample": plan.get("source_sample"),
+                "pca_color": pca_color,
+                "admix_mode": admix_mode,
+                "admix_all_k": admix_all_k,
+                "library_type": plan.get("library_type") or "",
+            }
+        )
+    if not specs:
+        raise click.UsageError("no VCF available for the 8K batch report")
+    payload = run_8k_batch(root, name, specs, nav_html=nav_html)
+    click.echo(f"8K batch report → {root / 'results' / f'{name}.8k.batch.report.html'}")
+    return payload
+
+
 def _samples_from_yaml(samples_file: Path) -> tuple[list[str], dict[str, str]]:
     import yaml
 
@@ -234,6 +401,13 @@ def _sample_ids_from_yaml(samples_file: Path) -> list[str]:
     help="Pass snakemake -F (rerun every rule even if outputs exist)",
 )
 @click.option("--no-html", is_flag=True, default=False, help="Skip the per-sample HTML report")
+@click.option(
+    "--panel-mode",
+    type=click.Choice(["167k", "8k", "both"]),
+    default="167k",
+    show_default=True,
+    help="167K capture report, 8,044-site GrapeReseq report, or both plus a comparison.",
+)
 def run(
     config_path: str,
     samples_file: str,
@@ -248,6 +422,7 @@ def run(
     admix_all_k: bool,
     forceall: bool,
     no_html: bool,
+    panel_mode: str,
 ) -> None:
     """End-to-end: fastq → panel VCF (+ default analyses)."""
     import subprocess
@@ -322,14 +497,15 @@ def run(
                         )
                     wrote = write_query_vcf(source_vcf, query_vcf, new_id=report_sample)
                     click.echo(f"stranger VCF → {query_vcf} sample={wrote}")
-            _post_analyze(
+            _dispatch_panel_mode(
                 report_sample,
                 root,
+                panel_mode=panel_mode,
+                render_html=not no_html,
                 pca_color=pca_color,
                 source_sample=source_sample,
                 admix_mode=admix_mode,
                 admix_all_k=admix_all_k,
-                render_html=not no_html,
             )
 
 
@@ -802,6 +978,13 @@ def cross_recommend(
     show_default=True,
 )
 @click.option("--no-html", is_flag=True, default=False, help="Skip the per-sample HTML report")
+@click.option(
+    "--panel-mode",
+    type=click.Choice(["167k", "8k", "both"]),
+    default="167k",
+    show_default=True,
+    help="167K capture report, 8,044-site GrapeReseq report, or both plus a comparison.",
+)
 def analyze(
     sample: str,
     vcf_path: str | None,
@@ -812,6 +995,7 @@ def analyze(
     admix_all_k: bool,
     pca_color: str,
     no_html: bool,
+    panel_mode: str,
 ) -> None:
     """QC + IBS + PCA + V2 HTML from results/{sample}.vcf.gz or --vcf."""
     from grapeancestry.adna.panel167k_nogwas import panel167k_assets_complete
@@ -853,14 +1037,15 @@ def analyze(
             )
     elif not src.exists():
         raise click.UsageError(f"missing {src}")
-    _post_analyze(
+    _dispatch_panel_mode(
         sample,
         root,
+        panel_mode=panel_mode,
+        render_html=not no_html,
         pca_color=pca_color,
         source_sample=source_sample,
         admix_mode=admix_mode,
         admix_all_k=admix_all_k,
-        render_html=not no_html,
     )
 
 
@@ -926,6 +1111,13 @@ def _report_sample_for_analyze(
     type=click.Choice(["adna", "pe", "se", "bam", "vcf"]),
     default=None,
 )
+@click.option(
+    "--panel-mode",
+    type=click.Choice(["167k", "8k", "both"]),
+    default="167k",
+    show_default=True,
+    help="167K capture report, 8,044-site GrapeReseq report, or both plus a comparison.",
+)
 def analyze_batch(
     sample_ids: tuple[str, ...],
     samples_file: str | None,
@@ -936,6 +1128,7 @@ def analyze_batch(
     admix_all_k: bool,
     pca_color: str,
     library_type: str | None,
+    panel_mode: str,
 ) -> None:
     """One interactive HTML for N queries. Does not write per-sample HTML."""
     from grapeancestry.adna.panel167k_nogwas import panel167k_assets_complete
@@ -972,8 +1165,7 @@ def analyze_batch(
             "[note] panel167k_nogwas P not ingested; stranger sample uses "
             "chip-P projection (official -P, NNLS fallback), not Science lookup"
         )
-    bundles = []
-    report_ids: list[str] = []
+    plans = []
     for sample in ids:
         report_sample, source_sample = _report_sample_for_analyze(
             root,
@@ -982,26 +1174,37 @@ def analyze_batch(
             force_query_vcf=force_query_vcf,
             source_sample=None,
         )
+        plans.append(
+            {
+                "source": sample,
+                "sample": report_sample,
+                "source_sample": source_sample,
+                "library_type": resolve_batch_library_type(
+                    sample,
+                    report_sample,
+                    cli_type=library_type,
+                    file_types=file_types,
+                ),
+            }
+        )
+    if panel_mode == "8k":
+        _run_8k_batch_cli(root, name, plans, pca_color=pca_color, admix_mode=admix_mode, admix_all_k=admix_all_k)
+        return
+    bundles = []
+    report_ids: list[str] = []
+    for plan in plans:
         bundle = _post_analyze(
-            report_sample,
+            plan["sample"],
             root,
             pca_color=pca_color,
-            source_sample=source_sample,
+            source_sample=plan["source_sample"],
             admix_mode=admix_mode,
             admix_all_k=admix_all_k,
             render_html=False,
         )
-        stamp_library_type(
-            bundle,
-            resolve_batch_library_type(
-                sample,
-                report_sample,
-                cli_type=library_type,
-                file_types=file_types,
-            ),
-        )
+        stamp_library_type(bundle, plan["library_type"])
         bundles.append(bundle)
-        report_ids.append(report_sample)
+        report_ids.append(plan["sample"])
     payload = build_batch_payload(root, report_ids, bundles=bundles)
     pair_path = write_pairwise_tsv(root / "results" / f"{name}.pairwise.tsv", payload["pairs"])
     html_path = root / "results" / f"{name}.batch.report.html"
@@ -1011,6 +1214,38 @@ def analyze_batch(
     click.echo(f"batch report → {html_path}")
     if published.resolve() != html_path.resolve():
         click.echo(f"batch report copy → {published}")
+    if panel_mode == "both":
+        nav = _nav_by_kind(name, is_batch=True)
+        _stamp_nav(html_path, nav["167k"])
+        publish_v2_report(root, html_path)
+        payload_8k = _run_8k_batch_cli(
+            root,
+            name,
+            plans,
+            pca_color=pca_color,
+            admix_mode=admix_mode,
+            admix_all_k=admix_all_k,
+            nav_html=nav["8k"],
+        )
+        side = html_path.with_name(html_path.name.replace(".html", ".data.json"))
+        if side.is_file() and isinstance(payload_8k, dict):
+            import json
+
+            from grapeancestry.report.compare import build_comparison_report
+
+            out = root / "results" / f"{name}.167k_vs_8k.compare.html"
+            build_comparison_report(
+                json.loads(side.read_text(encoding="utf-8")),
+                payload_8k,
+                out,
+                root=root,
+                title_target=name,
+                nav_html=nav["compare"],
+            )
+            publish_v2_report(root, out)
+            click.echo(f"comparison → {out}")
+        else:
+            click.echo("[warn] skip comparison: missing report payload")
 
 
 @main.command("admix-project")

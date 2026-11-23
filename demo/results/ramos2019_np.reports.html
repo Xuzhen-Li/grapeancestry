@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GrapeAncestry reports</title>
+<script>
+(function() {
+  var mode = 'system';
+  try { mode = localStorage.getItem('ga-theme') || 'system'; } catch (err) {}
+  if (mode !== 'light' && mode !== 'dark') mode = 'system';
+  var resolved = mode === 'system'
+    ? ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light')
+    : mode;
+  document.documentElement.setAttribute('data-theme', resolved);
+  var lang = '';
+  try { lang = localStorage.getItem('ga-lang') || ''; } catch (err) {}
+  if (!lang) {
+    lang = String(navigator.language || '').toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en';
+  } else {
+    lang = String(lang).toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en';
+  }
+  document.documentElement.setAttribute('data-lang', lang);
+  document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-CN' : 'en');
+  window.setTheme = function(next) {
+    next = (next === 'light' || next === 'dark') ? next : 'system';
+    var use = next === 'system'
+      ? ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light')
+      : next;
+    document.documentElement.setAttribute('data-theme', use);
+    try { localStorage.setItem('ga-theme', next); } catch (err) {}
+  };
+  window.setLang = function(next) {
+    next = String(next || 'en').toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en';
+    document.documentElement.setAttribute('data-lang', next);
+    document.documentElement.setAttribute('lang', next === 'zh' ? 'zh-CN' : 'en');
+    try { localStorage.setItem('ga-lang', next); } catch (err) {}
+  };
+})();
+</script>
+<style>
+:root { color-scheme: light; --bg:#f7f9fc; --card:#fff; --ink:#172033; --muted:#526079; --line:#cbd5e1; --accent:#b4234b; }
+:root[data-theme="dark"] { color-scheme: dark; --bg:#0b0f19; --card:#131b2e; --ink:#e2e8f0; --muted:#a8b3c7; --line:#2b3b59; --accent:#f06b84; }
+html:not([data-lang="zh"]) .cn { display:none !important; }
+html[data-lang="zh"] .en { display:none !important; }
+body { margin:0; font:16px/1.55 system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--ink); }
+.ga-report-nav { display:flex; gap:8px; flex-wrap:wrap; padding:12px 20px; background:var(--card); border-bottom:1px solid var(--line); }
+.ga-report-nav a { color:var(--ink); text-decoration:none; border:1px solid var(--line); border-radius:999px; padding:4px 10px; font-size:13px; }
+.ga-report-nav a[aria-current="true"] { background:var(--accent); color:#fff; border-color:var(--accent); }
+.toolbar { display:flex; gap:8px; padding:8px 20px; }
+.toolbar button { border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:6px; padding:4px 8px; }
+main { max-width:980px; margin:0 auto; padding:8px 20px 48px; }
+h1 { font-size:1.6rem; margin:12px 0; }
+.note { color:var(--muted); }
+.verdict { background:var(--card); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:12px; padding:16px 18px; margin:16px 0; }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; }
+.entry-card { display:block; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; color:inherit; text-decoration:none; }
+.entry-card:hover { border-color:var(--accent); }
+.entry-card h2 { font-size:1.05rem; margin:0 0 8px; }
+</style>
+</head><body>
+<nav id="ga-report-nav" class="ga-report-nav"><a href="ramos2019_np.reports.html" data-kind="reports" aria-current="true"><span class="en">Overview</span><span class="cn">总览</span></a><a href="ramos2019_np.batch.report.html" data-kind="167k" aria-current="false"><span class="en">GrapeAncestry (167K)</span><span class="cn">GrapeAncestry（167K）</span></a><a href="ramos2019_np.8k.batch.report.html" data-kind="8k" aria-current="false"><span class="en">GrapeReseq (8K)</span><span class="cn">GrapeReseq（8K）</span></a><a href="ramos2019_np.167k_vs_8k.compare.html" data-kind="compare" aria-current="false"><span class="en">167K vs 8K</span><span class="cn">167K 与 8K 对照</span></a></nav>
+<div class="toolbar">
+  <button type="button" onclick="setLang('zh')">中文</button>
+  <button type="button" onclick="setLang('en')">English</button>
+  <button type="button" onclick="setTheme('light')">Light</button>
+  <button type="button" onclick="setTheme('dark')">Dark</button>
+</div>
+<main>
+<h1><span class="en">GrapeAncestry reports</span><span class="cn">GrapeAncestry 报告</span></h1>
+<p class="note"><span class="en">The 167K report linked below is the v1.1 archive. That file is unchanged and has no top navigation bar. The 8K report and the comparison page are the v1.2 pages.</span><span class="cn">下面链到的 167K 报告是 v1.1 存档。那一份文件保持原样，页顶没有导航条。8K 报告和比较页是 v1.2 的新页面。</span></p>
+<section class="verdict" id="entry-verdict">
+<h2><span class="en">8K is only enough for a broad population placement</span><span class="cn">8K 只适合看群体大方向</span></h2>
+<p><span class="en">Population placement still lines up: median PCA distance 0.0011, lowest ADMIXTURE correlation 0.988.</span><span class="cn">群体位置大体还能对上：PCA 距离中位数 0.0011，ADMIXTURE 最低相关 0.988。</span></p><p><span class="en">Relatedness does not. Across 654 classified pairs, 315 (48.2%) match in kinship class, while 310 (47.4%) are unrelated on 167K but called as relatives on 8K (query–panel 79.3%, query–query 24.1%). median Top-1 nearest-cultivar overlap is 100% (17/28 samples exact), median Top-5 overlap is 80%.</span><span class="cn">亲缘没有这么稳。654 对已分类配对中，两套面板类别一致 315 对（48.2%），有 310 对（47.4%）在 167K 判为无关却在 8K 升格为近亲。其中样本–参考品种 79.3% 升格、样本–样本 24.1% 升格。Top-1 最近品种重合中位数 100%（17/28 个样本一致），Top-5 重合中位数 80%。</span></p><p><span class="en">Clone or parent-offspring calls found only by 8K: 56. Found by both: 0.</span><span class="cn">克隆或亲子里，仅 8K 命中 56 对，两侧共同命中 0 对。</span></p><p><span class="en">Trait sites: 40 on 167K, 2 on 8K.</span><span class="cn">性状位点 167K 有 40 个，8K 有 2 个。</span></p><p><span class="en">Use 8K to see the broad population of these samples. Use 167K for relatives, clones, and trait genotypes.</span><span class="cn">看这些样本落在哪个大群体可以用 8K。判断近亲、克隆和性状时用 167K。</span></p>
+</section>
+<div class="cards">
+<a class="entry-card" href="ramos2019_np.batch.report.html"><h2><span class="en">GrapeAncestry 167K report</span><span class="cn">GrapeAncestry 167K 报告</span></h2><p><span class="en">Full 167,433-site capture report. This file is the v1.1 archive.</span><span class="cn">完整的 167,433 位点捕获报告。这一份是 v1.1 存档。</span></p></a><a class="entry-card" href="ramos2019_np.8k.batch.report.html"><h2><span class="en">GrapeReseq 8K report</span><span class="cn">GrapeReseq 8K 报告</span></h2><p><span class="en">The same 28 samples on the 8,044 sites shared with the capture panel.</span><span class="cn">同样 28 个样本，用与捕获面板共有的 8,044 个位点。</span></p></a><a class="entry-card" href="ramos2019_np.167k_vs_8k.compare.html"><h2><span class="en">167K vs 8K comparison</span><span class="cn">167K 与 8K 比较</span></h2><p><span class="en">Side-by-side numbers and a verdict written from this run.</span><span class="cn">两边的数字对照，以及根据这次结果写出的结论。</span></p></a>
+</div>
+</main>
+</body></html>

@@ -15,6 +15,7 @@ from grapeancestry.report.interactive_data import build_interactive_payload, pay
 
 APP_JS = r"""
 var D=null, SROWS=[], SIDX={}, TREE_TIPS={}, QUERY='';
+var PANEL_SITES=null;
 var treeShape='circular';
 var currentK='8', selectedIID=null, compactAdmix=false, lzIdx=0, lzPlot=null;
 var selLzIdx=0, selLzPlot=null, selLzMetric='fst', selLzFocusPos=null;
@@ -1161,7 +1162,7 @@ function fillQueryGtCard(id, r, onPick){
     bi('Lead SNP (highest −log10 p on the 2449 map)','窗口主 SNP（2449 上 −log10 p 最高）');
   var ex=lzGtExplain(gt);
   var h='<div class="gt-card">';
-  h+='<div class="gt-head"><strong>'+bi('Query genotype overlay','查询基因型叠加')+'</strong> · <strong>'+bi('This sample','本样品分型')+'</strong> '+esc(name);
+  h+='<div class="gt-head"><strong>'+bi('This sample’s genotypes','本样品的基因型')+'</strong> · <strong>'+bi('This sample','本样品分型')+'</strong> '+esc(name);
   if(r.query_gt_note) h+=' <span class="muted">('+esc(r.query_gt_note)+')</span>';
   h+='<div class="muted" style="margin-top:4px">'+t(
     'LocusZoom is the 2449 map. This panel is only what <em>'+esc(name)+'</em> called at these chip sites.',
@@ -1655,7 +1656,7 @@ function drawLocusZoom(){
             +t('Gene: ','基因：')+'{{assoc:nearest_gene|htmlescape}} {{assoc:region|htmlescape}}<br>'
             +'{{assoc:product|htmlescape}}<br>'
             +'{{assoc:mas|htmlescape}}<br>'
-            +t('Query genotype overlay: ','查询样本基因型叠加：')+'{{assoc:query_gt|htmlescape}} ('+
+            +t('This sample’s genotype: ','本样品基因型：')+'{{assoc:query_gt|htmlescape}} ('+
               t('this sample','本样品')+')<br>'
             +'{{#if assoc:lz_is_ld_refvar}}<strong>'+t(
               'LD reference (panel dosage r²)','LD 参考（面板 dosage r²）')+'</strong>{{/if}}'
@@ -1898,8 +1899,8 @@ function drawSelLocusZoom(){
     meta.innerHTML=locusLabel+' · '+esc(r.slug||'')+' · chr'+esc(String(r.chrom))+':'+esc(String(r.window_start))+'-'+esc(String(r.window_end))+
       ' · '+t('lead','主位点')+' '+esc(String(r.chrom)+':'+String(r.pos))+' · n='+esc(String(r.n_snps||''))+
       '<div class="muted">'+bi(
-        'Active panel computation: Y = '+yEn+'. Panel map statistic; LocusZoom colour = panel r². Query genotype overlay: table / strip below = this sample’s genotypes.',
-        '当前面板计算：纵轴 = '+yZh+'。面板统计量；LocusZoom 颜色 = panel r²。查询样本基因型叠加：下方表格和色带是本样品分型。')+
+        'The Y axis is '+yEn+'. Point colour is panel r². The table and strip below show this sample’s genotypes.',
+        '纵轴是'+yZh+'。点的颜色是面板 r²。下方表格和色带是本样品的基因型。')+
       '</div>';
   }
   var focusJ=r.lead_i;
@@ -1955,7 +1956,7 @@ function drawSelLocusZoom(){
             +t('windowed heterozygosity: ','窗口杂合度：')+'{{assoc:het_window|htmlescape}} · het={{assoc:het|htmlescape}}<br>'
             +t('r² to lead: ','到 lead 的 r²：')+'{{ld:correlation|htmlescape}}<br>'
             +t('Gene: ','基因：')+'{{assoc:nearest_gene|htmlescape}} {{assoc:region|htmlescape}}<br>'
-            +t('Query genotype overlay: ','查询样本基因型叠加：')+'{{assoc:query_gt|htmlescape}} ('+t('this sample','本样品')+')<br>'
+            +t('This sample’s genotype: ','本样品基因型：')+'{{assoc:query_gt|htmlescape}} ('+t('this sample','本样品')+')<br>'
             +'{{#if assoc:lz_is_ld_refvar}}<strong>'+t('LD reference (panel dosage r²)','LD 参考（面板 dosage r²）')+'</strong>{{/if}}'
         };
       }
@@ -2119,12 +2120,12 @@ function fillSelSweepTable(){
   if(focus&&focus.chrom&&isFinite(Number(focus.pos))){
     h+='<strong>'+bi('Pinned on the Manhattan above.','已钉在上方 Manhattan 图上。')+'</strong> ';
     h+=bi('White star = '+esc(String(focus.chrom)+':'+String(focus.pos))+
-      '. Same 167K site as this row. Red dots stay the sweep set. This action keeps the focus on the exact Manhattan site.',
+      '. It marks this row’s 167K site. Red dots remain the sweep set.',
       '白星 = '+esc(String(focus.chrom)+':'+String(focus.pos))+
-      '。就是这一行的 167K 位点。红点仍是 sweep 集合。该操作保持对精确 Manhattan 位点的聚焦。');
+      '。它标出这一行的 167K 位点。红点仍是 sweep 位点。');
   }else{
-    h+=bi('Click <em>Show on plot</em> to pin a white star on the Manhattan above and scroll to it. The coordinate is the site; the button is the action.',
-      '点「在图上标出」会在上方 Manhattan 钉一颗白星并滚到该图。坐标是位点，按钮是动作。');
+    h+=bi('Click <em>Show on plot</em> to pin a white star on the Manhattan above and scroll to that site.',
+      '点「在图上标出」，会在上方 Manhattan 图上标一颗白星，并滚到该位点。');
   }
   h+='</div>';
   h+='<p class="muted" style="font-size:11px;margin:0 0 8px">'+esc(grp)+' '+
@@ -3647,6 +3648,7 @@ function initBatchReport(){
 
 function boot(payload){
   D=payload; SROWS=D.srows||[]; SIDX=D.sidx||{}; QUERY=D.query||'';
+  if(typeof applyPanelSiteCopy==='function') applyPanelSiteCopy();
   initThemeController();
   initLangController();
   bindPanelResearchToggle();
@@ -3700,10 +3702,53 @@ function fmtNum(v, dig){
   return v.toFixed(dig);
 }
 
+function panelIs8044(){
+  return typeof PANEL_SITES!=='undefined' && Number(PANEL_SITES)===8044;
+}
+function applyPanelSiteCopy(){
+  if(!panelIs8044() || typeof QC_META==='undefined') return;
+  var m=QC_META;
+  m.on_target_reads.hint='Overlap the 8,044 sites';
+  m.on_target_reads.meaning='Mapped reads overlapping the 8,044-site BED.';
+  m.on_target_reads.meaning_cn='落在 8,044 个位点捕获区间内的 reads。';
+  m.n_panel_sites.hint='Sites in the 8,044 BED';
+  m.n_panel_sites.meaning='Number of intervals in the 8,044-site BED (one SNP = one site).';
+  m.n_panel_sites.meaning_cn='8,044 位点 BED 的区间数（一个 SNP 一个位点）。';
+  m.pct_covered_1x.meaning='Share of the 8,044 sites with depth ≥1×. Complements mean depth.';
+  m.pct_covered_1x.meaning_cn='8,044 个位点中深度 ≥1× 的比例。可与平均深度对照。';
+  m.pct_covered_5x.meaning='Share of the 8,044 sites with depth ≥5×.';
+  m.pct_covered_5x.meaning_cn='8,044 个位点中深度 ≥5× 的比例。';
+  m.pct_covered_10x.meaning='Share of the 8,044 sites with depth ≥10×.';
+  m.pct_covered_10x.meaning_cn='8,044 个位点中深度 ≥10× 的比例。';
+  m.mean_depth.lab='Mean depth (all 8,044 sites)';
+  m.mean_depth.meaning='Average BAM depth across all 8,044 sites. Uncovered sites count as 0×.';
+  m.mean_depth.meaning_cn='8,044 个位点的平均 BAM 深度，没有覆盖的位点记为 0×。';
+  m.median_depth.lab='Median depth (all 8,044 sites)';
+  m.median_depth.meaning='Median BAM depth across all 8,044 sites, including zeros.';
+  m.median_depth.meaning_cn='8,044 个位点的中位 BAM 深度，包含 0。中位数为 0× 时，一半以上位点没有覆盖。';
+  m.n_sites_vcf.meaning='How many of the 8,044 sites appear in this sample VCF.';
+  m.n_sites_vcf.meaning_cn='本样本 VCF 里出现了多少个这 8,044 位点。古 DNA 往往更少。';
+  m.calling_rate_panel_pct.hint='called / 8,044 sites';
+  m.calling_rate_panel_pct.meaning='Called genotypes / 8,044 sites. Sites never written to the VCF count as not called.';
+  m.calling_rate_panel_pct.meaning_cn='已分型 / 8,044 个位点。没写进 VCF 的位点也算未分型。';
+  m.sites_recovered_pct.hint='VCF sites / 8,044';
+  m.sites_recovered_pct.meaning='Sites written to the VCF / 8,044 sites.';
+  m.sites_recovered_pct.meaning_cn='写进 VCF 的位点数 / 8,044。';
+  if(typeof QC_LABEL_ZH!=='undefined'){
+    QC_LABEL_ZH.mean_depth='平均深度（全部 8,044 个位点）';
+    QC_LABEL_ZH.median_depth='中位深度（全部 8,044 个位点）';
+  }
+  if(typeof QC_GROUP_LAB!=='undefined'){
+    QC_GROUP_LAB.coverage=['Coverage on the 8,044 sites','8,044 位点覆盖'];
+  }
+}
 function pcaMethodLabel(s){
   s=String(s||'');
   if(!s) return '—';
-  if(/gcta/i.test(s)) return t('GCTA64 PCA · 153,483 SNPs','GCTA64 PCA · 153,483 SNPs');
+  if(/gcta/i.test(s)){
+    if(panelIs8044()) return t('GCTA64 PCA · 8,044 sites','GCTA64 PCA · 8,044 个位点');
+    return t('GCTA64 PCA · 153,483 SNPs','GCTA64 PCA · 153,483 SNPs');
+  }
   if(/smartPCA|lsqproject/i.test(s)) return t('least-squares projection · 153,483 SNPs','最小二乘投影 · 153,483 SNPs');
   if(/5k/i.test(s)) return 'PCA · 5k SNPs';
   if(/167k/i.test(s)) return 'PCA · 167k SNPs';
@@ -3716,8 +3761,8 @@ function admixMethodsHtml(raw){
   var key=text.toLowerCase();
   if(key.indexOf('13,950')>=0 || key.indexOf('153,483')>=0 || key.indexOf('167k capture')>=0){
     return bi(
-      'ADMIXTURE K=2–8 is one unsupervised series on the 2449 reference using 167k capture sites minus GWAS/trait-locus overlap (13,950 dropped; 153,483 kept). No extra LD prune. Q is a clustering affinity, not a qpAdm proportion. Colours follow Dong et al. 2023 Fig. 1D (doi:10.1126/science.add8655); K→K+1 columns are greedy Pearson-matched (Alexander et al. 2009, https://doi.org/10.1101/gr.094052.109). In-panel samples look up this Q; new samples are projected with ADMIXTURE -P onto the frozen P matrix for every K in 2–8.',
-      'ADMIXTURE K=2–8 是 2449 参考集上的一套无监督拟合，使用 167k 捕获位点并去掉 GWAS/性状位点重叠（去掉 13,950；保留 153,483）。不再额外 LD 修剪。Q 是聚类亲和度，不是 qpAdm 比例。颜色按 Dong 等 2023 图 1D（doi:10.1126/science.add8655）；相邻 K 的列用贪婪 Pearson 匹配（Alexander 等 2009，https://doi.org/10.1101/gr.094052.109）。面板内样本读取这套 Q；新样本用 ADMIXTURE -P 投影到每个 K=2–8 的冻结等位基因频率矩阵。');
+      'ADMIXTURE K=2–8 is one unsupervised fit on the 2449 reference. Sites are the 167k capture set after dropping GWAS and trait-locus overlap: 13,950 removed and 153,483 kept, with no extra LD pruning. Q measures how close a sample is to a cluster. It is not a qpAdm proportion. Colours follow Dong et al. 2023 Fig. 1D (doi:10.1126/science.add8655), and columns from K to K+1 are matched by greedy Pearson correlation (Alexander et al. 2009, https://doi.org/10.1101/gr.094052.109). Samples already in the panel use this Q. A new sample is projected with ADMIXTURE -P onto the frozen P matrix for every K from 2 to 8.',
+      'ADMIXTURE K=2–8 是在 2449 参考集上做的一次无监督分析。位点来自 167k 捕获芯片，去掉与 GWAS 和性状位点重叠的部分后，去掉 13,950 个、保留 153,483 个，没有再做 LD 修剪。Q 表示样本与某个聚类有多近，不是 qpAdm 的混合比例。颜色沿用 Dong 等 2023 图 1D（doi:10.1126/science.add8655）；从 K 到下一个 K，各列按 Pearson 相关做贪婪匹配（Alexander 等 2009，https://doi.org/10.1101/gr.094052.109）。已在面板中的样本直接使用这套 Q。新样本用 ADMIXTURE -P 投影到冻结的等位基因频率矩阵，K 从 2 到 8 都会做。');
   }
   return bi('Source method: '+esc(text),'来源方法：'+esc(text));
 }
@@ -3859,8 +3904,8 @@ function cleanConclusionPair(c){
   m=en.match(/^QC: on-target (.+)% ; fold-enrichment (.+) ; covered≥1× (.+) \((.+)%\); mean depth (.+)× ; panel calling rate (.+)% \(called\/167k panel; primary\); VCF-site calling rate (.+)% \((.+) called \/ VCF sites; secondary\); variants (.+)\.$/);
   if(m){
     return {
-      en:en,
-      zh:'质控：目标区 '+m[1]+'% ；富集倍数 '+m[2]+' ；覆盖≥1× '+m[3]+'（'+m[4]+'%）；平均深度 '+m[5]+'× ；面板分型率 '+m[6]+'%（已分型/167k 面板；主指标）；VCF 位点分型率 '+m[7]+'%（'+m[8]+' 个已分型 / VCF 位点；次指标）；变异位点数 '+m[9]+'。'
+      en:panelIs8044()?en.replace('called/167k panel','called/8,044 sites'):en,
+      zh:'质控：目标区 '+m[1]+'% ；富集倍数 '+m[2]+' ；覆盖≥1× '+m[3]+'（'+m[4]+'%）；平均深度 '+m[5]+'× ；面板分型率 '+m[6]+'%（已分型/'+(panelIs8044()?'8,044 个位点':'167k 面板')+'；主指标）；VCF 位点分型率 '+m[7]+'%（'+m[8]+' 个已分型 / VCF 位点；次指标）；变异位点数 '+m[9]+'。'
     };
   }
   m=en.match(/^Query genotype coverage: (.+) panel sites called \((.+)\); missing sites remain missing\.$/);
@@ -5589,7 +5634,7 @@ function fillSelFstats(){
       'One row = one window from the box above. mean het / Fst among all Grps = average of chip SNPs inside that interval, using <strong>all 2449 samples together</strong>. Same numbers as the green stars on the scatter. Click a row → LocusZoom.',
       '一行=一个命名窗口。均值是窗口内芯片位点、2449 个样品合在一起算的（全体 Grp 的 Fst），和散点图绿星同一套数。点一行跳 LocusZoom。')+'</p>';
     h+='<div class="table-scroll"><table><caption>'+bi(
-      'Active panel computation · named-window summary','当前面板计算 · 命名窗口汇总')+
+      '2449 panel summary of the five named windows','2449 面板上五个命名窗口的汇总')+
       '</caption><thead><tr><th scope="col">'+bi('Window','窗口')+
       '</th><th scope="col">'+bi('Interval','区间')+'</th><th scope="col">'+bi(
         'n SNPs','SNP 数')+      '</th><th scope="col">'+bi('mean het','平均杂合')+
@@ -5605,10 +5650,10 @@ function fillSelFstats(){
     h+='<h3>'+bi('Table B · same 5 windows, one row per Grp',
       '表 B · 同 5 个窗口，每个 Grp 一行')+'</h3>';
     h+='<p class="muted" style="font-size:11px;margin:4px 0 8px">'+bi(
-      'Same five windows as Table A, split by 2449 panel Grp (12 groups × 5 windows). mean het = heterozygosity <em>inside that Grp only</em>. simplified Fst (Grp vs rest) = that Grp versus everyone else. Same numbers as the heatmap. Query genotype overlay is shown separately in Table C.',
-      '还是那五个窗口，按 2449 panel 的 Grp 拆开（12 组 × 5 窗口）。杂合=只在该组内；简化 Fst（Grp 对其余样品）=该组对其余样品。和热图同一套数。查询样本基因型叠加单列在表 C。')+'</p>';
+      'Same five windows as Table A, with one row per 2449 panel group (12 groups × 5 windows). Mean heterozygosity is calculated inside that group only. Simplified Fst compares that group with all other samples. The numbers match the heatmap. This sample’s genotypes are listed in Table C.',
+      '还是表 A 的五个窗口，2449 面板的每个组单独一行（12 组 × 5 个窗口）。平均杂合度只在该组内计算。简化 Fst 比较该组与其余全部样品。数字与热图相同。本样品的基因型列在表 C。')+'</p>';
     h+='<div class="table-scroll"><table><caption>'+bi(
-      'Active panel computation · by-Grp window statistics','当前面板计算 · 按 Grp 的窗口统计')+
+      '2449 panel window statistics by group','2449 面板按组汇总的窗口统计')+
       '</caption><thead><tr><th scope="col">'+bi('Grp','组别')+'</th><th scope="col">'+bi(
         'n vines','样本数')+'</th><th scope="col">'+bi('Window','窗口')+
       '</th><th scope="col">'+bi('n SNPs','SNP 数')+'</th><th scope="col">'+bi(
@@ -5878,20 +5923,20 @@ function fillSelQuerySites(){
   var loci=D.selection_loci||[];
   var name=D.query||'query';
   var h='<div class="info-box"><strong>'+bi(
-    'Query genotype overlay','查询样本基因型叠加')+'</strong> · '+scopeLabel(
+    'Query sample genotypes','查询样本基因型')+'</strong> · '+scopeLabel(
     'Query vs 2449 panel')+'<br>'+bi(
-    'Active panel computation: Fst values remain the 2449 panel map statistic; this table adds this sample’s observed genotype calls.',
-    '当前面板计算：Fst 数值仍是 2449 面板统计量；本表另外展示本样品的实际分型。')+
+    'This run: Fst values remain the 2449 panel map statistic; this table adds this sample’s observed genotype calls.',
+    '本次分析：Fst 数值仍是 2449 面板统计量；本表另外展示本样品的实际分型。')+
     '<br>'+bi(
     'Panel map statistic is not a query phenotype or a query association test.',
     '面板统计量不是查询样本表型，也不是查询样本关联检验。')+'</div>';
   h+='<p class="muted">'+bi(
-    'Table C · query genotype overlay at SNPs inside the named windows / Fst peaks. '+
+    'Table C · query sample genotypes at SNPs inside the named windows / Fst peaks. '+
       '<strong>This sample</strong> is '+esc(name)+'; Fst column is still the 2449 map. Click a row → LocusZoom.',
     '表 C：本查询样品在命名窗口 / Fst 峰里的芯片位点分型。'+
       '<strong>本样品</strong>是 '+esc(name)+'；Fst 列仍是 2449 地图。点一行跳 LocusZoom。')+'</p>';
   h+='<div class="table-scroll"><table><caption>'+bi(
-    'Query genotype overlay at selection sites','选择位点的查询基因型叠加')+
+    'Query sample genotypes at selection sites','选择位点上的查询样本基因型')+
     '</caption><thead><tr><th scope="col">'+bi('Window','窗口')+
     '</th><th scope="col">'+bi('Site','位点')+'</th><th scope="col">'+bi(
       'Alleles','等位基因')+'</th><th scope="col">'+bi('This sample','本样品')+
@@ -6416,7 +6461,7 @@ function buildPca2dFig(xi, yi){
         textfont:{size:11, color:tokens.text},
         marker:{size:14, color:color, symbol:'star', line:{width:1, color:'#111'}},
         cliponaxis:false,
-        hovertemplate:'%{text}<extra>'+t('query overlay','查询样本叠加')+'</extra>'
+        hovertemplate:'%{text}<extra>'+t('query sample','查询样本')+'</extra>'
       });
     });
   } else if(ginfo.query){
@@ -6427,7 +6472,7 @@ function buildPca2dFig(xi, yi){
       customdata:[q.iid], text:[sampleWho(q.iid,'query')],
       marker:{size:14, color:tokens['query-marker'], symbol:'star',
         line:{width:1,color:tokens['query-marker-outline']}},
-      hovertemplate:'%{text}<extra>'+t('query overlay','查询样本叠加')+'</extra>'
+      hovertemplate:'%{text}<extra>'+t('query sample','查询样本')+'</extra>'
     });
   }
   var method=pcaMethodLabel(D.pca_method);
@@ -6436,7 +6481,7 @@ function buildPca2dFig(xi, yi){
     paper_bgcolor:tokens['plot-bg'], plot_bgcolor:tokens['plot-bg'],
     height:520, margin:{l:54,r:16,t:44,b:92},
     title:t('Frozen panel PCA','冻结面板 PCA')+' ('+method+') · '+
-      t('Query overlay','查询样本叠加')+' · '+_pcLabel(xi)+' vs '+_pcLabel(yi)+
+      t('Query sample','查询样本')+' · '+_pcLabel(xi)+' vs '+_pcLabel(yi)+
       ' · '+t('query','查询样本')+'='+QUERY,
     xaxis:{title:_pcLabel(xi), zeroline:false, range:xr||undefined, automargin:true},
     yaxis:{title:_pcLabel(yi), zeroline:false, range:yr||undefined, automargin:true},
@@ -6475,7 +6520,7 @@ function buildPca3dFig(){
         x:[q.pcs[0]], y:[q.pcs[1]], z:[q.pcs[2]],
         customdata:[q.iid], text:[q.iid],
         marker:{size:7, color:color, symbol:'diamond', line:{width:1, color:'#111'}},
-        hovertemplate:'%{text}<extra>'+t('query overlay','查询样本叠加')+'</extra>'
+        hovertemplate:'%{text}<extra>'+t('query sample','查询样本')+'</extra>'
       });
     });
   } else if(ginfo.query){
@@ -6486,7 +6531,7 @@ function buildPca3dFig(){
       customdata:[q.iid], text:[sampleWho(q.iid,'query')],
       marker:{size:7, color:tokens['query-marker'], symbol:'diamond',
         line:{width:1,color:tokens['query-marker-outline']}},
-      hovertemplate:'%{text}<extra>'+t('query overlay','查询样本叠加')+'</extra>'
+      hovertemplate:'%{text}<extra>'+t('query sample','查询样本')+'</extra>'
     });
   }
   if(selectedIID){
@@ -6507,7 +6552,7 @@ function buildPca3dFig(){
     paper_bgcolor:tokens['plot-bg'], height:520, margin:{l:0,r:0,t:40,b:0},
     title:t('Frozen panel PCA','冻结面板 PCA')+' ('+
       (pcaMethodLabel(D.pca_method)==='—'?'PCA':pcaMethodLabel(D.pca_method))+
-      ') · '+t('Query overlay','查询样本叠加')+' · 3D',
+      ') · '+t('Query sample','查询样本')+' · 3D',
     showlegend:!!(D&&D.batch),
     scene:{
       bgcolor:tokens['plot-bg'],
@@ -6791,13 +6836,13 @@ function loadTree(){
       }
       o.text=o.customdata.map(function(id){return sampleWho(id);});
       o.hovertemplate='%{text}<extra>'+
-        t('2449 panel / query overlay','2449 面板 / 查询样本叠加')+'</extra>';
+        t('2449 panel + query samples','2449 面板 + 查询样本')+'</extra>';
     }
     return o;
   });
   var lay=applyPlotTheme(fig.layout||{});
-  lay.title=t('Frozen 2449-panel NJ tree · query overlay',
-    '冻结 2449 面板 NJ 树 · 查询样本叠加');
+  lay.title=t('Frozen 2449-panel NJ tree · query samples',
+    '冻结 2449 面板 NJ 树 · 查询样本');
   lay.autosize=false;
   var host=frame||el;
   var tw=host.clientWidth;
@@ -7341,6 +7386,9 @@ def write_dashboard_html(
     *,
     write_sidecar: bool = True,
     merged_vcf_note: str = "",
+    nav_html: str = "",
+    site_note_html: str = "",
+    panel_sites_count: int | None = None,
 ) -> Path:
     # Prefer local Plotly (offline); CDN fallback
     plotly_local = root / "assets" / "plotly-2.32.0.min.js"
@@ -7361,6 +7409,34 @@ def write_dashboard_html(
         "../assets/locuszoom-0.14.0.css"
         if lz_css_local.exists()
         else "https://cdn.jsdelivr.net/npm/locuszoom@0.14.0/dist/locuszoom.css"
+    )
+    is_panel_8k = panel_sites_count == 8044
+    panel_sites_js = "8044" if is_panel_8k else "null"
+    qc_sites_label = "8,044" if is_panel_8k else "167,433"
+    qc_rate_label = "8,044" if is_panel_8k else "167K"
+    nav_text = str(nav_html or "").strip()
+    if not nav_text:
+        nav_block = ""
+    elif 'id="ga-report-nav"' in nav_text or "id='ga-report-nav'" in nav_text:
+        nav_block = nav_text
+    else:
+        nav_block = f'<div class="ga-report-nav" id="ga-report-nav">{nav_html}</div>'
+    note_text = str(site_note_html or "").strip()
+    if not note_text:
+        site_note_block = ""
+    elif 'id="site-set-note"' in note_text or 'id="ga-site-note"' in note_text:
+        site_note_block = note_text
+    else:
+        site_note_block = f'<div class="ga-site-note" id="ga-site-note">{site_note_html}</div>'
+    pca_8k_en = (
+        " This report places the sample using the 8,044 sites shared by GrapeReseq and the capture panel. The axes are still the frozen reference model, which was fit on 153,483 non-GWAS sites."
+        if is_panel_8k
+        else ""
+    )
+    pca_8k_zh = (
+        " 本报告用 GrapeReseq 与捕获芯片共有的 8,044 个位点给样本定位。坐标轴仍是冻结的参考模型，拟合时用了 153,483 个非 GWAS 位点。"
+        if is_panel_8k
+        else ""
     )
 
     html = apply_damage_library_class(f"""<!DOCTYPE html>
@@ -7444,6 +7520,12 @@ button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visi
 .theme-transition body,.theme-transition .sidebar,.theme-transition #top-bar,.theme-transition .main,.theme-transition .theme-control,.theme-transition .card,.theme-transition .plot-box,.theme-transition table,.theme-transition input,.theme-transition select,.theme-transition button,.theme-transition .info-box,.theme-transition .sec-guide{{transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease}}
 @media (prefers-reduced-motion: reduce){{.sidebar,.sidebar-toggle,.main,#top-bar,.theme-control,.theme-choice{{transition:none!important;animation:none!important}}.theme-transition body,.theme-transition .sidebar,.theme-transition #top-bar,.theme-transition .main,.theme-transition .theme-control,.theme-transition .card,.theme-transition .plot-box,.theme-transition table,.theme-transition input,.theme-transition select,.theme-transition button,.theme-transition .info-box,.theme-transition .sec-guide{{transition:none!important;animation:none!important}}*{{scroll-behavior:auto!important;animation:none!important}}}}
 .stats{{display:flex;gap:12px;padding:12px 28px;flex-wrap:wrap;border-bottom:1px solid var(--border);background:var(--surface)}}
+.ga-report-nav{{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 28px 12px;padding:12px 20px;background:var(--surface);border:0;border-bottom:1px solid var(--border);border-radius:0;color:var(--text);font-size:13px;line-height:1.4}}
+.ga-report-nav a{{color:var(--text);font-weight:600;margin:0;text-decoration:none;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:4px 10px}}
+.ga-report-nav a:hover{{border-color:var(--accent);color:var(--accent);background:var(--hover-bg);text-decoration:none}}
+.ga-report-nav a[aria-current="true"]{{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}}
+.ga-report-nav a[aria-current="true"]:hover{{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}}
+.ga-site-note{{margin:0 28px 12px;padding:10px 14px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--info-bg);color:var(--text);font-size:13px;line-height:1.5}}
 .author-intake{{padding:12px 28px 16px;border-bottom:1px solid var(--border);background:var(--surface)}}
 .author-head{{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:10px}}
 .author-head strong{{font-size:13px}}
@@ -7697,6 +7779,7 @@ footer{{text-align:center;padding:16px;color:var(--muted);font-size:11px}}
 <button type="button" class="sidebar-toggle" id="sidebar-toggle" aria-controls="report-sidebar" aria-expanded="true" aria-label="Close report navigation" onclick="toggleSidebar()" title="Hide">◀</button>
 
 <div class="main" id="main-content">
+{nav_block}
 <div id="top-bar">
 <div id="batch-switcher">
   <div class="batch-card-bar">
@@ -7750,6 +7833,7 @@ footer{{text-align:center;padding:16px;color:var(--muted);font-size:11px}}
   </div>
 </div>
 
+{site_note_block}
 <div class="stats">
   <div class="card"><div class="num" id="stat-n">—</div><div class="lbl"><span class="en">Panel</span><span class="cn">面板</span></div></div>
   <div class="card"><div class="num" id="stat-q">—</div><div class="lbl" id="stat-q-lbl"><span class="en">Query</span><span class="cn">查询</span></div></div>
@@ -7764,7 +7848,7 @@ footer{{text-align:center;padding:16px;color:var(--muted);font-size:11px}}
 <div class="author-intake" id="author-intake"></div>
 
 <section id="sample-validity"><h2><span class="en">Sample validity</span><span class="cn">样本有效性</span> <span class="scope-label"><span class="en">Query-derived</span><span class="cn">查询样本来源</span></span></h2>
-<div class="sec-guide"><div class="en"><strong>How to read.</strong> Start with the report identity, artifact provenance, method coverage, QC, and damage availability before interpreting placement or panel context.</div><div class="cn">怎么看：先确认报告身份、产物溯源、方法覆盖、质控和损伤信息，再解释样本定位或 panel 背景。</div></div>
+<div class="sec-guide"><div class="en"><strong>How to read.</strong> Check the sample name, where the files came from, which analyses ran, the capture QC, and whether a damage profile is available. Then read the placement plots.</div><div class="cn">怎么看：先核对样品名、文件来源、跑了哪些分析、捕获质控，以及有没有损伤谱。然后再看群体定位图。</div></div>
 <div id="report-meta"></div>
 <div id="method-coverage"></div>
 
@@ -7799,12 +7883,12 @@ Black ★/◆ identifies the query; yellow ◆ identifies the pinned sample.</di
 
 <section id="qc"><h2><span class="en">Capture QC</span><span class="cn">捕获质控</span></h2>
 <div class="sec-guide"><strong>How to read.</strong> Two calling rates are not the same.
-<strong>Panel calling rate</strong> (highlighted) = called genotypes ÷ 167,433 chip sites — sites never written to the VCF count as failure.
+<strong>Panel calling rate</strong> (highlighted) = called genotypes ÷ {qc_sites_label} chip sites. Sites never written to the VCF count as not called.
 <strong>VCF-site calling rate</strong> = called ÷ sites in this VCF (usually ~100% once a site is written; not capture success).
 Depth includes zeros; median 0× means more than half the chip has no covering read.
 <div class="cn">怎么看：两个分型率不是一回事。
-<strong>Panel calling rate</strong>（高亮）= 已分型 ÷ 167,433 芯片位点（没写进 VCF 的位点也算失败）。
-<strong>VCF-site calling rate</strong> = 已分型 ÷ 本 VCF 位点（位点一旦写出通常接近 100%，不能当捕获成功率）。
+<strong>面板分型率</strong>（高亮）= 已分型 ÷ {qc_sites_label} 个芯片位点。没写进 VCF 的位点也算未分型。
+<strong>VCF 位点分型率</strong> = 已分型 ÷ 本 VCF 里的位点。位点一旦写出，这个比例通常接近 100%，不能当作捕获是否成功。
 深度含 0；中位深度 0× 表示一半以上芯片位点没有覆盖 reads。</div></div>
 <div id="qc-highlights"></div>
 <div id="qc-table"></div>
@@ -7835,7 +7919,7 @@ Ancient DNA: both termini high, falling inward. The bar plot is the fragment-len
 </section>
 
 <section id="identity-placement"><h2><span class="en">Identity &amp; placement</span><span class="cn">身份与定位</span> <span class="scope-label"><span class="en">Query vs 2449 panel</span><span class="cn">查询样本 vs 2449 面板</span></span></h2>
-<div class="sec-guide"><div class="en"><strong>How to read.</strong> Identity screens compare this query with the 4K reference set; clone/PO, IBS, KING, and nearest-reference results are query-versus-panel evidence.</div><div class="cn">怎么看：身份筛查把本查询与 4K 参考集比较；clone/亲子、IBS、KING 和最近参考样本都属于查询与 panel 的比较证据。</div></div>
+<div class="sec-guide"><div class="en"><strong>How to read.</strong> These screens compare this sample with the 4K reference set. Identical and parent–offspring calls, IBS neighbours, KING kinship, and the nearest reference vine all come from that comparison.</div><div class="cn">怎么看：这里把本样品和 4K 参考集比较。完全相同、亲子、IBS 近邻、KING 亲缘，以及最近的参考品种，都来自这次比较。</div></div>
 
 <div id="clone-controls" hidden></div>
 <div id="rel-graph" hidden>
@@ -7868,7 +7952,7 @@ Ancient DNA: both termini high, falling inward. The bar plot is the fragment-len
  </section>
 
 <section id="population-placement"><h2><span class="en">Population placement</span><span class="cn">群体定位</span> <span class="scope-label"><span class="en">Query vs 2449 panel</span><span class="cn">查询样本 vs 2449 面板</span></span></h2>
-<div class="sec-guide"><div class="en"><strong>How to read.</strong> PCA, ADMIXTURE, and the NJ tree show where this query sits relative to the 2449 panel. Panel summaries remain panel context; the query marker is a projection or observed genotype.</div><div class="cn">怎么看：PCA、ADMIXTURE 和 NJ 树显示本查询相对 2449 panel 的位置。panel 汇总只是 panel 背景；查询标记是投影或实际基因型。</div></div>
+<div class="sec-guide"><div class="en"><strong>How to read.</strong> PCA, ADMIXTURE, and the NJ tree show where this sample sits among the 2449 reference vines. Numbers computed on the 2449 set describe the reference. The mark for this sample is either a projection onto that reference or its own genotype.</div><div class="cn">怎么看：PCA、ADMIXTURE 和 NJ 树说明本样品落在 2449 份参考材料的哪一片。图上的参考统计来自这 2449 份材料。本样品的标记，要么是投影到参考模型上的位置，要么是它自己的基因型。</div></div>
 
 <section id="pca"><h2><span class="en">PCA</span><span class="cn">PCA</span></h2>
 <div class="sec-guide"><div class="en"><strong>How to read.</strong> The 2449 cloud uses frozen GCTA64 GRM-PCA reference axes on 153,483 non-GWAS chip sites
@@ -7876,9 +7960,9 @@ Ancient DNA: both termini high, falling inward. The bar plot is the fragment-len
 This query is least-squares projected onto those axes
 (<a href="https://doi.org/10.1371/journal.pgen.0020190">Patterson et al. 2006</a>).
 2D (left) and 3D (right) use square canvases. PC2 is fixed at −0.01…0.01; other axes follow the data min/max. Points outside the PC2 window are not shown. Switch PC1–PC2 / PC1–PC3 / PC2–PC3. Click a point to pin.
-Black ★/◆ = query; yellow ◆ = pinned.</div>
+Black ★/◆ = query; yellow ◆ = pinned.{pca_8k_en}</div>
 <div class="cn">怎么看：2449 点云使用冻结的 GCTA64 GRM-PCA 参考坐标轴（153,483 个非 GWAS 芯片位点；<a href="https://doi.org/10.1016/j.ajhg.2010.11.011">Yang 等 2011</a>）。本查询样本以最小二乘投影到这些轴上（<a href="https://doi.org/10.1371/journal.pgen.0020190">Patterson 等 2006</a>）。
-二维/三维画布为正方形。PC2 固定 −0.01…0.01；其余轴按数据最小最大值。PC2 窗外的点不显示。可切换 PC 轴；点击钉住。黑★/◆=查询样本，黄◆=钉住的对照。</div></div>
+二维和三维画布都是正方形。PC2 固定在 −0.01 到 0.01；其余轴按数据的最小和最大值。落在 PC2 窗口外的点不显示。可以切换 PC 轴，点击一个点即可钉住。黑★或◆是本样品，黄◆是钉住的对照。{pca_8k_zh}</div></div>
 <div class="info-box"><div class="en"><strong>PCA</strong>: switch PC axes on the left; 3D on the right.
 Black ★/◆ = query; yellow ◆ = pinned sample. Click a point or tip to pin.
 <span id="pca-method-note" class="pca-method-note-slot muted"></span></div>
@@ -7897,19 +7981,19 @@ Black ★/◆ = query; yellow ◆ = pinned sample. Click a point or tip to pin.
 
 <section id="admix-k28"><h2><span class="en">ADMIXTURE K=2–8</span><span class="cn">ADMIXTURE K=2–8</span></h2>
 <div class="sec-guide"><strong>How to read.</strong>
-Unsupervised ADMIXTURE at K=2–8 on the 2449 reference
+Each row is one value of K, from 2 to 8, fit without supervision on the 2449 reference
 (<a href="https://doi.org/10.1101/gr.094052.109">Alexander et al. 2009</a>).
-Rows share one sample order. Colours are matched K→K+1 by greedy Pearson correlation of Q (label switching).
-A colour that continues down a column is the same component; a new colour is a split at that K.
-Palette follows <a href="https://doi.org/10.1126/science.add8655">Dong et al. 2023</a> Fig. 1D.
-The right-hand column is this sample projected onto the frozen allele-frequency matrix (ADMIXTURE <code>-P</code>), not a new unsupervised run.
-<div class="cn">怎么看：2449 参考集上 K=2–8 的无监督 ADMIXTURE。各行样本顺序相同。颜色按相邻 K 的 Q 列 Pearson 相关贪婪匹配（label switching）。一列上下同色=同一组分；新颜色=该 K 发生分裂。右侧一列是本样本投影到冻结的等位基因频率矩阵（ADMIXTURE -P），不是一次新的无监督拟合。</div></div>
+Every row uses the same sample order. Read down a column: the same colour is the same component, and a new colour is a split at that K.
+Colours are aligned from K to K+1 by greedy Pearson correlation of Q, because the program can swap labels between runs.
+The palette follows <a href="https://doi.org/10.1126/science.add8655">Dong et al. 2023</a> Fig. 1D.
+The column on the right is this sample, projected onto the frozen allele-frequency matrix with ADMIXTURE <code>-P</code>. It is not a new unsupervised run.
+<div class="cn">怎么看：每一行是一个 K，从 2 到 8，在 2449 参考集上做无监督 ADMIXTURE（<a href="https://doi.org/10.1101/gr.094052.109">Alexander 等 2009</a>）。各行的样本顺序相同。顺着一列往下看：同一种颜色是同一个组分，新出现的颜色表示这个 K 把组分拆开了。相邻 K 的颜色按 Q 列的 Pearson 相关做贪婪匹配，因为程序每次运行可能对调标签。配色沿用 <a href="https://doi.org/10.1126/science.add8655">Dong 等 2023</a> 图 1D。最右侧一列是本样品，用 ADMIXTURE <code>-P</code> 投影到冻结的等位基因频率矩阵，不是一次新的无监督分析。</div></div>
 <div class="plot-static"><img src="{sample}.admixture_k2_8.png" alt="ADMIXTURE K=2 to K=8"/></div>
 </section>
 
 <section id="admix"><h2><span class="en">ADMIXTURE bar (K tabs)</span><span class="cn">ADMIXTURE 柱图（K 标签）</span></h2>
-<div class="sec-guide"><strong>How to use.</strong> One K at a time (top K tabs). Full = whole panel; Compact = even subsample per group. In-panel query uses lookup Q; when Q exists it is a separate right-hand column. Click a bar to pin.
-<div class="cn">怎么用：顶部 K 标签一次看一个 K。Full=全 panel；Compact=每组均匀抽。库内样本用 lookup Q；有 Q 时查询样本单独一列。点柱钉住。</div></div>
+<div class="sec-guide"><strong>How to use.</strong> Use the K tabs to view one K at a time. Full shows every reference sample. Compact keeps an even number from each group. A sample already in the panel uses its stored Q. When this sample has a Q, it is drawn as its own column on the right. Click a bar to pin that sample.
+<div class="cn">怎么用：用顶部的 K 标签一次看一个 K。完整视图显示全部参考样本。紧凑视图在每个组里均匀抽取。已经在面板里的样本使用保存好的 Q。本样品如果有 Q，会单独画在右侧一列。点击一根柱可以钉住该样本。</div></div>
 <div class="info-box"><div class="en"><strong>Bar</strong>: stacked Q in deterministic report-group order.
 Default shows the full panel; compact mode samples evenly within groups. In-panel query uses
 <strong>lookup</strong> Q at its group position. When Q exists on this strip, the query is a
@@ -7969,7 +8053,7 @@ OUT 处理是条件的：有指定 OUT 时报告实际 n，即使 n &lt; min_n �
  </section>
 
 <section id="sample-evidence"><h2><span class="en">Observed in this sample</span><span class="cn">本样品实际观测</span> <span class="scope-label"><span class="en">Query-derived</span><span class="cn">查询样本来源</span></span></h2>
-<div class="sec-guide"><div class="en"><strong>How to read.</strong> This section reports query genotypes and per-query predictions. A panel association, trait label, or CV score supplies context; the active evidence is the query call.</div><div class="cn">怎么看：本节只报告查询样本的实际基因型和逐样本预测。panel 关联、性状标签或交叉验证分数提供背景；当前证据以查询样本分型为主。</div></div>
+<div class="sec-guide"><div class="en"><strong>How to read.</strong> This section reports query genotypes and per-query predictions. A panel association, trait name, or cross-validation score is background. The genotype called in this sample is the result.</div><div class="cn">怎么看：本节只报告查询样本的实际基因型和逐样本预测。面板上的关联、性状名称和交叉验证分数只是背景。要看的是本样品自己的基因型。</div></div>
 <h3><span class="en">Query genotype evidence</span><span class="cn">查询样本基因型证据</span></h3>
 <div id="query-evidence"></div>
 <h3><span class="en">Per-query GS predictions</span><span class="cn">本查询 GS 预测</span> <span class="scope-label"><span class="en">Query-derived</span><span class="cn">查询样本来源</span></span></h3>
@@ -7978,11 +8062,11 @@ OUT 处理是条件的：有指定 OUT 时报告实际 n，即使 n &lt; min_n �
 
 <details id="panel-research" open>
 <summary><span class="en">Panel research context</span><span class="cn">2449 panel 研究背景</span></summary>
-<div class="sec-guide"><div class="en"><strong>How to read.</strong> The following analyses describe the 2449 panel or published reference context. Query genotype overlays are labelled as overlays; panel statistics remain the active computation.</div><div class="cn">怎么看：以下分析描述 2449 panel 或已发表参考背景。查询基因型叠加会明确标为 overlay；面板统计量仍是当前计算。</div></div>
+<div class="sec-guide"><div class="en"><strong>How to read.</strong> The following analyses describe the 2449 panel or published reference context. When this sample’s genotype is drawn on a panel figure, the label says so. The statistics in these plots were computed on the 2449 reference.</div><div class="cn">怎么看：以下分析描述 2449 panel 或已发表参考背景。本样品的基因型如果画在面板图上，会单独标明。这些图里的统计量是在 2449 参考集上计算的。</div></div>
 
-<section id="sel"><h2><span class="en">Selection scan</span><span class="cn">选择扫描</span> <span class="tag tag-red">unphased 167K</span> <span class="scope-label"><span class="en">2449 panel only</span><span class="cn">仅 2449 面板</span></span></h2>
-<div class="sec-guide"><div class="en"><strong>How to read.</strong> Screening contrast is <strong>simplified Fst (Grp vs rest)</strong> — pick a Grp. Red = sweep: that Grp’s simplified Fst (Grp vs rest) in the top 5% <em>and</em> within-Grp windowed heterozygosity in the bottom 5%. Blue/yellow = chromosomes. Green bands = our five named MAS/GWAS windows. The heatmap summarizes the same two statistics at those windows, followed by this sample’s overlapping sites → LocusZoom. Unphased 167K; active computation is shown below.</div><div class="cn">怎么看：筛选对照是<strong>简化 Fst（Grp 对其余样品）</strong>，请先选组。红点 = sweep：该组简化 Fst（Grp 对其余样品）最高 5% 且组内窗口杂合度最低 5%。蓝/黄=染色体。绿带=五个命名 MAS/GWAS 窗口。热图汇总这些窗口的同一套统计，随后查看本样品重合位点 → LocusZoom。未定相 167K；下方展示当前计算。</div></div>
-<div class="info-box"><div class="en"><strong>Selection data and method.</strong> Unphased ±50 kb windowed heterozygosity + simplified Fst (Grp vs rest) on the 167K chip. LocusZoom.js 0.14.0 (Boughton et al. 2021, https://doi.org/10.1093/bioinformatics/btab186). Named MAS/GWAS windows are summarized in the active plots.</div><div class="cn"><strong>选择数据与方法。</strong> 167K 芯片上的未定相 ±50 kb 窗口杂合度 + 简化 Fst（Grp 对其余样品）。LocusZoom.js 0.14.0（Boughton 等 2021，https://doi.org/10.1093/bioinformatics/btab186）。命名 MAS/GWAS 窗口由当前图表汇总。</div></div>
+<section id="sel"><h2><span class="en">Selection scan</span><span class="cn">选择扫描</span> <span class="tag tag-red"><span class="en">2449 reference Fst</span><span class="cn">2449 参考集 Fst</span></span> <span class="scope-label"><span class="en">2449 panel only</span><span class="cn">仅 2449 面板</span></span></h2>
+<div class="sec-guide"><div class="en"><strong>How to read.</strong> Pick a group first. Screening contrast is <strong>simplified Fst (Grp vs rest)</strong>: that group against every other sample. A red point is a sweep, when this Fst is in the top 5% and windowed heterozygosity inside the group is in the bottom 5%. Blue and yellow mark chromosomes. Green bands mark five named MAS/GWAS windows. The heatmap repeats those two numbers on the five windows. The Fst track comes from the 2,449-sample reference panel. This sample’s genotypes use the site set of the current run, then LocusZoom. The calls are unphased.</div><div class="cn">怎么看：先选一个组。筛选对照是<strong>简化 Fst（Grp 对其余样品）</strong>，也就是该组相对其余全部样品。红点是 sweep：这个 Fst 处在最高 5%，并且该组的窗口杂合度处在最低 5%。蓝色和黄色区分染色体。绿色条带是五个已命名的 MAS/GWAS 窗口。热图在这五个窗口上重复这两个数。Fst 背景来自 2,449 份参考材料。本样品的基因型用的是本次分析的位点集，然后是 LocusZoom。分型没有定相。</div></div>
+<div class="info-box"><div class="en"><strong>Selection data and method.</strong> Heterozygosity is counted in unphased ±50 kb windows on the 167K chip, together with simplified Fst (Grp vs rest). Regional plots use LocusZoom.js 0.14.0 (Boughton et al. 2021, https://doi.org/10.1093/bioinformatics/btab186). The plots below summarize the named MAS/GWAS windows.</div><div class="cn"><strong>选择数据与方法。</strong> 杂合度在 167K 芯片上按未定相的 ±50 kb 窗口计算，并同时计算简化 Fst（Grp 对其余样品）。区域图使用 LocusZoom.js 0.14.0（Boughton 等 2021，https://doi.org/10.1093/bioinformatics/btab186）。下面的图汇总已命名的 MAS/GWAS 窗口。</div></div>
 <h3><span class="en">1. Genome-wide (2449 panel)</span><span class="cn">1. 全基因组（2449 面板）</span></h3>
 <label for="sel-manh-metric"><span class="en">Y</span><span class="cn">纵轴</span></label>
 <select id="sel-manh-metric">
@@ -7996,12 +8080,12 @@ OUT 处理是条件的：有指定 OUT 时报告实际 n，即使 n &lt; min_n �
 <div class="muted" style="font-size:11px;margin:4px 0 8px"><div class="en">Default Grp = largest n. Red = sweep. The last menu item reports Fst among all Grps. Blue/yellow identify chromosomes.</div><div class="cn">默认 Grp = n 最大的组。红点 = sweep。最后一个菜单项报告全体 Grp 的 Fst。蓝/黄表示染色体。</div></div>
 <div class="plot-box" id="plot-sel-manh"></div>
 <h3><span class="en">Sweep sites (this Grp)</span><span class="cn">Sweep 位点（该 Grp）</span></h3>
-<div class="muted" style="font-size:11px;margin:4px 0 8px"><div class="en">Our 167K sweep calls are shown here; literature intervals are checked separately. Red dots = this Grp’s simplified Fst (Grp vs rest) ≥ 95th <em>and</em> within-Grp windowed heterozygosity ≤ 5%. Sweep rows highlight the exact Manhattan site: the button pins a white star on the plot above and scrolls to it.</div><div class="cn">这里展示 167K sweep；文献区间另行核对。红点 = 该组简化 Fst（Grp 对其余样品）≥95% 且组内窗口杂合度 ≤5%。Sweep 行会高亮精确 Manhattan 位点：按钮在上方图里钉一颗白星并滚到该图。</div></div>
+<div class="muted" style="font-size:11px;margin:4px 0 8px"><div class="en">Our 167K sweep calls are shown here; literature intervals are checked separately. Sweep rows highlight the exact Manhattan site: the button pins a white star on the plot above and scrolls to it.</div><div class="cn">这里展示 167K sweep；文献区间另行核对。点一行会在上方 Manhattan 图上标出该位点的白星，并滚到那张图。</div></div>
 <div id="sel-sweep-table"></div>
 <h3><span class="en">5 named loci × Grp</span><span class="cn">5 个命名位点 × Grp</span></h3>
 <div class="info-box" id="named-window-why">
 <div class="en"><strong>Why these five.</strong>
-These five windows are the MAS/GWAS windows on the 167K chip.
+They mark berry skin colour, flower sex, and muscat. Breeders score those three traits, so each window is checked for a signal in the 2,449-sample reference.
 (<code>data/panel/selection_windows.tsv</code>). Dong 2023 Table S29 intervals are checked separately in the Reference-only section, while genome-wide red sweeps use a different rule.
 <strong>Colour (OIV 225)</strong>: classic VvMybA (<code>2:5116947</code> ±10 kb) plus two Science GWAS predictors
 (<em>Vvsyl02G000229</em>, <em>Vvsyl02G001064</em>).
@@ -8012,7 +8096,7 @@ H1–H5 is Dong et al. literature context. Panel H1/H2 or other SDR tags are pan
 <strong>Muscat (OIV 236)</strong>: VvDXS window around Science chr5:19,419,686
 (panel tag <code>5:19418903</code> is 783 bp away).
 No OIV 241 locus overlap found in the panel GWAS. Green bands, heatmap columns, green stars, and Table A use this list.</div>
-<div class="cn">为什么是这五个：这五个窗口是 167K 芯片上的 MAS/GWAS 窗口。(<code>data/panel/selection_windows.tsv</code>)。Dong 2023 表 S29 区间在“仅作参考”部分单独核对；全基因组红色 sweep 使用另一套规则。
+<div class="cn">为什么看这五个：它们标出果皮颜色、花性和麝香。育种记录里常有这三项，所以每个窗口都在 2,449 份参考材料里核对有没有分化信号。(<code>data/panel/selection_windows.tsv</code>)。Dong 2023 表 S29 区间在“仅作参考”部分单独核对；全基因组红色 sweep 使用另一套规则。
 <strong>皮色（OIV 225）</strong>：经典 VvMybA（<code>2:5116947</code> ±10 kb），加上论文里两个皮色 GWAS 预测基因 <em>Vvsyl02G000229</em>、<em>Vvsyl02G001064</em>（Dong 等 2023 写它们比 VvMybA 更能预测果皮颜色）。
 <strong>花性（OIV 151）</strong>：SDR 区间 chr2:14,165,010–14,345,273。H1–H5 仅作 Dong 等文献背景。面板 H1/H2 或其他 SDR 标签是面板注释。
 <strong>麝香（OIV 236）</strong>：VvDXS 窗口，论文坐标 chr5:19,419,686（芯片标签 <code>5:19418903</code> 相差 783 bp）。
@@ -8096,7 +8180,7 @@ NCBI gene_info https://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Plants/ 。
 </section>
 
 <section id="breeding"><h2><span class="en">Panel GWAS / panel GS</span><span class="cn">面板育种</span> <span class="scope-label"><span class="en">2449 panel only</span><span class="cn">仅 2449 面板</span></span></h2>
-<div class="sec-guide"><div class="en"><strong>How to read.</strong> Panel GWAS/GS index. LocusZoom: drag to pan, scroll to zoom, click a SNP or gene. Association / r² / β are panel EMMAX/P3D. The panel track supplies the query genotype overlay; per-query GS predictions are reported above.</div><div class="cn">怎么看：panel 的 GWAS/GS 索引。LocusZoom 可拖动平移、滚轮缩放、点击 SNP 或基因。关联/r²/β 来自 2449；panel 轨道提供查询样本基因型叠加；逐样本 GS 预测见上方。</div></div>
+<div class="sec-guide"><div class="en"><strong>How to read.</strong> Panel GWAS/GS index. In LocusZoom, drag to move, scroll to zoom, and click a SNP or gene. Association, r², and β come from the 2449 EMMAX/P3D analysis. The lower track shows this sample’s genotype. Genomic-selection predictions for this sample are in the section above.</div><div class="cn">怎么看：panel 的 GWAS/GS 索引。在 LocusZoom 里拖动可平移，滚轮可缩放，点击可看 SNP 或基因。关联、r² 和 β 来自 2449 的 EMMAX/P3D。下方轨道是本样品的基因型。本样品的基因组选择预测在上一节。</div></div>
 <div class="info-box"><div class="en"><strong>GWAS / GS panel index and regional context.</strong> Regional plot is <strong>LocusZoom.js 0.14.0</strong>
 (Boughton et al. 2021, https://doi.org/10.1093/bioinformatics/btab186;
 classic layout Pruim et al. 2010, https://doi.org/10.1093/bioinformatics/btq419).
@@ -8159,11 +8243,11 @@ READv2，Alaçamlı 等 2024，doi:10.1186/s13059-024-03350-3：标准化 P0 阈
 <div class="info-box"><div class="en"><strong>Source</strong>:</div>
 <div class="cn"><strong>来源</strong>：</div>
 <div id="admix-provenance"><span class="en">Loading…</span><span class="cn">加载中…</span></div></div>
-<div class="info-box"><div class="en"><strong>QC calling rates</strong>: <em>panel</em> rate = called / 167K panel sites (primary);
-<em>VCF-site</em> rate = called / sites present in the sample VCF.</div>
-<div class="cn"><strong>QC 分型率</strong>：<em>panel</em> 分型率 = 已分型 / 167K 面板位点（主指标）；
-<em>VCF-site</em> 分型率 = 已分型 / 本样品 VCF 中的位点。</div></div>
-<div class="info-box"><div class="en"><strong>Scope boundary: exclusions and literature comparisons are summarized here.</strong> Reader-facing panels above lead with their active computation. Selection: unphased ±50 kb windowed heterozygosity + simplified Fst (Grp vs rest) on the 167K chip; sweep = Fst ≥95th ∩ within-Grp windowed heterozygosity ≤5th. Regional / Table A context uses Fst among all Grps. These Fst values are a simplified estimator, not a canonical Weir–Cockerham implementation. Dong 2023 Table S29 (doi:10.1126/science.add8655) is the CG1∩CG2 shared-bin reference (189 genes / 31 regions), and its interval overlap is reported separately. Regional view is LocusZoom.js (Y = Fst among all Grps or windowed heterozygosity). Displayed PCA uses frozen GCTA64 GRM-PCA axes with least-squares query projection, not a 5k-SNP SVD. f3/f4 are exploratory 2449 panel Grp-mean allele-frequency summaries with complete-case n_sites and n_blocks (Patterson et al. 2012, doi:10.1534/genetics.112.145037).</div><div class="cn"><strong>范围边界：排除项和文献比较统一在这里说明。</strong> 上方读者区域优先展示当前计算。选择扫描使用 167K 未定相窗口杂合度与简化 Fst（Grp 对其余样品）；sweep 使用 Fst ≥95% 且组内窗口杂合度 ≤5%。区域 / 表 A 使用全体 Grp 的 Fst。这些 Fst 是简化估计，不是规范 Weir–Cockerham 实现。Dong 2023 表 S29（doi:10.1126/science.add8655）是 CG1∩CG2 共同区间参考（189 个基因 / 31 个区间），其区间重合单独报告。区域图使用 LocusZoom.js；显示的 PCA 使用冻结 GCTA64 GRM-PCA 轴加最小二乘查询投影，不是 5k SNP 的 SVD。f3/f4 是探索性的 2449 面板 Grp 均值等位基因频率汇总，并报告完整案例 n_sites 和 n_blocks（Patterson 等 2012，doi:10.1534/genetics.112.145037）。</div></div>
+<div class="info-box"><div class="en"><strong>QC calling rates</strong>: the panel rate = called / {qc_rate_label} panel sites. This is the main rate, because sites missing from the VCF count as not called.
+The VCF-site rate = called / sites present in this sample’s VCF.</div>
+<div class="cn"><strong>质控分型率</strong>：面板分型率 = 已分型 / {qc_rate_label} 个面板位点。这是主指标，因为没写进 VCF 的位点也算未分型。
+VCF 位点分型率 = 已分型 / 本样品 VCF 里已有的位点。</div></div>
+<div class="info-box"><div class="en"><strong>What was excluded, and how this report compares with the paper.</strong> Selection uses unphased heterozygosity in ±50 kb windows, plus simplified Fst (Grp vs rest), on the 167K chip. A sweep needs Fst at or above the 95th percentile and within-group windowed heterozygosity at or below the 5th percentile. Regional plots and Table A use Fst among all groups. These Fst values are a simplified estimator, not a Weir–Cockerham implementation. Dong 2023 Table S29 (doi:10.1126/science.add8655) is the CG1∩CG2 shared-bin reference (189 genes / 31 regions). Its interval overlap is reported on its own. The regional view is LocusZoom.js. Its Y axis is Fst among all groups, or windowed heterozygosity. Displayed PCA uses frozen GCTA64 GRM-PCA axes with least-squares query projection, not a 5k-SNP SVD. f3 and f4 are exploratory summaries of 2449 group-mean allele frequencies, with complete-case n_sites and n_blocks (Patterson et al. 2012, doi:10.1534/genetics.112.145037).</div><div class="cn"><strong>这里说明排除了什么，以及和论文如何对照。</strong> 选择扫描在 167K 芯片上计算未定相的 ±50 kb 窗口杂合度，以及简化 Fst（Grp 对其余样品）。判定 sweep 时，Fst 要达到或超过第 95 百分位，组内窗口杂合度要达到或低于第 5 百分位。区域图和表 A 使用全体组之间的 Fst。这些 Fst 是简化估计，不是 Weir–Cockerham 的标准实现。Dong 2023 表 S29（doi:10.1126/science.add8655）是 CG1 与 CG2 共有区间的文献对照（189 个基因 / 31 个区间），区间重合单独报告。区域图使用 LocusZoom.js，纵轴是全体组的 Fst 或窗口杂合度。图上的 PCA 使用冻结的 GCTA64 GRM-PCA 轴，本样品用最小二乘投影，不是 5k SNP 的 SVD。f3 和 f4 是对 2449 各组平均等位基因频率的探索性汇总，并报告完整案例的 n_sites 和 n_blocks（Patterson 等 2012，doi:10.1534/genetics.112.145037）。</div></div>
 <div id="methods-embed"></div>
 </section>
 
@@ -8178,6 +8262,7 @@ READv2，Alaçamlı 等 2024，doi:10.1186/s13059-024-03350-3：标准化 P0 阈
 <script>
 {APP_JS}
 var PAYLOAD = {data_json};
+PANEL_SITES = {panel_sites_js};
 boot(PAYLOAD);
 </script>
 </body></html>""", data_json)

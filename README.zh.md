@@ -5,16 +5,27 @@
 # GrapeAncestry
 [English](README.md)
 
-GrapeAncestry v1.1.0 将新的葡萄样本比对到基于 VS-1 参考基因组构建的 2449 × 167K 固定（frozen）面板上，并生成交互式 HTML 报告。多个样本可以合并在同一份报告中。
+GrapeAncestry v1.2.0 将新的葡萄样本比对到基于 VS-1 参考基因组构建的 2449 × 167K 固定面板上，也可以报告与 GrapeReseq 共有的 8,044 个位点。多个样本可以合并在同一份报告中。
 
 代码采用 MIT 许可。面板的基因型和表型数据不受 MIT 许可约束（详见 [`DATA_NOTICE.md`](DATA_NOTICE.md)）。作者：李旭真，[ORCID 0000-0003-3670-6657](https://orcid.org/0000-0003-3670-6657)。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <p align="center">
-  <a href="https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.batch.report.html">打开演示报告</a><br/>
+  <a href="https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.reports.html">打开 v1.2 演示总览</a><br/>
   28 颗考古葡萄籽，Ramos-Madrigal et al. 2019 <em>Nat. Plants</em>
 </p>
+
+## v1.2 更新
+
+v1.2.0 在开跑前可以选择 GrapeAncestry（167K）、GrapeReseq（8K），或两者都选。两者都选时，会写出两份 HTML 报告，以及一份带简短结论的 167K 与 8K 比较页。界面和报告的中英文都重写过。镜像里也修好了面板信息文件在容器内的读取权限。可运行镜像是 `grapeancestry:1.2.0`（`grapeancestry-v1.2.0-amd64.tar`）。
+
+| 页面 | 内容 |
+|------|------|
+| [报告总览](https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.reports.html) | 下面三份报告的入口 |
+| [GrapeAncestry 167K 演示](https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.batch.report.html) | v1.1 存档，内容未改 |
+| [GrapeReseq 8K 演示](https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.8k.batch.report.html) | 同样 28 颗种子，用共有的 8,044 个位点 |
+| [167K 与 8K 比较](https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.167k_vs_8k.compare.html) | 对照数字和结论 |
 
 ## v1.1 更新
 
@@ -47,18 +58,18 @@ v1.1 新功能。蓝色节点为输入样本，红色节点为面板品种。连
 
 | 路径 | 操作 | 结果 |
 |------|-------------|---------|
-| Docker 套件 | 从 Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)) 下载 `grapeancestry-v1.1.0-amd64.tar`，放在 `./start.sh` 同级目录，并运行 | 产出 `*.sample-first-v2.report.html`，UI <http://127.0.0.1:8501>，报告端口 8502 |
-| 演示 | [打开 28 颗种子报告](https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.batch.report.html)。 | 仅供浏览。Ramos-Madrigal et al. 2019, *Nat. Plants* ([doi:10.1038/s41477-019-0437-5](https://doi.org/10.1038/s41477-019-0437-5)) |
+| Docker 套件 | 从 Zenodo Restricted ([doi:10.5281/zenodo.22868632](https://doi.org/10.5281/zenodo.22868632)) 下载 `grapeancestry-v1.2.0-amd64.tar`，放在 `./start.sh` 同级目录，并运行 | 产出 HTML 报告，UI <http://127.0.0.1:8501>，报告端口 8502 |
+| 演示 | [打开 v1.2 总览](https://xuzhen-li.github.io/grapeancestry/demo/results/ramos2019_np.reports.html)。 | 仅供浏览。Ramos-Madrigal et al. 2019, *Nat. Plants* ([doi:10.1038/s41477-019-0437-5](https://doi.org/10.1038/s41477-019-0437-5)) |
 | 手动构建 | 准备你自己的 VS-1 和固定的 2449×167K 资源（不在 git 中）。CLI: `pip install -e .`（见 docs/USER_GUIDE.md §5） | 遵循 [`steps/`](steps/) `00a`–`13b` |
 
 ### Docker 套件
 
 1. 安装 [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) 或 [Docker Desktop for Mac](https://docs.docker.com/desktop/setup/install/mac-install/)。在 Apple Silicon Mac 上，需在 Docker Desktop 设置中开启 x86_64/amd64 模拟。
-2. 下载本仓库（绿色 Code 按钮，然后 Download ZIP）并下载镜像包 `grapeancestry-v1.1.0-amd64.tar`（约 1.7 GB）。将镜像包放入解压后的文件夹中。
+2. 下载本仓库（绿色 Code 按钮，然后 Download ZIP）并下载镜像包 `grapeancestry-v1.2.0-amd64.tar`（约 1.7 GB）。将镜像包放入解压后的文件夹中。
 3. Mac: 双击 `start.command`。Windows: 双击 `start.bat`。Linux / 终端: `./start.sh`
 4. 浏览器将打开 <http://127.0.0.1:8501>。首次访问需设置本地密码，随后选择文件，开始分析，并打开报告（端口 8502）。报告副本保存在 `output/results/` 中。
 
-Docker 简易命令：`./start.sh`（macOS 用 `start.command`，Windows 用 `start.bat`）会创建 `input/`、`output/` 和 `settings/` 文件夹。如果缺失则加载 `grapeancestry:1.1.0` 并启动 UI。仅包含文档但没有 tar 包的仓库无法完成分析步骤。请勿对该大型镜像执行 `docker push`。详情见 [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md)。
+Docker 简易命令：`./start.sh`（macOS 用 `start.command`，Windows 用 `start.bat`）会创建 `input/`、`output/` 和 `settings/` 文件夹。镜像包在旁边时加载 `grapeancestry:1.2.0` 并启动 UI。仅包含文档但没有 tar 包的仓库无法完成分析步骤。请勿对该大型镜像执行 `docker push`。详情见 [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md)。
 
 v1 版本的最终输出仅限 `*.sample-first-v2.report.html`（云端的 `chip.json` 不属于 v1 内容）。
 

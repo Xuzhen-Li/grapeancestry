@@ -8,7 +8,7 @@ import subprocess
 import sys
 import tempfile
 from collections.abc import Iterator
-from dataclasses import asdict, dataclass, fields
+from dataclasses import asdict, dataclass, fields, replace
 from pathlib import Path
 
 import yaml
@@ -17,6 +17,12 @@ from grapeancestry.report.build_report import REPORT_V2_SUFFIX
 
 PCA_COLORS = ("Grp", "CON", "GEO", "Uti")
 ADMIX_MODES = ("auto", "lookup", "nnls", "official")
+PANEL_MODES = ("167k", "8k", "both")
+REPORT_LABELS = {
+    "167k": ("GrapeAncestry (167K)", "GrapeAncestry（167K）"),
+    "8k": ("GrapeReseq (8K)", "GrapeReseq（8K）"),
+    "compare": ("167K vs 8K", "167K 与 8K 对照"),
+}
 FASTP_POLY_G = ("auto", "on", "off")
 AR3_ADAPTER_SEL = ("auto", "manual", "undefined", "none")
 AR3_QUAL_TRIM = ("mott", "window", "per-base", "none")
@@ -67,6 +73,7 @@ class PipelineOptions:
     snakemake_force: bool = False
     pca_color: str = "Grp"
     admix_mode: str = "auto"
+    panel_mode: str = "167k"
     admix_all_k: bool = True
     source_sample: str = ""
     fastp_min_length: int = 15
@@ -132,6 +139,7 @@ class PipelineOptions:
         self.adna_adapter1 = str(self.adna_adapter1 or "").strip().upper()
         self.pca_color = str(self.pca_color)
         self.admix_mode = str(self.admix_mode)
+        self.panel_mode = str(self.panel_mode or "167k")
         self.fastp_poly_g = str(self.fastp_poly_g)
         self.adna_adapter_selection = str(self.adna_adapter_selection)
         self.adna_quality_trimming = str(self.adna_quality_trimming)
@@ -140,6 +148,8 @@ class PipelineOptions:
             raise ValueError(f"pca_color must be one of {PCA_COLORS}")
         if self.admix_mode not in ADMIX_MODES:
             raise ValueError(f"admix_mode must be one of {ADMIX_MODES}")
+        if self.panel_mode not in PANEL_MODES:
+            raise ValueError(f"panel_mode must be one of {PANEL_MODES}")
         if self.fastp_poly_g not in FASTP_POLY_G:
             raise ValueError(f"fastp_poly_g must be one of {FASTP_POLY_G}")
         if self.adna_adapter_selection not in AR3_ADAPTER_SEL:
@@ -180,6 +190,7 @@ def _analyze_flags(options: PipelineOptions, *, with_source: bool = False) -> li
         cmd.append("--force-query-vcf")
     cmd.extend(["--pca-color", options.pca_color])
     cmd.extend(["--admix-mode", options.admix_mode])
+    cmd.extend(["--panel-mode", options.panel_mode])
     cmd.append("--admix-all-k" if options.admix_all_k else "--admix-k8-only")
     if with_source and options.source_sample:
         cmd.extend(["--source-sample", options.source_sample])
@@ -241,6 +252,8 @@ def pipeline_command(
             str(files["vcf"]),
         ]
         cmd.extend(flags)
+        if no_html:
+            cmd.append("--no-html")
         return cmd
     yaml_path = Path(tempfile.mkstemp(suffix=".yaml", prefix="ga-samples-")[1])
     write_samples_yaml(yaml_path, sample, kind, files, paired=opt.paired)
@@ -416,6 +429,16 @@ def batch_report_ids(rows: list[dict], *, as_query: bool = True) -> list[str]:
     return [report_id_for(str(row["sample"]), pipeline_kind(str(row["kind"])), as_query) for row in rows]
 
 
+def _per_sample_panel_options(options: PipelineOptions) -> PipelineOptions:
+    """Per-sample steps only materialise the 167K VCF.
+
+    ``8k`` and ``both`` are applied once by the final ``analyze-batch`` command.
+    """
+    if options.panel_mode in {"8k", "both"}:
+        return replace(options, panel_mode="167k")
+    return options
+
+
 def batch_pipeline_commands(
     root: Path,
     rows: list[dict],
@@ -424,6 +447,8 @@ def batch_pipeline_commands(
     options: PipelineOptions | None = None,
 ) -> list[list[str]]:
     opt = options or PipelineOptions(as_query=True)
+    mode = opt.panel_mode
+    pre_opt = _per_sample_panel_options(opt)
     commands: list[list[str]] = []
     for row in rows:
         commands.append(
@@ -433,7 +458,7 @@ def batch_pipeline_commands(
                 pipeline_kind(str(row["kind"])),
                 dict(row.get("files") or {}),
                 paired=bool(row.get("paired")),
-                options=opt,
+                options=pre_opt,
                 no_html=True,
             )
         )
@@ -454,6 +479,8 @@ def batch_pipeline_commands(
         "--admix-mode",
         opt.admix_mode,
         "--admix-all-k" if opt.admix_all_k else "--admix-k8-only",
+        "--panel-mode",
+        mode,
     ]
     if opt.force_query_vcf:
         final.append("--force-query-vcf")
@@ -472,11 +499,18 @@ def iter_batch_pipeline(
     extra_env: dict[str, str] | None = None,
 ) -> Iterator[tuple[str | None, int | None]]:
     """Yield log lines, then (None, returncode). Status lines start with ``[batch]``."""
-    commands = batch_pipeline_commands(root, rows, name, options=options)
+    opt = options or PipelineOptions(as_query=True)
+    per_opt = _per_sample_panel_options(opt)
+    commands = batch_pipeline_commands(root, rows, name, options=opt)
     per_sample = commands[:-1]
     n = len(rows)
     for index, (row, cmd) in enumerate(zip(rows, per_sample), 1):
         yield f"[batch] {index}/{n} {row['sample']}\n", None
+        pre_mode = cmd[cmd.index("--panel-mode") + 1]
+        if pre_mode != per_opt.panel_mode:
+            raise RuntimeError(
+                f"per-sample panel_mode {pre_mode} does not match {per_opt.panel_mode}"
+            )
         code = 0
         for line, rc in iter_pipeline(
             root,
@@ -484,7 +518,7 @@ def iter_batch_pipeline(
             pipeline_kind(str(row["kind"])),
             dict(row.get("files") or {}),
             paired=bool(row.get("paired")),
-            options=options,
+            options=per_opt,
             extra_env=extra_env,
             no_html=True,
         ):
@@ -512,3 +546,59 @@ def iter_batch_pipeline(
     for line in proc.stdout:
         yield line, None
     yield None, int(proc.wait())
+
+
+def report_filenames(target: str, *, is_batch: bool) -> dict[str, tuple[str, str | None]]:
+    """HTML and sidecar names for one sample or one batch."""
+    if is_batch:
+        return {
+            "167k": (f"{target}.batch.report.html", f"{target}.batch.report.data.json"),
+            "8k": (f"{target}.8k.batch.report.html", f"{target}.8k.batch.report.data.json"),
+            "compare": (f"{target}.167k_vs_8k.compare.html", None),
+        }
+    return {
+        "167k": (f"{target}.sample-first-v2.report.html", f"{target}.sample-first-v2.report.data.json"),
+        "8k": (f"{target}.8k.sample-first-v2.report.html", f"{target}.8k.sample-first-v2.report.data.json"),
+        "compare": (f"{target}.167k_vs_8k.compare.html", None),
+    }
+
+
+def _panel_kinds(panel_mode: str) -> tuple[str, ...]:
+    mode = panel_mode if panel_mode in PANEL_MODES else "167k"
+    if mode == "8k":
+        return ("8k",)
+    if mode == "both":
+        return ("167k", "8k", "compare")
+    return ("167k",)
+
+
+def find_report_artifacts(
+    root: Path,
+    *,
+    is_batch: bool,
+    target: str,
+    panel_mode: str = "167k",
+) -> list[dict]:
+    """Existing reports in order 167k, 8k, compare."""
+    names = report_filenames(target, is_batch=is_batch)
+    bases = [Path(root) / "results", Path(root) / "output" / "results"]
+    found: list[dict] = []
+    for kind in _panel_kinds(panel_mode):
+        html_name, side_name = names[kind]
+        html_path = next((base / html_name for base in bases if (base / html_name).is_file()), None)
+        if html_path is None:
+            continue
+        sidecar = None
+        if side_name:
+            sidecar = next((base / side_name for base in bases if (base / side_name).is_file()), None)
+        label_en, label_zh = REPORT_LABELS[kind]
+        found.append(
+            {
+                "kind": kind,
+                "label_en": label_en,
+                "label_zh": label_zh,
+                "html": html_path,
+                "sidecar": sidecar,
+            }
+        )
+    return found
