@@ -109,4 +109,4 @@ Stage those under `data/` locally; see `data/MANIFEST.md` and `data/*/README.md`
 | Repo | Owns |
 |------|------|
 | **grapeancestry** (this) | Grapevine 167K walkthrough, GUIDELINE, 28-seed demo, step docs, grape-specific runnable modules |
-| **gtbs-chip-service-kit** | Species-agnostic GBTS scaffold + profile contract only |
+| **gtbs-chip-service-kit** | Species-agnostic genotyping by target sequencing scaffold + profile contract only |
