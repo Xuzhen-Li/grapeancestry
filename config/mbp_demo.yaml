@@ -16,7 +16,7 @@ mapping: full  # gate 2026-08-10: subref_vs_full=0.959 < 0.99 → default full; 
 panel_n_sites: 167433
 panel_n_samples: 2449
 
-# Gate (batch 1.5): enable subref accel only if concordance >= threshold
+# Gate: enable subref accel only if concordance >= threshold
 gate:
   concordance_min: 0.99
 

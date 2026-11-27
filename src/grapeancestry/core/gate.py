@@ -1,4 +1,4 @@
-"""Genotype concordance for subref vs full mapping gate (Batch 1.5).
+"""Genotype concordance for subref vs full mapping gate.
 
 Compares two call sets at shared sites (CHROM:POS), normalizing GT to
 unordered allele dosage strings (0/0, 0/1, 1/1, ./.).

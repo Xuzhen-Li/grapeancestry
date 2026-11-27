@@ -548,7 +548,7 @@ def render_methods_markdown(
         lines.append("")
         lines.append(
             "**CN**: 表型来自 2022-05-23 数据包（eu-vitis.de 与 OIV 2009 世界品种描述）。"
-            "Library ID 与面板 ID 精确匹配。GRIN/NPGS 与「所有能对应样品」大表本轮不用。"
+            "Library ID 与面板 ID 精确匹配。GRIN/NPGS 与「所有能对应样品」大表不用。"
         )
     lines.append("")
 
